@@ -120,7 +120,7 @@ Here's an example of how to use the arena allocator.
 [[https://www.huy.rocks/everyday/01-12-2022-zig-how-arenaallocator-works][Zig how arena allocator works]]
 Internally, the arena allocator uses a linked list to keep track of the created buffers.
 
-The example below shows a code snippet of the arena allocation (from the standard library).
+The example below shows a code snippet of the arena allocation (from the standard library [[https://github.com/ziglang/zig/blob/0.11.x/lib/std/heap/arena_allocator.zig][arena_allocator.zig]]).
 The internals of the arena allocator are the child allocator and a state that contains a singly linked list of buffers.
 #+begin_src zig
   pub const ArenaAllocator = struct {
@@ -145,7 +145,7 @@ The internals of the arena allocator are the child allocator and a state that co
 #+end_src
 
 The ~deinit~ function of the arena allocator will free all the buffers by iterating over each node and calling the ~rawFree~ from the child allocator.
-(this code snippet comes from the standard library)
+(this code snippet comes from the standard library [[https://github.com/ziglang/zig/blob/0.11.x/lib/std/heap/arena_allocator.zig][arena_allocator.zig]])
 #+begin_src zig
       pub fn deinit(self: ArenaAllocator) void {
         // NOTE: When changing this, make sure `reset()` is adjusted accordingly!
@@ -167,7 +167,7 @@ A general purpose allocator is available in Zig, this is a safe allocator that c
 The general purpose allocator is safety first design, but it's still faster than the page allocator ([[https://zig.guide/standard-library/allocators/][Zig guide allocator]])
 
 The general purpose allocator is a function that takes as argument a comptime configuration struct and return a type.
-(this code snippet comes from the standard library)
+(this code snippet comes from the standard library [[https://github.com/ziglang/zig/blob/0.11.x/lib/std/heap/general_purpose_allocator.zig][general_purpose_allocator.zig]])
 #+begin_src zig
   pub fn GeneralPurposeAllocator(comptime config: Config) type {
       return struct {
@@ -177,7 +177,7 @@ The general purpose allocator is a function that takes as argument a comptime co
 #+end_src
 
 The configuration struct of the general purpose allocator shown below, has different options, like thread safety, memory limit, and debug utils.
-(this code snippet comes from the standard library)
+(this code snippet comes from the standard library [[https://github.com/ziglang/zig/blob/0.11.x/lib/std/heap/general_purpose_allocator.zig][general_purpose_allocator.zig]])
 #+begin_src zig
 pub const Config = struct {
     /// Number of stack frames to capture.
