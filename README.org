@@ -1,0 +1,2 @@
+* Zig Documentation
+The purpose of this repository is to document the features of the Zig language, as well as examples of its use.
