@@ -1,0 +1,96 @@
+
+* Compilation - build system
+** TODO Comptime
+
+** TODO How to use the build system
+
+** TODO Build modes
+
+*** TODO Build steps
+https://zig.guide/build-system/build-steps
+
+*** TODO Generate automatically documentation
+In Zig there is an experimental feature, it's automatically generated documentation.
+It will scan all the public structures and functions and will create documentation.
+Moreover, the comments like ~///~ are used to give more information to types.
+
+This example is created with the help of the ~build.zig~ of the Zig language GitHub repository.
+This is used the same way as the Zig teams auto-generate the standard library documentation. See: [[https://github.com/ziglang/zig/blob/master/build.zig][build.zig]]
+#+begin_src zig
+ pub fn build(b: *std.Build) void {
+     const autodoc_test = b.addTest(.{
+          .root_source_file = .{ .path = "src/main.zig" },
+      });
+      const install_std_docs = b.addInstallDirectory(.{
+          .source_dir = autodoc_test.getEmittedDocs(),
+          .install_dir = .prefix,
+          .install_subdir = "doc",
+      });
+
+      const doc_step = b.step("docs", "Generate documentation");
+      doc_step.dependOn(&install_std_docs.step);
+      doc_step.makeFn = generateDocumentation;
+  }
+
+  fn generateDocumentation(self: *std.build.Step, progress: *std.Progress.Node) !void {
+      _ = self;
+      _ = progress;
+      std.log.info("The documentation has been generated", .{});
+  }
+#+end_src
+
+*** Strip output binary in Zig in Linux
+[[http://flint.cs.yale.edu/cs422/doc/ELF_Format.pdf][ELF format]]
+In an ~ELF~ executable there are various sections that hold program and control information.
+For example:
+- ~.bss~: it holds uninitialized variables and data.
+- ~.text~: it holds the instruction of the program
+- ~.debug~: it holds unspecified information for debugging
+
+Removing the debug symbols will reduce his size, make it harder to reverse engineering, and improve speed performance.
+
+By default, Zig will produce an executable that has all the debug symbols.
+However, Zig has reproduced a drop-in replacement for the program GNU ~objcopy~.
+
+To strip an output in the zig command line :
+#+begin_src sh
+  zig build-exe -fstrip src/main.zig
+#+end_src
+
+To be sure that the output executable is stripped, the command ~file~ can be useful :
+#+begin_src sh
+ file main
+#+end_src
+And the output : 
+#+begin_src 
+main: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, stripped
+#+end_src
+
+With the Zig build system (~build.zig~) there is an option to strip an executable :
+#+begin_src zig
+    const target = b.standardTargetOptions(.{});
+    const optimize = b.standardOptimizeOption(.{});
+
+    var exe = b.addExecutable(.{
+        .name = "linkedlist",
+        .root_source_file = .{ .path = "src/main.zig" },
+        .target = target,
+        .optimize = optimize,
+    });
+
+    exe.strip = true;
+#+end_src
+
+If the option strip is set to false, we have :
+#+begin_src 
+ $file linkedlist
+ linkedlist: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, with debug_info, not stripped
+#+end_src
+
+And with the option to ~true~ :
+#+begin_src 
+ $file linkedlist
+ linkedlist: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, stripped
+#+end_src
+
+*** TODO Separate object file from ELF executable
