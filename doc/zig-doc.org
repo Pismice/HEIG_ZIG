@@ -1,5 +1,9 @@
 #+title: Zig documentation
 
+#+bibliography: bibliography.bib
+#+cite_export: csl ieee.csl
+
+
 * Intro
 ** TODO UTF-8 encoding
 Write about string UTF-8 encoding in Zig.
@@ -28,3 +32,5 @@ Does Zig manage tcp stream with the OS stream or has it created its own implemen
 *** Compare Zig threading library with ~p_thread~
 
 
+* Bibliography
+#+print_bibliography: :section 2 :heading subbibliography

@@ -251,6 +251,21 @@ The example below shows a basic usage of the Zig's GPA:
 
 ** TODO Testing allocator
 
+#+begin_src zig :tangle ./test.zig
+  test "Test ArrayList" {
+      var array = std.ArrayList(i32).init(std.testing.allocator);
+      defer array.deinit();
+
+      const expected: i32 = 42;
+      try array.append(expected);
+
+      try std.testing.expectEqual(expected, array.items[0]);
+  }
+#+end_src
+
+#+RESULTS:
+
+
 ** TODO Failing allocator
 
 ** TODO C allocator
