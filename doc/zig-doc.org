@@ -21,6 +21,8 @@ Write about how Zig's log module uses ~comptime~ and whether the log system will
 ** TODO Errors and compilation mode
 Check whether compilation modes will affect the error behaviors.
 
+#+INCLUDE: "./errors.org" :minlevel 1
+
 #+INCLUDE: "./build-system.org" :minlevel 1
 
 * Standard library
