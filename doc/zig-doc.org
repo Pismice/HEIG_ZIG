@@ -18,7 +18,7 @@ Write about ~undefined~ and how it behaves between debug and release mode.
 Write about how Zig's log module uses ~comptime~ and whether the log system will be or not in the executable thanks to the log configuration.
 
 * Errors
-** TODO Errors and compilation mode
+** Compilation mode
 Check whether compilation modes will affect the error behaviors.
 
 #+INCLUDE: "./errors.org" :minlevel 1
