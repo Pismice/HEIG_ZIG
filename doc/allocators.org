@@ -1,3 +1,4 @@
+#+bibliography: bibliography.bib
 
 * Allocator
 The Zig language doesn't hide the memory management, the mantra of Zig is to have no hidden control flow.
@@ -11,6 +12,31 @@ This part is documented thanks to various resources:
 - [[https://zig.guide/standard-library/allocators/][Zig guide about allocator]]
 - [[https://www.openmymind.net/learning_zig/heap_memory/][openmymind - learning zig - heap memory]]
 - The Zig's standard library code
+
+** General pattern
+In Zig for library development, a good practice is to pass an allocator as a parameter, so the programmer can choose the best allocator for his use case.
+
+In the Zig standard library, this pattern is used a lot.
+
+For example, the ~ArrayList~ of the standard library uses this pattern :
+#+begin_src zig :imports '(std)
+    const stdout = std.io.getStdOut().writer();
+
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+
+    var list = std.ArrayList(i32).init(gpa.allocator());
+    defer list.deinit();
+
+    try list.append(42);
+
+    for (list.items) |value| {
+        try stdout.print("Output:  {d}", .{value});
+    }
+#+end_src
+
+#+RESULTS:
+: Output:  42
+
 
 ** Page allocator (~page_allocator~)
 The page allocator is the basic allocator that will directly ask the OS for memory. 
@@ -249,9 +275,11 @@ The example below shows a basic usage of the Zig's GPA:
 | myStruct: Zig-src-MFk0Tx.main.MyStruct{ .myFloat = 3.14149999e+00 | .myInt = 42 } |
 
 
-** TODO Testing allocator
+** Testing allocator
+The testing allocator is available in tests and the test runner will report all the memory leaks that have occurred during testing.[cite:@LearningZigHeap] [cite:@ZiglangZig2024]
 
-#+begin_src zig :tangle ./test.zig
+The example below shows how to use the testing allocator.
+#+begin_src zig :imports '(std) :testsuite 'yes
   test "Test ArrayList" {
       var array = std.ArrayList(i32).init(std.testing.allocator);
       defer array.deinit();
@@ -265,10 +293,62 @@ The example below shows a basic usage of the Zig's GPA:
 
 #+RESULTS:
 
+If the code below is run, the test will fail and it will display a leaked test memory.
+Zig will help the programmer to detect memory leaks using code tests.
+#+begin_src zig :imports '(std) :testsuite 'yes
+  test "Test ArrayList" {
+      var array = std.ArrayList(i32).init(std.testing.allocator);
+      //defer array.deinit(); -> the array will not be free
+
+      const expected: i32 = 42;
+      try array.append(expected);
+
+      try std.testing.expectEqual(expected, array.items[0]);
+  }
+#+end_src
+
+#+RESULTS:
+
+Under the hood, the testing allocator is an instance of the general purpose allocator.
+Below, an extract of testing allocator of the standard library [[https://github.com/ziglang/zig/blob/0.11.x/lib/std/testing.zig][testing.zig]].
+If the testing allocator is used outside of the tests, a compilation error will be thrown.
+#+begin_src zig
+  /// This should only be used in temporary test programs.
+  pub const allocator = allocator_instance.allocator();
+  pub var allocator_instance = b: {
+      if (!builtin.is_test)
+          @compileError("Cannot use testing allocator outside of test block");
+      break :b std.heap.GeneralPurposeAllocator(.{}){};
+  };
+#+end_src
 
 ** TODO Failing allocator
+The failing allocator can be used to ensure that the ~error.OutOfMemory~ is well handled.
+
+The failling allocator need to have a child allocator to run.
+In fact, the failing allocator can set in his ~init~ function the number of allocation that will be performed without errors (see the ~numberOfAllocation~ variable).
+This pattern is pretty useful in restricted memory environments such as embedded development.
+#+begin_src zig :imports '(std) :testsuite 'yes
+  test "test alloc falling" {
+    const numberOfAllocation = 0;
+    var failingAlloc = std.testing.FailingAllocator.init(std.testing.allocator, numberOfAllocation);
+    var list = std.ArrayList(i32).init(failingAlloc.allocator());
+    defer list.deinit();
+
+    const expected = 45;
+
+    try std.testing.expectError(std.mem.Allocator.Error.OutOfMemory, list.append(expected));
+  }
+#+end_src
+
+#+RESULTS:
 
 ** TODO C allocator
+The ~C~ standard allocator can also be used, this allocator has high performance but it has less safety feature.
+
+However, to use this allocator, the ~libC~ is required.
+Adding the ~libC~ in the project will add more dependencies.
+
 
 ** TODO How to use Zig to detect memory leaks
 *** TODO Comparison between gcc-utils sanitizer, Valgrind, and Zig memory leak detection
