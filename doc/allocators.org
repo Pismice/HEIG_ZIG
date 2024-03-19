@@ -310,7 +310,7 @@ Zig will help the programmer to detect memory leaks using code tests.
 
 #+RESULTS:
 
-Under the wood, the testing allocator is an instance of the general purpose allocator.
+Under the hood, the testing allocator is an instance of the general purpose allocator.
 Below, an extract of testing allocator of the standard library [[https://github.com/ziglang/zig/blob/0.11.x/lib/std/testing.zig][testing.zig]].
 If the testing allocator is used outside of the tests, a compilation error will be thrown.
 #+begin_src zig
@@ -331,10 +331,9 @@ In fact, the failing allocator can set in his ~init~ function the number of allo
 This pattern is pretty useful in restricted memory environments such as embedded development.
 #+begin_src zig :imports '(std) :testsuite 'yes
   test "test alloc falling" {
-    const intList = std.ArrayList(i32);
     const numberOfAllocation = 0;
     var failingAlloc = std.testing.FailingAllocator.init(std.testing.allocator, numberOfAllocation);
-    var list = intList.init(failingAlloc.allocator());
+    var list = std.ArrayList(i32).init(failingAlloc.allocator());
     defer list.deinit();
 
     const expected = 45;
