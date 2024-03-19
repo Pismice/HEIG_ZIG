@@ -1,0 +1,97 @@
+* Errors
+https://ziglang.org/documentation/0.11.1/#Errors
+In ZIG errors are juste values.
+Those values are those of an special type of enum "error".
+When you declare your enum using this keyword instead of "enum", the compiler is going to know that those values are going to be errors, therefore they can be catched, tried, ...
+
+
+** Handling errors in the application flow
+Functions can return either a value or an error, this is done by adding the "!" to the return type of a function
+With the "!" the return type of the function below is the coerced "anyerror!u8"
+
+Note: "anyerror" is just a u16 under the hood.
+
+When a function can return an error we have to either "try" or "catch" it.
+
+#+source: simple
+#+begin_src zig :imports '(std)
+fn maybeErrorMaybeValue(isError: bool) !u8 {
+    // ... might return an u8 or an error
+    if (isError) {
+        return error.Bar;
+    } else {
+        return 2;
+    }
+}
+
+test "return value or error" {
+    // "try" version
+    const res = try maybeErrorMaybeValue(false); // if error, return the error
+    try std.testing.expect(res == 2);
+    
+    // "catch" version
+    const err = maybeErrorMaybeValue(true) catch 3;
+    try std.testing.expect(err == 3);
+}
+
+test "should panic" {
+    _ = maybeErrorMaybeValue(true) catch unreachable;
+}
+#+end_src
+
+** Errdefer
+This exemple is taken from: https://ziglang.org/documentation/0.11.1/#errdefer
+Errdefer is a particularity of ZIG, it allows the user to execute some code when the function returns an error, it is useful exemple for deallocating variables you would have normally returned from the function, but since the function failed you deallocate that memory to avoid a memory leak.
+#+source: simple
+#+begin_src zig :imports '(std)
+fn createFoo(param: i32) !Foo {
+    const foo = try tryToAllocateFoo();
+    // now we have allocated foo. we need to free it if the function fails.
+    // but we want to return it if the function succeeds.
+    errdefer deallocateFoo(foo);
+
+    const tmp_buf = allocateTmpBuffer() orelse return error.OutOfMemory;
+    // tmp_buf is truly a temporary resource, and we for sure want to clean it up
+    // before this block leaves scope
+    defer deallocateTmpBuffer(tmp_buf);
+
+    if (param > 1337) return error.InvalidParam;
+
+    // here the errdefer will not run since we're returning success from the function.
+    // but the defer will run!
+    return foo;
+}
+#+end_src
+
+
+** Coercing
+The rule is simple: you can coerce an error from a subset to a superset but you cannot coerce an error from a superset to a subset
+
+#+source: simple
+#+begin_src zig :imports '(std)
+const SuperErrors = error{
+    Foo,
+    Bar,
+    Baz,
+};
+const SubErrors = error{
+    Foo,
+    Bar,
+};
+
+test "coerce subset to superset" {
+    tac(SubErrors.Foo) catch {}; // PASSED
+}
+
+test "coerce superset to subset" {
+    tic(SuperErrors.Foo) catch {}; // FAILED
+}
+
+fn tic(err: SuperErrors) SubErrors {
+    return err;
+}
+
+fn tac(err: SubErrors) SuperErrors {
+    return err;
+}
+#+end_src
