@@ -9,7 +9,8 @@ When you declare your enum using this keyword instead of "enum", the compiler is
 Functions can return either a value or an error, this is done by adding the "!" to the return type of a function
 With the "!" the return type of the function below is the coerced "anyerror!u8"
 
-Note: "anyerror" is just a u16 under the hood.
+Note 1: "anyerror" is just a u16 under the hood.
+Note 2: It is important that the syntax is ErrorSet!Payload if you write it by hand and NOT Payload!ErrorSet
 
 When a function can return an error we have to either "try" or "catch" it.
 
