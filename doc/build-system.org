@@ -95,7 +95,72 @@ And with the option to ~true~ :
  linkedlist: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, stripped
 #+end_src
 
-*** TODO Separate object file from ELF executable
+*** Separate debug symbols from ELF executable
+The chapter above shows how to remove all the symbols for the executable directly in the Zig build system.
+In this section, the interest is more about the Zig objcopy command.
+In fact, Zig has implemented his own ~objcopy~ utils to strip, and remove symbols as the objcopy from the bin utils (GNU utils).
+(/Note: for now, the Zig objcopy has fewer features/)
+
+The interest in having objcopy directly in Zig is there is no need to have multiple objcopy executables.
+Indeed, in a cross-compilation world, each binutil needs to be compatible with the CPU architecture target.
+So, it avoids using different toolchains and scripts to build on various targets.
+
+Here's how to invoke the help of the Zig build objcopy:
+#+begin_src sh
+   zig objcopy --help
+#+end_src
+
+The following example illustrates several applications of the objcopy command.
+First, remove the debug symbols of the executable.
+After that, keep only the debug symbols in a separate file.
+And finally, how to link the debug symbols file to an executable (that has no debug file).
+
+For this example, the output executable of the Zig build toolchain is named ~main~.
+#+begin_src sh
+  $file main
+  main: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, with debug_info, not stripped
+#+end_src
+
+The first step is to strip the debug file from the executable:
+#+begin_src sh
+  zig objcopy --strip-debug main mainStripped
+#+end_src
+
+The small flag alternative can also be used:
+#+begin_src sh
+  zig objcopy -g main mainNoDebugInfo
+#+end_src
+
+After this command, the new executable has no longer the debug info.
+#+begin_src sh
+  $file mainNoDebugInfo
+  mainNoDebugInfo: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, not stripped
+#+end_src
+
+The second step shows how to keep only the debug symbols in the ~main.dbg~ file:
+#+begin_src sh
+  zig objcopy --only-keep-debug main main.dbg
+#+end_src
+
+Finally, to recreate an executable with a link to a debug symbols file, the following command can be used:
+#+begin_src sh
+  zig objcopy --add-gnu-debuglink=main.dbg mainNoDebugInfo mainWithDbgSymbols
+#+end_src
+
+Now, the executable named ~mainWithDbgSymbols~ can be used, for example in GDB to debug it (GDB will know where its debug symbols file is located).
+
+Removing the debug symbol will create a smaller executable.
+Bellow shows the process with a mini-example:
+
+| executable name    | size |
+|--------------------+------|
+| main               | 1.9M |
+| main.dbg           | 1.2M |
+| mainNoDebugInfo    | 690K |
+| mainWithDbgSymbols | 690K |
+
+The advantage of this method is that the executable can be sent to production without debug symbols (it's more difficult to reverse engineering the exe, and it has a smaller size).
+But when a bug is reported, it is always possible to debug it because all you have to do is link the debug symbol to the executable.
 
 ** Cross-compilation
 
