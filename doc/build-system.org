@@ -98,7 +98,7 @@ And with the option to ~true~ :
 *** Separate debug symbols from ELF executable
 The chapter above shows how to remove all the symbols for the executable directly in the Zig build system.
 In this section, the interest is more about the Zig objcopy command.
-In fact, Zig has implemented his own ~objcopy~ utils to strip, and remove symbols as the objcopy from the bin utils (GNU utils).
+In fact, Zig has implemented his own ~objcopy~ utils to strip, and remove symbols like the objcopy from the bin utils (GNU utils).
 (/Note: for now, the Zig objcopy has fewer features/)
 
 The interest in having objcopy directly in Zig is there is no need to have multiple objcopy executables.
