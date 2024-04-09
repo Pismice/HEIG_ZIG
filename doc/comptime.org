@@ -46,13 +46,13 @@ This allows to use for loops in comptime indeed, if a standard for loop is used,
 | variable-at-compile-time |  42 |
 
 *** Compile-time expression
-In Zig, an expression can have an ~comptime~ to tell the compiler to evaluate the expression at compile-time.
+In Zig, an expression can have a ~comptime~ to tell the compiler to evaluate the expression at compile-time.
 Like a compile-time variable, if an expression cannot be evaluated at compile-time, a compile-time error will be thrown.
 
 With a prefixed ~comptime~ keyword Zig can interpret a function at compile-time instead of runtime. [cite:@DocumentationZigProgramming]
 
 A good example of demonstrating comptime expression is in the standard documentation [cite:@DocumentationZigProgramming].
-The results show that the comptime expression is faster than the runtime one.
+The results show that the comptime expression is faster than the runtime one when the code is executed (runtime) because the work has already been done.
 But this will work only with code that hasn't runtime dependency code.
 
 #+begin_src zig :imports '(std) :main 'no :testsuite 'yes :exports both
@@ -152,7 +152,7 @@ The example below is based on [[https://zig.guide/language-basics/comptime][the 
       return [height][width]T;
   }
 
-  fn Matrix3D(
+  fn Matrix3x3(
       comptime T: type,
   ) type {
       return Matrix(T, 3, 3);
@@ -162,8 +162,8 @@ The example below is based on [[https://zig.guide/language-basics/comptime][the 
       try std.testing.expect(Matrix(f32, 4, 4) == [4][4]f32);
   }
 
-  test "returning a 3D matrix" {
-      try std.testing.expect(Matrix3D(f32) == [3][3]f32);
+  test "returning a 3x3 matrix" {
+      try std.testing.expect(Matrix3x3(f32) == [3][3]f32);
   }
 
 #+end_src
@@ -182,7 +182,7 @@ See the example ~Example with a custom CSV writer based on type~ to have a view 
 ** TODO Optimization
 inline for / while
 
-*** How works log in Zig
+*** How log works in Zig
 In the C language, a common use to use debug print is with Marco.
 Like in this example, if the ~DEBUG~ is defined to ~1~ the code will print the debug info.
 If the ~DEBUG~ is not set, at the compilation, all the print information will be removed.
@@ -234,9 +234,12 @@ But if the release mode is set to ~Release*~, the debug log will not print, ther
 To create a generic data structure, the same pattern is used as a comptime parameter.
 A function needs to return an anonymous struct as a type ~type~.
 
-In a generic data structure, the ~@This()~ is used to get the type of the data structure because she is anonymous.
+In a generic data structure, the ~@This()~ is used to get the type of the data structure because it is anonymous.
 
-Moreover, with generic data structure can have a function that can be called on the structure type and can have a function call on the instance of the structure.
+Moreover, a generic data structure can have tow type of function:
+1. a function that can be called on the structure type
+2. a function that can be called on the instance of the structure.
+
 To have an instance function, the first argument needs to be a parameter of the type of the struct.
 That's why a constant ~Self~ is used with ~@This()~.
 And after that, the parameter ~self~ can be used to get the members of the struct.
@@ -277,7 +280,7 @@ The example shows the difference between a function that can be called on a stru
 | structFunction  |    |
 | structInstance: | 42 |
 
-Zig can infer the name of a struct when there are created, or a name can be explicitly given :
+In Zig, a structure name can be explicitly given or Zig can infer the name of a struct when there are created:
 #+begin_src zig :imports '(std) :main 'no
   fn MyStruct(comptime T: type) type {
       return struct {
@@ -286,11 +289,13 @@ Zig can infer the name of a struct when there are created, or a name can be expl
   }
 
   pub fn main() !void {
+      // The structure name is infered
       const myStruct1 = MyStruct(i32) {
           .myNumber = 42,
       };
       _ = myStruct1;
 
+      // The structure has a explicit name
       const intStruct = MyStruct(i32);
       const myStruct2 =  intStruct {
           .myNumber = 42,
@@ -328,7 +333,7 @@ Here's an compete example of an generic linked list :
               var curr = self.head;
 
               while (curr) |currNotNull| {
-                  var node = currNotNull;
+                  const node = currNotNull;
                   curr = currNotNull.next;
                   self.allocator.destroy(node);
               }
@@ -361,7 +366,7 @@ Here's an compete example of an generic linked list :
       const expected = 42;
 
       try list.push(expected);
-      var result = list.head.?.data;
+      const result = list.head.?.data;
 
       try std.testing.expect(expected == result);
   }
@@ -374,7 +379,7 @@ Here's an compete example of an generic linked list :
       const expected = 3.1415;
 
       try list.push(expected);
-      var result = list.head.?.data;
+      const result = list.head.?.data;
 
       try std.testing.expect(expected == result);
   }
@@ -383,7 +388,7 @@ Here's an compete example of an generic linked list :
 #+RESULTS:
 
 ** Example with a custom CSV writer based on type
-This example shows that Zig has a type reflection with the keyword ~@typeinfo~.
+This example shows that Zig has a type reflection with the keyword ~@typeInfo~.
 The goal of this example is to create CSV output with a generic struct as input.
 Only with the ~try csv.stringify(&arrayList, stream.writer());~ function the ~CsvWriter~ can infer at comptime the struct pass as argument.
 For this example, a basic struct named ~Person~ will be transformed to CSV.
@@ -429,7 +434,7 @@ For this example, a basic struct named ~Person~ will be transformed to CSV.
                   @compileError("The type is not the a struct");
 
               inline for (fields, 1..) |field, i| {
-                  var f = @field(item, field.name);
+                  const f = @field(item, field.name);
 
                   switch (@typeInfo(@TypeOf(f))) {
                       .Int => try writer.print("{d}", .{f}),
