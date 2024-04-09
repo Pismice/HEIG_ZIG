@@ -23,13 +23,23 @@ To understand what is described in this documentation, you should first read up 
 ** How to use this documentation
 
 parler du fait qu'on utilise org babel et comment faire pour tester les examples
-et le fait qu'on utilise la version 0.11 pour les examples (mais que certains benchmark ont aussi utilisé des version de dev)
+et le fait qu'on utilise la version 0.11 pour les examples (mais que certains benchmark ont aussi utilisé des version de devlike
+
+This documentation is build to guide to user through differents examples.
+Those examples has been created to use literate programming, in fact the documentation is build on Emacs with the org mode.
+You can follow the examples and execut it directly in Emacs.
+
+For that, you need to:
+1. Install the configuration created for that (see the section below)
+2. When all is configured, in Emacs you can select the example that you want to execute and use the command ~C-c C-c~.
+   The output will be created or updated below the source block
 
 ** Build Emacs configuration
 
 *** Install Zig emacs org babel plugin
 Use ~C-c C-c~ (~ctrl-c ctrl-c~) to evaluate the code below.
 It will add a shell interpreter inside org-babel configuration, it will be used when shell commands is evaluated.
+
 #+begin_src emacs-lisp
   (add-to-list 'org-babel-load-languages '(shell . t))
   (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
@@ -61,43 +71,29 @@ This file can be load from your emacs configuration (see section below).
                '("melpa" . "https://melpa.org/packages/"))
   (package-initialize)
   (package-refresh-contents)
-#+end_src
 
-#+begin_src emacs-lisp :tangle zigIterativeProgramming.el
   (defun install-custom-pkg (pck)
     (if (featurep pck)
         (message "The package %s is already installed !" pck)
       (package-install pck)
       ))
-#+end_src
 
-#+begin_src emacs-lisp :tangle zigIterativeProgramming.el
   (install-custom-pkg 'zig-mode)
   (install-custom-pkg 'lsp-mode)
-#+end_src
-
-#+RESULTS:
-: The package lsp-mode is already installed !
-
-#+begin_src emacs-lisp :tangle zigIterativeProgramming.el
   (require 'lsp-mode)
   (add-hook 'zig-mode-hook #'lsp)
-#+end_src
 
-#+begin_src emacs-lisp :tangle zigIterativeProgramming.el
   (let ((local-file-path (expand-file-name "ob-zig.el" base_dir)))
     (setq org-babel-zig-compiler local-file-path)
     (load-file local-file-path)
-  )
-#+end_src
+    )
 
-#+begin_src emacs-lisp :tangle zigIterativeProgramming.el
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(org-babel-load-languages '((C . t) (emacs-lisp . t) (shell . t))))
+  (custom-set-variables
+   ;; custom-set-variables was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(org-babel-load-languages '((C . t) (emacs-lisp . t) (shell . t))))
 #+end_src
 
 *** Execute configuration file from the configuration
