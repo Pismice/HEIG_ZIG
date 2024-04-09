@@ -1,6 +1,8 @@
 #+bibliography: bibliography.bib
 #+cite_export: csl ieee.csl
 
+#+HTML_MATHJAX: align: left indent: 5em tagside: left
+
 * Compilation - build system
 ** TODO Comptime
 
@@ -161,6 +163,7 @@ Bellow shows the process with a mini-example:
 
 The advantage of this method is that the executable can be sent to production without debug symbols (it's more difficult to reverse engineering the exe, and it has a smaller size).
 But when a bug is reported, it is always possible to debug it because all you have to do is link the debug symbol to the executable.
+*** TODO Separate object file from ELF executable
 
 ** Cross-compilation
 
@@ -188,4 +191,41 @@ The executable on the embedded target runs flawlessly, below is shown the output
 All your codebase are belong to us.
 Run `zig build test` to run the tests.
 #+end_example
+
+
+* Performance comparaison + SMID
+
+Leibniz algorithm :
+https://en.wikipedia.org/wiki/Leibniz_formula_for_%CF%80
+
+\begin{equation}
+\frac{\pi}{4} = 1 - \frac{1}{3} + \frac{1}{5} - \frac{1}{7} + \frac{1}{9} - \ldots = \sum_{k = 0}^{\infty} \frac{(-1)^k}{2k + 1}
+\end{equation}
+
+https://github.com/niklas-heer/speed-comparison/tree/master
+
+| Command              | Mean [ms]  | Min [ms] | Max [ms] | Relative    |
+|----------------------+------------+----------+----------+-------------|
+| =./leibniz_zig=      | 85.9 ± 0.4 |     85.0 |     87.0 | 2.02 ± 0.03 |
+| =./leibniz_zig_smid= | 42.5 ± 0.5 |     41.6 |     43.7 | 1.00        |
+| =./leibniz_c=        | 43.3 ± 0.8 |     42.2 |     45.4 | 1.02 ± 0.02 |
+| =./leibniz_rs=       | 86.4 ± 1.5 |     85.2 |     94.3 | 2.03 ± 0.04 |
+| =./leibniz_avx2=     | 43.3 ± 0.5 |     42.1 |     44.3 | 1.02 ± 0.02 |
+
+| Command              | Mean [ms]   | Min [ms] | Max [ms] | Relative    |
+|----------------------+-------------+----------+----------+-------------|
+| =./leibniz_zig=      | 883.9 ± 9.5 |    864.1 |    896.0 | 1.99 ± 0.03 |
+| =./leibniz_zig_smid= | 443.8 ± 5.2 |    437.2 |    452.0 | 1.00        |
+| =./leibniz_c=        | 481.5 ± 4.4 |    476.8 |    489.2 | 1.08 ± 0.02 |
+| =./leibniz_rs=       | 912.7 ± 9.7 |    897.1 |    925.1 | 2.06 ± 0.03 |
+| =./leibniz_avx2=     | 451.2 ± 6.3 |    443.8 |    465.7 | 1.02 ± 0.02 |
+
+
+| Command              | Mean [s]      | Min [s] | Max [s] | Relative     |
+|----------------------+---------------+---------+---------+--------------|
+| =./leibniz_zig=      | 8.889 ± 0.095 |   8.722 |   9.058 | 13.91 ± 0.33 |
+| =./leibniz_zig_smid= | 4.386 ± 0.028 |   4.357 |   4.420 | 6.86 ± 0.15  |
+| =./leibniz_c=        | 0.665 ± 0.003 |   0.658 |   0.669 | 1.04 ± 0.02  |
+| =./leibniz_rs=       | 8.903 ± 0.053 |   8.855 |   8.973 | 13.93 ± 0.31 |
+| =./leibniz_avx2=     | 0.639 ± 0.013 |   0.618 |   0.657 | 1.00         |
 
