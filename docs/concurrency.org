@@ -1,0 +1,79 @@
+Note: il se peut qu je dise des trucs faux car la plupart des ces termes sont complétement nouveaux, donc si tu vois des trucs louches, cest assez probable que tu aies un bon feeling.
+
+Je dois voir Alberto lors de ma prochaine séance pour lui poser plusieurs questsions sur ces différents termes etc
+
+** Definitions
+Coroutine (cooperative multitasking): 
+- a coroutine itself is not concurrent !, it allows to manage concurrent tasks in the same way as callbacks for example
+- single threaded
+- allows to write code in a sequential manner
+- allows not to have context switch
+- 2 types of coroutine: symetric vs asymetric (relative to the control-transfer mechanism)
+- coroutines are not preemptive, they are cooperative, therefore they must explicitly give back control by **yielding**
+- usually uses keywords like **yield**, **resume**, **suspend**, ...
+- " With nonstackful coroutines, a task cannot yield within those libraries. Therefore, either those programs will block until the operation completes or they must be restructured to avoid doing I/O inside library functions."
+
+Fibers :
+- cooperative multitasking instead of preemptive multitasking
+- manage au user level plutot que kernel level comme les threads standards
+- stackful coroutines
+
+Green threads:
+- managed by a VM instead of the OS
+- has the advantage to be managed in user space instead of kernel space
+
+Thread (multithreading -> the threads are still blocking):
+- Main and historical way of doing concurrency
+- Parallelism (eventually): Threads allow for true parallel execution on multi-core CPUs, enabling better utilization of hardware resources and potentially improving performance.
+- Isolation: Threads provide strong isolation between concurrent tasks, with each thread having its own execution context, stack, and local variables.
+- Scalability: Managing a large number of threads can be challenging and may lead to scalability issues, as the operating system kernel has to allocate resources for each thread.
+- Usually used with a thread pool to avoid the overhead of creating and destroying threads for each task which is very expensive
+QUESTION: est ce que je parle pas des virtual threads la ?
+
+Event-driven programming (ex: NodeJS):
+- Event loop that regularly checks if "events" are launched
+- Scalability: Event-driven architectures are inherently scalable, as they can handle a large number of concurrent connections with low memory and CPU overhead.
+- Code behind NodeJS: https://github.com/libuv/libuv
+
+** Zig current state
+There a multiple ways you currently can do concurent code in ZIG:
+- Spawning OS threads (https://ziglang.org/documentation/master/std/#std.Thread)
+- Using old async/await from before 0.11 (not recommanded because unstable !!! https://github.com/ziglang/zig/issues/6025)
+- Using an event loop (by wrapping libuv or using libxev which is the equivalent buz in ZIG)
+- Using fibers (https://github.com/kprotty/zefi, https://github.com/kassane/fiber)
+- async/await built on top of libxev (https://github.com/rsepassi/zigcoro)
+- Low level single threaded concurrency if you want to craft your owng thing (https://github.com/kassane/context)
+- ... obviously you can still use C libraries that do async stuff :)
+
+** Function coloring
+Green threads make function colors disapear ????
+
+** MES NOTES -------- pas besoin de lire ca, cest juste pour moi
+
+- "libuv and OSes will usually run background/worker threads and/or polling to perform tasks in a non-blocking manner." est ce que cest comment ca under the hood les non blocking async ?
+
+- "The event loop follows the rather usual single threaded asynchronous I/O approach: all (network) I/O is performed on non-blocking sockets which are polled using the best mechanism available on the given platform: epoll on Linux, kqueue on OSX and other BSDs, event ports on SunOS and IOCP on"
+
+** Sources:
+- https://dl.acm.org/doi/pdf/10.1145/1462166.1462167
+- https://www.lua.org/pil/9.1.html
+- https://blog.orhun.dev/zig-bits-04/ (regarder regul pour voir si il m a rep)
+- https://github.com/mitchellh/libxev/issues/92 (regul ...)
+- ChatGPT et GH Copilot
+- https://github.com/lewissbaker/cppcoro
+- https://ericniebler.com/2020/11/08/structured-concurrency/
+- https://en.wikipedia.org/wiki/Fiber_(computer_science)
+- https://github.com/rsepassi/zigcoro
+- https://github.com/mitchellh/libxev
+- https://github.com/libuv/libuv
+- https://github.com/libuv/libuv/blob/v1.x/docs/src/guide/basics.rst
+- https://docs.libuv.org/en/v1.x/guide/basics.html (ptetre le meme que celui au dessus)
+- https://github.com/dotnet/runtimelab/issues/2398
+- https://kristoff.it/blog/zig-colorblind-async-await/
+- https://tigerbeetle.com/blog/a-friendly-abstraction-over-iouring-and-kqueue/
+- https://docs.libuv.org/en/v1.x/design.html#the-i-o-loop
+- https://docs.libuv.org/en/v1.x/guide/threads.html
+- https://softwareengineering.stackexchange.com/questions/254140/is-there-a-difference-between-fibers-coroutines-and-green-threads-and-if-that-i
+- https://github.com/ziglang/zig/issues/6025
+- https://www.reddit.com/r/Zig/comments/177e4cb/what_are_you_doing_for_async/
+- https://github.com/catdevnull/awesome-zig?tab=readme-ov-file#network
