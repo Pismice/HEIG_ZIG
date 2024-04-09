@@ -236,7 +236,7 @@ A function needs to return an anonymous struct as a type ~type~.
 
 In a generic data structure, the ~@This()~ is used to get the type of the data structure because it is anonymous.
 
-Moreover, a generic data structure can have tow type of function:
+Moreover, a generic data structure can have two type of function:
 1. a function that can be called on the structure type
 2. a function that can be called on the instance of the structure.
 
