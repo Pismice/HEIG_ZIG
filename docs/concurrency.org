@@ -8,19 +8,39 @@ Coroutine (cooperative multitasking):
 - single threaded
 - allows to write code in a sequential manner
 - allows not to have context switch
-- 2 types of coroutine: symetric vs asymetric (relative to the control-transfer mechanism)
+- 2 types of coroutine: symetric vs asymmetric (relative to the control-transfer mechanism, explained a bit below)
 - coroutines are not preemptive, they are cooperative, therefore they must explicitly give back control by **yielding**
 - usually uses keywords like **yield**, **resume**, **suspend**, ...
-- " With nonstackful coroutines, a task cannot yield within those libraries. Therefore, either those programs will block until the operation completes or they must be restructured to avoid doing I/O inside library functions."
+- Coroutines can be either stackful or stackless, we are not gonna dive deep into this concept since most of the time you are going to use stackful coroutines since they allow you to suspend from within a nested stackframe (strength of stacless coroutines: efficiency)
+
+Symmetric coroutines:
+- Their only control-transfer mechanism is: 
+1. explicitly passing control to another coroutine
+
+Asymmetric coroutines (called asymmetric because the control-transfer can go both ways):
+- They have two control-transfer mechanisms:
+1. invoking another coroutine which is going to be the subcoroutine of the calling coroutine
+2. suspending itself and giving control back to the caller
+
+Green threads (userland threads):
+- preemptive multitasking
+- managed by a VM instead of the OS (TODO: A CONIRMER AVEC LE PROF JLUI POSERAI LA QUESTION)
+- has the advantage to be managed in user space instead of kernel space which allows to avoid the overhead of making system calls to open and close threads
+- still use several native threads behind the scenes
+- used more for short-lived tasks
 
 Fibers :
-- cooperative multitasking instead of preemptive multitasking
-- manage au user level plutot que kernel level comme les threads standards
-- stackful coroutines
+- Same as green threads but cooperative multitasking instead of preemptive multitasking
+- TODO: confirmer avec le prof si ya pas autre chose
 
-Green threads:
-- managed by a VM instead of the OS
-- has the advantage to be managed in user space instead of kernel space
+Preemptive multitasking:
+- The underlying architecture (NOT us) is going to be deciding what to execute and when
+- This means that our threads can be interrupted at any time
+
+Cooperative multitasking:
+- A thread will continue to run until it decides to give up control (yielding)
+- We are in full control of the execution flow of our threads
+- The drawback of this method is that YOU have to think and code in a way to not have starving threads for exemple
 
 Thread (multithreading -> the threads are still blocking):
 - Main and historical way of doing concurrency
@@ -77,3 +97,6 @@ Green threads make function colors disapear ????
 - https://github.com/ziglang/zig/issues/6025
 - https://www.reddit.com/r/Zig/comments/177e4cb/what_are_you_doing_for_async/
 - https://github.com/catdevnull/awesome-zig?tab=readme-ov-file#network
+- https://stackoverflow.com/questions/41891989/what-is-the-difference-between-asymmetric-and-symmetric-coroutines
+- https://www.baeldung.com/java-threading-models#:~:text=The%20big%20difference%20between%20green,executing%20at%20any%20given%20time.
+- https://stackoverflow.com/questions/28977302/how-do-stackless-coroutines-differ-from-stackful-coroutines
