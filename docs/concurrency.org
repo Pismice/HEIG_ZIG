@@ -1,14 +1,10 @@
-Note: il se peut qu je dise des trucs faux car la plupart des ces termes sont complétement nouveaux, donc si tu vois des trucs louches, cest assez probable que tu aies un bon feeling.
-
-Je dois voir Alberto lors de ma prochaine séance pour lui poser plusieurs questsions sur ces différents termes etc
-
 ** Definitions
 Coroutine (cooperative multitasking): 
 - a coroutine itself is not concurrent !, it allows to manage concurrent tasks in the same way as callbacks for example
 - single threaded
 - allows to write code in a sequential manner
 - allows not to have context switch
-- 2 types of coroutine: symetric vs asymmetric (relative to the control-transfer mechanism, explained a bit below)
+- 2 types of coroutine: symmetric vs asymmetric (relative to the control-transfer mechanism, explained a bit below)
 - coroutines are not preemptive, they are cooperative, therefore they must explicitly give back control by **yielding**
 - usually uses keywords like **yield**, **resume**, **suspend**, ...
 - Coroutines can be either stackful or stackless, we are not gonna dive deep into this concept since most of the time you are going to use stackful coroutines since they allow you to suspend from within a nested stackframe (strength of stacless coroutines: efficiency)
@@ -23,8 +19,8 @@ Asymmetric coroutines (called asymmetric because the control-transfer can go bot
 2. suspending itself and giving control back to the caller
 
 Green threads (userland threads):
-- preemptive multitasking
-- managed by a VM instead of the OS (TODO: A CONIRMER AVEC LE PROF JLUI POSERAI LA QUESTION)
+- preemptive multitasking (PAS VRAI !)
+- managed by a VM/runtime instead of the OS (TODO: A CONIRMER AVEC LE PROF JLUI POSERAI LA QUESTION)
 - has the advantage to be managed in user space instead of kernel space which allows to avoid the overhead of making system calls to open and close threads
 - still use several native threads behind the scenes
 - used more for short-lived tasks
@@ -66,7 +62,7 @@ There a multiple ways you currently can do concurent code in ZIG:
 - ... obviously you can still use C libraries that do async stuff :)
 
 ** Function coloring
-Green threads make function colors disapear ????
+Green threads make function colors disapear ???? (dependences entre threads)
 
 ** MES NOTES -------- pas besoin de lire ca, cest juste pour moi
 
