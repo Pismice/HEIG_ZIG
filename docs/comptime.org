@@ -1,0 +1,500 @@
+#+bibliography: bibliography.bib
+
+* Comptime
+Zig has a concept called ~comptime~, it's stands for "compile-time".
+Comptime is used to evaluate an expression at compile time and not at runtime.
+In comparison with C, Zig comptime has the purpose of replacing marco with a more explicit syntax.
+In fact, C's macro tends to be error-prone when using it.
+The advantage of using comptime over macro is the type safety of Zig when writing comptime.
+
+** Compile-time evaluation
+*** Compile-time variable
+
+In Zig, there are variables that can be evaluated at compile-time, in fact, Zig allows computing mutating variables at compile-time but all the inputs need to be known also at compile-time.
+If not, the compiler will throw a compile error. [cite:@DocumentationZigProgramming]
+
+For a mutating variable at compile-time, Zig requires naming the variables with a ~comptime var~.
+But if the variable is a constant, the compiler requires to use a ~const~. 
+
+Like in the example below, the variable named ~variableAtCompileTime~ is evaluated at compile-time because all the inputs are known.
+On the other hand, the variable named ~constantAtRuntime~ cannot be a comptime variable because its dependency is based on unknown before runtime.
+
+Moreover, in the example, the ~inline for~ is used to unroll the for loop.
+This allows to use for loops in comptime indeed, if a standard for loop is used, it will cause an error because the capture value will be evaluated at runtime.[cite:@DocumentationZigProgramming] 
+#+begin_src zig :imports '(std) :exports both
+  const stdout = std.io.getStdOut().writer();
+
+  const randVariable = std.crypto.random.float(f32);
+  const selectedConstant = 6;
+
+  const constantAtRuntime = randVariable * selectedConstant;
+
+  comptime var variableAtCompileTime = selectedConstant * selectedConstant;
+  const array = [_]comptime_int { 3, 2, 1};
+
+  inline for (array) |item| {
+      variableAtCompileTime += item;
+  }
+
+  try stdout.print("constant-at-runtime {d:.2}\n", .{constantAtRuntime});
+  try stdout.print("variable-at-compile-time  {d}", .{variableAtCompileTime});
+
+#+end_src
+
+#+RESULTS:
+| constant-at-runtime      | 0.0 |
+| variable-at-compile-time |  42 |
+
+*** Compile-time expression
+In Zig, an expression can have a ~comptime~ to tell the compiler to evaluate the expression at compile-time.
+Like a compile-time variable, if an expression cannot be evaluated at compile-time, a compile-time error will be thrown.
+
+With a prefixed ~comptime~ keyword Zig can interpret a function at compile-time instead of runtime. [cite:@DocumentationZigProgramming]
+
+A good example of demonstrating comptime expression is in the standard documentation [cite:@DocumentationZigProgramming].
+The results show that the comptime expression is faster than the runtime one when the code is executed (runtime) because the work has already been done.
+But this will work only with code that hasn't runtime dependency code.
+
+#+begin_src zig :imports '(std) :main 'no :testsuite 'yes :exports both
+  const Timer = std.time.Timer;
+  const stdout = std.io.getStdOut().writer();
+
+  fn fib(iteration: u32) u32 {
+      if (iteration < 2) return iteration;
+
+      return fib(iteration - 1) + fib(iteration - 2);
+  }
+
+  test "comptime fib" {
+      var timer = try Timer.start();
+      const result = comptime fib(15);
+      const elapsed = timer.read();
+      try stdout.print("Elasped-comptime: {d:0.2}ns\n", .{elapsed});
+
+      try std.testing.expectEqual(610, result);
+  }
+
+  test "fib" {
+      var timer = try Timer.start();
+      var result = fib(15);
+      const elapsed = timer.read();
+      try stdout.print("Elasped-runtime: {d:0.2}ns\n", .{elapsed});
+
+      try std.testing.expect(610 == result);
+  }
+
+#+end_src
+
+#+RESULTS:
+| Elasped-comptime: | 58ns   |
+| Elasped-runtime:  | 6078ns |
+
+*** Compile-time parameter
+Zig implements generic by using duck typing at compile-time.
+To use generic, Zig needs to know the type at compile-time.
+#+begin_src zig :imports '(std) :main 'no :testsuite 'yes
+
+  fn greater(comptime T: type, array: []const T) !?T {
+      var max: ?T = null;
+      for (array) |item| {
+          if (max) |m| {
+              if (m < item) {
+                  max = item;
+              }
+          } else {
+              max = item;
+          }
+      }
+      return max;
+  }
+
+  test "should return the max of an i32 array" {
+      const intArray = [_]i32{ 2, 9, 4, 6, 7, 1};
+      const result = try greater(i32, &intArray);
+
+      try std.testing.expect(result == 9);
+  }
+
+  test "should return the max of an f32 array" {
+      const floatArray = [_]f32{ 2.34, 14.55, 4.12, 6.876, 7.111 };
+      const result = try greater(f32, &floatArray);
+
+      try std.testing.expect(result == 14.55);
+  }
+
+
+#+end_src
+
+#+RESULTS:
+
+But with duck typing, if the same method is used, an error will be thrown at compile time:
+#+begin_src Zig
+  test "should fail with bool" {
+      const boolArray = [_]bool{ true, false, true, true };
+      const result = greater(bool, &boolArray);
+  }
+#+end_src
+
+The error will be:
+#+begin_example
+error: operator < not allowed for type 'bool'
+#+end_example
+
+Moreover, comptime can also be used as a type definition.
+For this, the function needs to return a ~type~.
+The example below is based on [[https://zig.guide/language-basics/comptime][the zig guide]] [cite:@ComptimeZigGuide2024], it's shows that it can define a new type with a function.
+#+begin_src zig :imports '(std) :main 'no :testsuite yes
+  fn Matrix(
+      comptime T: type,
+      comptime width: comptime_int,
+      comptime height: comptime_int,
+  ) type {
+      return [height][width]T;
+  }
+
+  fn Matrix3x3(
+      comptime T: type,
+  ) type {
+      return Matrix(T, 3, 3);
+  }
+
+  test "returning a type" {
+      try std.testing.expect(Matrix(f32, 4, 4) == [4][4]f32);
+  }
+
+  test "returning a 3x3 matrix" {
+      try std.testing.expect(Matrix3x3(f32) == [3][3]f32);
+  }
+
+#+end_src
+
+#+RESULTS:
+
+** Metaprogramming
+*** ~@TypeOf~
+The ~@TypeOf~ builtin function can be used to take as a parameter an expression and return a type.
+
+*** ~@typeInfo~
+This built-in function provides type reflection, it returns information on type.
+
+See the example ~Example with a custom CSV writer based on type~ to have a view of the usability.
+
+** TODO Optimization
+inline for / while
+
+*** How log works in Zig
+In the C language, a common use to use debug print is with Marco.
+Like in this example, if the ~DEBUG~ is defined to ~1~ the code will print the debug info.
+If the ~DEBUG~ is not set, at the compilation, all the print information will be removed.
+#+begin_src C :main 'no :includes <stdio.h>
+
+  #define DEBUG 1
+
+  #if DEBUG 
+  #define TRACE(x) printf x;
+  #else
+  #define TRACE(x)
+  #endif
+
+  int main() {
+    TRACE(("Hello World! : %d\n", 12));
+  }
+#+end_src
+
+#+RESULTS:
+: Hello World! : 12
+
+In Zig, logging uses this same principle, a message level is set at the start of the program (at compile-time) and if the log is not enabled, all the code about the print is removed.
+However, if the log level is greater than the limit, the message will be printed.
+
+The code below shows an extract of the standard library for logging.
+#+begin_src zig
+ fn log(
+    comptime message_level: Level,
+    comptime scope: @Type(.EnumLiteral),
+    comptime format: []const u8,
+    args: anytype,
+) void {
+    if (comptime !logEnabled(message_level, scope)) return;
+
+    std.options.logFn(message_level, scope, format, args);
+}
+#+end_src
+
+In addition, Zig provides some helper functions for logging, such as :
+- ~std.log.debug~
+- ~std.log.info~
+- ~std.log.warn~
+- ~std.log.err~
+
+And if the release mode is set to ~Debug~, the debug log will be printed.
+But if the release mode is set to ~Release*~, the debug log will not print, there is no need to configure the logging to have this behavior.
+
+** Generic data structures
+To create a generic data structure, the same pattern is used as a comptime parameter.
+A function needs to return an anonymous struct as a type ~type~.
+
+In a generic data structure, the ~@This()~ is used to get the type of the data structure because it is anonymous.
+
+Moreover, a generic data structure can have two type of function:
+1. a function that can be called on the structure type
+2. a function that can be called on the instance of the structure.
+
+To have an instance function, the first argument needs to be a parameter of the type of the struct.
+That's why a constant ~Self~ is used with ~@This()~.
+And after that, the parameter ~self~ can be used to get the members of the struct.
+
+The example shows the difference between a function that can be called on a struct and a function that can be called on an instance of a struct.
+#+begin_src zig :imports '(std) :main 'no
+  pub fn MyStruct(comptime T: type) type {
+      return struct {
+          const Self = @This();
+
+          myNumber: T,
+
+          pub fn structFunction(writer: anytype) !void {
+              try writer.print("structFunction\n", .{});
+          }
+
+          pub fn instanceFunction(self: *Self, writer: anytype) !void {
+              try writer.print("structInstance: {d}\n", .{self.myNumber});
+          }
+      };
+  }
+
+  pub fn main() !void {
+      const stdout = std.io.getStdOut().writer();
+
+      try MyStruct(f32).structFunction(stdout);
+
+      var myStruct = MyStruct(f32){
+          .myNumber = 42,
+      };
+
+      try myStruct.instanceFunction(stdout);
+  }
+
+#+end_src
+
+#+RESULTS:
+| structFunction  |    |
+| structInstance: | 42 |
+
+In Zig, a structure name can be explicitly given or Zig can infer the name of a struct when there are created:
+#+begin_src zig :imports '(std) :main 'no
+  fn MyStruct(comptime T: type) type {
+      return struct {
+          myNumber: T,
+      };
+  }
+
+  pub fn main() !void {
+      // The structure name is infered
+      const myStruct1 = MyStruct(i32) {
+          .myNumber = 42,
+      };
+      _ = myStruct1;
+
+      // The structure has a explicit name
+      const intStruct = MyStruct(i32);
+      const myStruct2 =  intStruct {
+          .myNumber = 42,
+      };
+      _ = myStruct2;
+  }
+#+end_src
+
+#+RESULTS:
+
+Here's an compete example of an generic linked list :
+#+begin_src zig :imports '(std) :main 'no :testsuite yes
+  pub fn LinkedList(comptime T: type) type {
+      return struct {
+          const Node = struct {
+              data: T,
+              prev: ?*Node,
+              next: ?*Node,
+          };
+
+          const LinkedListError = error{headNull};
+          const Self = @This();
+          allocator: std.mem.Allocator,
+          head: ?*Node,
+          len: u32 = 0,
+
+          pub fn init(allocator: std.mem.Allocator) Self {
+              return Self{
+                  .head = null,
+                  .allocator = allocator,
+              };
+          }
+
+          pub fn deinit(self: *Self) void {
+              var curr = self.head;
+
+              while (curr) |currNotNull| {
+                  const node = currNotNull;
+                  curr = currNotNull.next;
+                  self.allocator.destroy(node);
+              }
+              self.len = 0;
+          }
+
+          pub fn push(self: *Self, value: T) !void {
+              var node = try self.allocator.create(Node);
+              node.*.data = value;
+              self.len += 1;
+
+              if (self.head) |head| {
+                  node.next = head;
+                  head.prev = node;
+                  self.head = node;
+              } else {
+                  self.head = node;
+                  node.*.next = null;
+                  node.*.prev = null;
+              }
+          }
+      };
+  }
+
+  test "Should push one item into a i32 list" {
+      const intLinkedList = LinkedList(i32);
+      var list = intLinkedList.init(std.testing.allocator);
+      defer list.deinit();
+
+      const expected = 42;
+
+      try list.push(expected);
+      const result = list.head.?.data;
+
+      try std.testing.expect(expected == result);
+  }
+
+  test "Should push one item into a f32 list" {
+      const intLinkedList = LinkedList(f32);
+      var list = intLinkedList.init(std.testing.allocator);
+      defer list.deinit();
+
+      const expected = 3.1415;
+
+      try list.push(expected);
+      const result = list.head.?.data;
+
+      try std.testing.expect(expected == result);
+  }
+#+end_src
+
+#+RESULTS:
+
+** Example with a custom CSV writer based on type
+This example shows that Zig has a type reflection with the keyword ~@typeInfo~.
+The goal of this example is to create CSV output with a generic struct as input.
+Only with the ~try csv.stringify(&arrayList, stream.writer());~ function the ~CsvWriter~ can infer at comptime the struct pass as argument.
+For this example, a basic struct named ~Person~ will be transformed to CSV.
+#+begin_src zig :imports '(std) :main 'no :exports both
+  pub fn CsvWriter(comptime T: type) type {
+      return struct {
+          const Self = @This();
+
+          const Config = struct {
+              separator: u8 = ',',
+          };
+          config: Config,
+
+          pub fn init(config: Config) Self {
+              return Self{
+                  .config = config,
+              };
+          }
+
+          pub fn stringify(self: *Self, arrayList: *std.ArrayList(T), writer: anytype) !void {
+              try writeHeader(self, &writer);
+              for (arrayList.items) |item| {
+                  try writeType(self, item, &writer);
+              }
+          }
+
+          fn writeHeader(self: *Self, writer: anytype) !void {
+              const fields = std.meta.fields(T);
+
+              inline for (fields, 1..) |field, i| {
+                  try writer.print("{s}", .{field.name});
+                  if (fields.len != i) {
+                      try writer.print("{c}", .{self.config.separator});
+                  }
+              }
+              try writer.print("\n", .{});
+          }
+
+          fn writeType(self: *Self, item: T, writer: anytype) !void {
+              const fields = std.meta.fields(T);
+
+              if (@TypeOf(fields) != []const std.builtin.Type.StructField)
+                  @compileError("The type is not the a struct");
+
+              inline for (fields, 1..) |field, i| {
+                  const f = @field(item, field.name);
+
+                  switch (@typeInfo(@TypeOf(f))) {
+                      .Int => try writer.print("{d}", .{f}),
+                      .Float => try writer.print("{d}", .{f}),
+                      .Pointer => |pointer| {
+                          if (pointer.size == std.builtin.Type.Pointer.Size.Slice and pointer.child == u8) {
+                              try writer.print("{s}", .{f});
+                          } else {
+                              @compileError("Currently, the CsvWriter dosen't support complex types");
+                          }
+                      },
+                      else => @compileError("Currently, the CsvWriter dosen't support complex types"),
+                  }
+
+                  if (fields.len != i) {
+                      try writer.print("{c}", .{self.config.separator});
+                  }
+              }
+              try writer.print("\n", .{});
+          }
+      };
+  }
+
+  const Person = struct {
+      sexe: []const u8,
+      name: []const u8,
+      date: u32,
+  };
+
+
+  pub fn main() !void {
+      const stdout = std.io.getStdOut().writer();
+      var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+
+      const person1 = .{ .sexe = "M", .name = "Lucas", .date = 2000 };
+      const person2 = .{ .sexe = "F", .name = "Ava", .date = 2020 };
+      const person3 = .{ .sexe = "F", .name = "Sophia", .date = 1989 };
+
+      var arrayList = std.ArrayList(Person).init(gpa.allocator());
+      defer arrayList.deinit();
+
+      try arrayList.append(person1);
+      try arrayList.append(person2);
+      try arrayList.append(person3);
+
+      var buffer: [1024]u8 = undefined;
+      var stream = std.io.fixedBufferStream(buffer[0..]);
+
+      const personCsvWriter = CsvWriter(Person);
+      var csv = personCsvWriter.init(.{ .separator = ' ' });
+      try csv.stringify(&arrayList, stream.writer());
+
+      try stdout.print("{s}", .{stream.getWritten()});
+
+  }
+
+#+end_src
+
+#+RESULTS:
+| sexe | name   | date |
+| M    | Lucas  | 2000 |
+| F    | Ava    | 2020 |
+| F    | Sophia | 1989 |
