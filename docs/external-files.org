@@ -1,0 +1,14 @@
+There are multiple ways to do it in ZIG:
+1. @embedFile
+Simply going to embed the file in the binary.
+https://ziglang.org/documentation/master/#embedFile
+
+2. Use an allocator to dynamically store the content of the file 
+By using the method: readToEndAlloc 
+https://ziglang.org/documentation/master/std/#std.fs.File.readToEndAlloc
+
+3. Read the file and put it in a buffer
+By using the method readAll 
+https://ziglang.org/documentation/master/std/#std.fs.File.readAll
+
+TODO mettre des exemples pour chacun

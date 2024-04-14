@@ -1,0 +1,7 @@
+Using ZIG before 1.0 might require that you ofter switch between master and the last official release.
+
+One solution would be to install both (or more) versions of ZIG and switch the PATH environment variable to the version you want to use.
+
+But the best solution is to use the ZIG version manager, which is a tool that allows you to install and switch between different versions of ZIG.
+
+We recommend using ZVM (Zig Version Manager ^^) which is a simple and easy to use tool. (https://github.com/tristanisham/zvm)
