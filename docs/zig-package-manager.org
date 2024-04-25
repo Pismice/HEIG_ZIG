@@ -43,6 +43,7 @@ Note: here it is specific to the zap package, you might have different options a
 const zap = @import("zap");
 #+end_src
 
+Your packages will be downloaded and compiled when you build your project.
 
 *** Sources
 https://zig.news/edyu/zig-package-manager-wtf-is-zon-558e
