@@ -1,7 +1,7 @@
 ** Reading external files
 There are multiple ways to do it in ZIG:
 *** @embedFile
-This method is simply going to embed the file in the binary.
+This method is simply going to embed the file in the binary at compile time.
 
 Beware that by using this method the path to the file is going to be relative to the file you are calling it from and that the file must be in the same package.
 
