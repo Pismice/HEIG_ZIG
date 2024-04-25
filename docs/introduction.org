@@ -45,7 +45,7 @@ It will add a shell interpreter inside org-babel configuration, it will be used 
   (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
 #+end_src
 
-The shell command will clone an org babel zig plugin necessary to use execute some Zig example directly in Emacs with Org babel.
+The shell command will clone an org babel [[https://github.com/samuel-schlaeppy/ob-zig.el.git][zig plugin] necessary to execute some Zig example directly in Emacs with Org babel.
 
 The ~HEADER~ parameter below configures the directory path by default.
 You can change the directory where the plugin will be installed (change the argument after the ~:dir~).
