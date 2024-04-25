@@ -1,11 +1,11 @@
-* Errors
+** Errors
 https://ziglang.org/documentation/0.11.1/#Errors
 In ZIG errors are juste values.
 Those values are those of an special type of enum "error".
 When you declare your enum using this keyword instead of "enum", the compiler is going to know that those values are going to be errors, therefore they can be catched, tried, ...
 
 
-** Handling errors in the application flow
+*** Handling errors in the application flow
 Functions can return either a value or an error, this is done by adding the "!" to the return type of a function
 With the "!" the return type of the function below is the coerced "anyerror!u8"
 
@@ -40,7 +40,7 @@ test "should panic" {
 }
 #+end_src
 
-** Errdefer
+*** Errdefer
 This exemple is taken from: https://ziglang.org/documentation/0.11.1/#errdefer
 Errdefer is a particularity of ZIG, it allows the user to execute some code when the function returns an error, it is useful exemple for deallocating variables you would have normally returned from the function, but since the function failed you deallocate that memory to avoid a memory leak.
 #+source: simple
@@ -65,7 +65,7 @@ fn createFoo(param: i32) !Foo {
 #+end_src
 
 
-** Coercing
+*** Coercing
 The rule is simple: you can coerce an error from a subset to a superset but you cannot coerce an error from a superset to a subset
 
 #+source: simple

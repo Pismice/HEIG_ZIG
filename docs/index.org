@@ -4,22 +4,21 @@
 #+bibliography: bibliography.bib
 #+cite_export: csl ieee.csl
 
-
 #+INCLUDE: "./introduction.org" :minlevel 1
-
-* Intro
 
 #+INCLUDE: "./allocators.org" :minlevel 1
 
-#+INCLUDE: "./errors.org" :minlevel 1
-
 #+INCLUDE: "./build-system.org" :minlevel 1
+
+#+INCLUDE: "./concurrency.org" :minlevel 1
+
+#+INCLUDE: "./web.org" :minlevel 1
 
 * Utils
 
-#+INCLUDE: "./zig-package-manager.org :minlevel 2
+#+INCLUDE: "./zig-package-manager.org" :minlevel 2
 
-#+INCLUDE: "./zig-version-manager.org :minlevel 2
+#+INCLUDE: "./zig-version-manager.org" :minlevel 2
 
 * Standard library
 ** TCP stream
@@ -28,6 +27,11 @@ Does Zig manage tcp stream with the OS stream or has it created its own implemen
 
 ** Threading
 *** Compare Zig threading library with ~p_thread~
+
+* Others
+#+INCLUDE: "./external-files.org" :minlevel 2
+
+#+INCLUDE: "./errors.org" :minlevel 2
 
 * Bibliography
 #+print_bibliography: :section 2 :heading subbibliography

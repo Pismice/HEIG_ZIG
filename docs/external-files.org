@@ -1,14 +1,58 @@
+** Reading external files
 There are multiple ways to do it in ZIG:
-1. @embedFile
-Simply going to embed the file in the binary.
-https://ziglang.org/documentation/master/#embedFile
+*** @embedFile
+This method is simply going to embed the file in the binary at compile time.
 
-2. Use an allocator to dynamically store the content of the file 
+Beware that by using this method the path to the file is going to be relative to the file you are calling it from and that the file must be in the same package.
+
+By using the other methods below you can use a file from anywhere but relative to your root folder and not main.zig.
+#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+const input = @embedFile("input.txt");
+std.debug.print("{s}", .{input});
+#+end_src
+
+*** Use an allocator to dynamically store the content of the file 
 By using the method: readToEndAlloc 
-https://ziglang.org/documentation/master/std/#std.fs.File.readToEndAlloc
+#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+// Alocator
+var gp = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
+defer gp.deinit();
+const allocator = gp.allocator();
 
-3. Read the file and put it in a buffer
+// Path
+var path_buffer: [std.fs.MAX_PATH_BYTES]u8 = undefined;
+const path = try std.fs.realpath("./input.txt", &path_buffer);
+
+// Open file
+const file = try std.fs.openFileAbsolute(path, .{});
+defer file.close();
+
+// Read
+const file_content = try file.readToEndAlloc(allocator, std.math.maxInt(usize));
+defer allocator.free(file_content);
+#+end_src
+
+*** Read the file and put it in a buffer
 By using the method readAll 
-https://ziglang.org/documentation/master/std/#std.fs.File.readAll
+#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+// Path
+var path_buffer: [std.fs.MAX_PATH_BYTES]u8 = undefined;
+const path = try std.fs.realpath("./input.txt", &path_buffer);
 
-TODO mettre des exemples pour chacun
+// Open file
+const file = try std.fs.openFileAbsolute(path, .{});
+defer file.close();
+
+// Read
+var content_buffer: [1024]u8 = undefined;
+const size = try file.readAll(&content_buffer);
+
+std.debug.print("{s}", .{content_buffer[0..size]});
+#+end_src
+
+TODO reading files with org babel doesnt work yet idk why
+
+Sources: 
+- https://ziglang.org/documentation/master/std/#std.fs.File.readToEndAlloc
+- https://ziglang.org/documentation/master/std/#std.fs.File.readAll
+- https://ziglang.org/documentation/master/#embedFile
