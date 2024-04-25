@@ -5,16 +5,16 @@ In fact, C is widely used in many places, learned by a lot of engineers, and use
 C is a powerful tool, /but with great power comes great responsibility/, in fact, memory leaks can easily occur by mistake.
 
 That's why new languages come to find a better way to handle errors and memory.
-The Rust language relies strongly on its borrow checker to avoid safe memory but it comes at a cost: increased code complexity
+The Rust language relies strongly on its borrow checker to ensure safe memory but it comes at a cost: increased code complexity, that can slow down it's adoption.
 
 In another case, the Zig language has a purpose to replace the C language.
 Zig wants to simplify the programming development experience with no hidden control flow and no macro to avoid complex mistakes.
-In comparison with the Rust language, Zig uses explicit memory allocation to prevent memory leaks.
+In comparison with the Rust language, Zig uses explicit memory allocation to track the allocation and deallocation to prevent memory leaks.
 
 In the sections below, certain aspects of this programming language will be explored in greater depth.
 
 ** What is not this documentation
-This is *not* a beginner guide for Zig, this documentation wants to go in-depth in certain parts of the language.
+This is *not* a guide to learn Zig as first-language, this documentation wants to go in-depth in certain parts of the language.
 
 To understand what is described in this documentation, you should first read up on the basics of the Zig language, in particular, its guide, which contains a wealth of information.
 - [[https://zig.guide][Zig guide]]
@@ -24,7 +24,7 @@ To understand what is described in this documentation, you should first read up 
 
 This documentation is built to guide to user through different examples.
 Those examples have been created to use literate programming, in fact, the documentation is built on Emacs with the org mode.
-You can follow the examples and execute it directly in Emacs.
+You can follow the examples and execute them directly in Emacs.
 
 For that, you need to:
 1. Install the configuration created for that (see the section below)
@@ -32,6 +32,7 @@ For that, you need to:
    The output will be created or updated below the source block. If you want more documentation, you can check the [[https://orgmode.org/worg/org-contrib/babel/intro.html][Org babel documentation]]
 
 You can follow the examples with the Zig version 0.12.
+But Zig is in constant evolution we *may* have to use other versions at some point in this guide, but if that is the case we will precise it.
 
 ** Build Emacs configuration
 
@@ -44,7 +45,7 @@ It will add a shell interpreter inside org-babel configuration, it will be used 
   (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
 #+end_src
 
-The shell command will clone an org babel zig plugin necessary to use this documentation with iterative programming.
+The shell command will clone an org babel zig plugin necessary to use execute some Zig example directly in Emacs with Org babel.
 
 The ~HEADER~ parameter below configures the directory path by default.
 You can change the directory where the plugin will be installed (change the argument after the ~:dir~).
