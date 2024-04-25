@@ -4,7 +4,7 @@
 #+bibliography: bibliography.bib
 #+cite_export: csl ieee.csl
 
-* Intro
+#+INCLUDE: "./introduction.org" :minlevel 1
 
 #+INCLUDE: "./allocators.org" :minlevel 1
 
