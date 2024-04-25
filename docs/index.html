@@ -1,1 +1,1852 @@
-zigggg ziggggggg
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2024-04-25 gio 19:13 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Zig documentation</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="tetratrux" />
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/readtheorg.js"></script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Zig documentation</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org7d7b263">1. Introduction</a>
+<ul>
+<li><a href="#org929781e">1.1. What this documentation is not</a></li>
+<li><a href="#org912a28a">1.2. How to use this documentation</a></li>
+<li><a href="#org46b96e9">1.3. Build Emacs configuration</a>
+<ul>
+<li><a href="#orgbb939f1">1.3.1. Install Zig emacs org babel plugin</a></li>
+<li><a href="#org3dcee28">1.3.2. Create an emacs configuration file</a></li>
+<li><a href="#org1b9c504">1.3.3. Execute the configuration file from the configuration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org5c1042a">2. Allocator</a>
+<ul>
+<li><a href="#org3ab77f2">2.1. General pattern</a></li>
+<li><a href="#orgd7cf115">2.2. Page allocator (<code>page_allocator</code>)</a></li>
+<li><a href="#orgd8cb182">2.3. Fixed buffer allocator</a></li>
+<li><a href="#org94ab2b2">2.4. Arena allocator</a>
+<ul>
+<li><a href="#org04d7e4e">2.4.1. Internal working of arena allocator</a></li>
+</ul>
+</li>
+<li><a href="#org9e1d1ce">2.5. General purpose allocator</a></li>
+<li><a href="#orgc2cc355">2.6. Testing allocator</a></li>
+<li><a href="#org8fc8e24">2.7. <span class="todo TODO">TODO</span> Failing allocator</a></li>
+<li><a href="#org40a5218">2.8. <span class="todo TODO">TODO</span> C allocator</a></li>
+<li><a href="#orgd03e676">2.9. <span class="todo TODO">TODO</span> How to use Zig to detect memory leaks</a>
+<ul>
+<li><a href="#org2dfecc6">2.9.1. <span class="todo TODO">TODO</span> Comparison between gcc-utils sanitizer, Valgrind, and Zig memory leak detection</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org9975b3c">3. Compilation - build system</a>
+<ul>
+<li><a href="#org4e7d84b">3.1. <span class="todo TODO">TODO</span> Comptime</a></li>
+<li><a href="#org5786384">3.2. <span class="todo TODO">TODO</span> How to use the build system</a></li>
+<li><a href="#org6e7d468">3.3. <span class="todo TODO">TODO</span> Build modes</a>
+<ul>
+<li><a href="#org1699d40">3.3.1. <span class="todo TODO">TODO</span> Build steps</a></li>
+<li><a href="#org90bba46">3.3.2. <span class="todo TODO">TODO</span> Generate automatically documentation</a></li>
+<li><a href="#orgd671f02">3.3.3. Strip output binary in Zig in Linux</a></li>
+<li><a href="#orge79c6af">3.3.4. Separate debug symbols from ELF executable</a></li>
+</ul>
+</li>
+<li><a href="#orgca2a40f">3.4. Cross-compilation</a>
+<ul>
+<li><a href="#org086ef20">3.4.1. <span class="todo TODO">TODO</span> Cross-compile with an embedded linux</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org567d591">4. Concurrency</a>
+<ul>
+<li><a href="#org7c68929">4.1. Definitions</a></li>
+<li><a href="#orgd24b0ee">4.2. Zig current state</a>
+<ul>
+<li><a href="#org4f239aa">4.2.1. Feedbacks from thoses methods:</a></li>
+</ul>
+</li>
+<li><a href="#org1f1af1b">4.3. Function coloring</a></li>
+<li><a href="#org26a772f">4.4. <span class="todo TODO">TODO</span> MES NOTES ---&#x2013;&#x2014; pas besoin de lire ca, cest juste pour moi pour approfondir certains sujets plus tard</a></li>
+<li><a href="#org6bf5231">4.5. Sources:</a></li>
+</ul>
+</li>
+<li><a href="#org950c106">5. Web frameworks</a>
+<ul>
+<li><a href="#org9f98b91">5.1. Zap</a>
+<ul>
+<li><a href="#orgee2807f">5.1.1. Description</a></li>
+</ul>
+</li>
+<li><a href="#org02bb9e6">5.2. HTTP from the std</a>
+<ul>
+<li><a href="#org5c412bc">5.2.1. Description</a></li>
+<li><a href="#orge5abb4b">5.2.2. Exemples</a></li>
+</ul>
+</li>
+<li><a href="#orgcc1d3bd">5.3. Tokamak</a></li>
+<li><a href="#org346106f">5.4. Jetzig</a></li>
+</ul>
+</li>
+<li><a href="#org5cab439">6. Utils</a>
+<ul>
+<li><a href="#orgb78f721">6.1. Zig package manager</a>
+<ul>
+<li><a href="#orga93e6f6">6.1.1. Add a package in your project</a></li>
+<li><a href="#org1f5559c">6.1.2. Sources</a></li>
+</ul>
+</li>
+<li><a href="#org60fcd12">6.2. Zig version manager</a>
+<ul>
+<li><a href="#org71ba961">6.2.1. Basic usage</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgbab1910">7. Standard library</a>
+<ul>
+<li><a href="#orgdb11d19">7.1. TCP stream</a>
+<ul>
+<li><a href="#orgf2804ae">7.1.1. <span class="todo TODO">TODO</span> How Zig manages stream</a></li>
+</ul>
+</li>
+<li><a href="#orgef9a8ff">7.2. Threading</a>
+<ul>
+<li><a href="#org4089008">7.2.1. Compare Zig threading library with <code>p_thread</code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org969d825">8. Others</a>
+<ul>
+<li><a href="#org5f02a97">8.1. Reading external files</a>
+<ul>
+<li><a href="#org05dca18">8.1.1. @embedFile</a></li>
+<li><a href="#orga41dd0f">8.1.2. Use an allocator to dynamically store the content of the file</a></li>
+<li><a href="#org467c319">8.1.3. Read the file and put it in a buffer</a></li>
+</ul>
+</li>
+<li><a href="#orgda1c697">8.2. Errors</a>
+<ul>
+<li><a href="#org6dbeb65">8.2.1. Handling errors in the application flow</a></li>
+<li><a href="#org6417685">8.2.2. Errdefer</a></li>
+<li><a href="#org790f489">8.2.3. Coercing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org60115ac">9. Bibliography</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org7d7b263" class="outline-2">
+<h2 id="org7d7b263"><span class="section-number-2">1</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Nowadays, multiple languages have emerged to compete with the well-established C language.
+In fact, C is widely used in many places, learned by a lot of engineers, and used for many purposes.
+C is a powerful tool, <i>but with great power comes great responsibility</i>, in fact, memory leaks can easily occur by mistake.
+</p>
+
+<p>
+That's why new languages come to find a better way to handle errors and memory.
+The Rust language relies strongly on its borrow checker to ensure safe memory but it comes at a cost: increased code complexity, that can slow down it's adoption.
+</p>
+
+<p>
+In another case, the Zig language has a purpose to replace the C language.
+Zig wants to simplify the programming development experience with no hidden control flow and no macro to avoid complex mistakes.
+In contrary to rust, in Zig the memory is managed explicitly, you have to manually allocate and deallocate memory, just as in C.
+Zig offers different allocators that have different purposes, but some can detect memory leaks (<a href="./allocators.html#General purpose allocator">General purpose allocator</a>).
+</p>
+
+<p>
+In the sections below, certain aspects of this programming language will be explored in greater depth.
+</p>
+</div>
+
+<div id="outline-container-org929781e" class="outline-3">
+<h3 id="org929781e"><span class="section-number-3">1.1</span> What this documentation is not</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+This is <b>not</b> a guide to learn Zig as first-language, this documentation wants to go in-depth in certain parts of the language.
+</p>
+
+<p>
+To understand what is described in this documentation, you should first read up on the basics of the Zig language, in particular, its guide, which contains a wealth of information.
+</p>
+<ul class="org-ul">
+<li><a href="https://zig.guide">Zig guide</a></li>
+<li><a href="https://ziglang.org/documentation/0.11.0">Zig documentation</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org912a28a" class="outline-3">
+<h3 id="org912a28a"><span class="section-number-3">1.2</span> How to use this documentation</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+This documentation is built to guide to user through different examples.
+Those examples have been created to use literate programming, in fact, the documentation is built on Emacs with the org mode.
+You can follow the examples and execute them directly in Emacs.
+</p>
+
+<p>
+For that, you need to:
+</p>
+<ol class="org-ol">
+<li>Install the configuration created for that (see the section below)</li>
+<li>When all is configured, in Emacs you can select the example that you want to execute and use the command <code>C-c C-c</code>.
+The output will be created or updated below the source block. If you want more documentation, you can check the <a href="https://orgmode.org/worg/org-contrib/babel/intro.html">Org babel documentation</a></li>
+</ol>
+
+<p>
+You can follow the examples with the Zig version 0.12.
+But Zig is in constant evolution we <b>may</b> have to use other versions at some point in this guide, but if that is the case we will precise it.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org46b96e9" class="outline-3">
+<h3 id="org46b96e9"><span class="section-number-3">1.3</span> Build Emacs configuration</h3>
+<div class="outline-text-3" id="text-1-3">
+</div>
+<div id="outline-container-orgbb939f1" class="outline-4">
+<h4 id="orgbb939f1"><span class="section-number-4">1.3.1</span> Install Zig emacs org babel plugin</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<p>
+Use <code>C-c C-c</code> (<code>ctrl-c ctrl-c</code>) to evaluate the code below.
+It will add a shell interpreter inside org-babel configuration, it will be used when shell commands are evaluated.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(add-to-list 'org-babel-load-languages '(shell . t))
+(org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
+</pre>
+</div>
+
+<p>
+The shell command will clone an org babel <a href="https://github.com/samuel-schlaeppy/ob-zig.el.git">zig plugin</a> necessary to execute some Zig example directly in Emacs with Org babel.
+</p>
+
+<p>
+The <code>HEADER</code> parameter below configures the directory path by default.
+You can change the directory where the plugin will be installed (change the argument after the <code>:dir</code>).
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">git clone https://github.com/samuel-schlaeppy/ob-zig.el.git
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3dcee28" class="outline-4">
+<h4 id="org3dcee28"><span class="section-number-4">1.3.2</span> Create an emacs configuration file</h4>
+<div class="outline-text-4" id="text-1-3-2">
+<p>
+To use the plugin installed before, you need to modify the first path to give the path where the plugin is installed (see section upper),
+and a path to the Zig executable need also to be referenced.
+</p>
+
+<p>
+After that, the following command <code>C-c C-v t</code> (<code>ctrl-c ctrl-v t</code>) will produce a <code>zigIterativeProgramming.el</code> file.
+This file can be loaded from your emacs configuration (see section below).
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(setq base_dir "~/PATH-WHERE-THE-ZIG-PLUGIN-IS-INSTALLED/ob-zig.el")
+(setq org-babel-zig-compiler "PATH-TO-THE-ZIG-EXECUTABLE")
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(require 'package)
+(add-to-list 'package-archives
+	     '("melpa" . "https://melpa.org/packages/"))
+(package-initialize)
+(package-refresh-contents)
+
+(defun install-custom-pkg (pck)
+  (if (featurep pck)
+      (message "The package %s is already installed !" pck)
+    (package-install pck)
+    ))
+
+(install-custom-pkg 'zig-mode)
+(install-custom-pkg 'lsp-mode)
+(require 'lsp-mode)
+(add-hook 'zig-mode-hook #'lsp)
+
+(let ((local-file-path (expand-file-name "ob-zig.el" base_dir)))
+  (setq org-babel-zig-compiler local-file-path)
+  (load-file local-file-path)
+  )
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(org-babel-load-languages '((C . t) (emacs-lisp . t) (shell . t))))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1b9c504" class="outline-4">
+<h4 id="org1b9c504"><span class="section-number-4">1.3.3</span> Execute the configuration file from the configuration</h4>
+<div class="outline-text-4" id="text-1-3-3">
+<p>
+You can put the code below in your <code>init.el</code> it will load the file produced before and load the necessary package to learn Zig with literate programming.
+But you need the specify the directory path of the <code>zigIterativeProgramming.el</code> file (first line below).
+(the <code>init.el</code> can be found in <code>~/.emacs.d/</code> or can be created in <code>~/.config/emacs/</code>
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(let ((file_dir "~/PATH-TO-THE-zigIterativeProgramming-file"))
+(load-file (expand-file-name "zigIterativeProgramming.el" file_dir)))
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5c1042a" class="outline-2">
+<h2 id="org5c1042a"><span class="section-number-2">2</span> Allocator</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+The Zig language doesn't hide the memory management, the mantra of Zig is to have no hidden control flow.
+Like the C language, Zig has manual memory management however, Zig will offer the programmer different allocators that allow him to handle exactly how to use his memory.
+That's why Zig doesn't have a runtime and it can be used without the <code>libc</code> runtime.
+</p>
+
+<p>
+Different allocators will be presented in the next sections.
+</p>
+
+<p>
+This part is documented thanks to various resources:
+</p>
+<ul class="org-ul">
+<li><a href="https://ziglang.org/documentation/0.11.0/#Memory">Zig documentation - Memory</a></li>
+<li><a href="https://zig.guide/standard-library/allocators/">Zig guide about allocator</a></li>
+<li><a href="https://www.openmymind.net/learning_zig/heap_memory/">openmymind - learning zig - heap memory</a></li>
+<li>The Zig's standard library code</li>
+</ul>
+</div>
+
+<div id="outline-container-org3ab77f2" class="outline-3">
+<h3 id="org3ab77f2"><span class="section-number-3">2.1</span> General pattern</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+In Zig for library development, a good practice is to pass an allocator as a parameter, so the programmer can choose the best allocator for his use case.
+</p>
+
+<p>
+In the Zig standard library, this pattern is used a lot.
+</p>
+
+<p>
+For example, the <code>ArrayList</code> of the standard library uses this pattern :
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">const stdout = std.io.getStdOut().writer();
+
+var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+
+var list = std.ArrayList(i32).init(gpa.allocator());
+defer list.deinit();
+
+try list.append(42);
+
+for (list.items) |value| {
+    try stdout.print("Output:  {d}", .{value});
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgd7cf115" class="outline-3">
+<h3 id="orgd7cf115"><span class="section-number-3">2.2</span> Page allocator (<code>page_allocator</code>)</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+The page allocator is the basic allocator that will directly ask the OS for memory. 
+This is not the most efficient allocator because it will request memory pages from the OS via systems calls.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig">const allocator = std.heap.page_allocator;
+const stdout = std.io.getStdOut().writer();
+
+const MyStruct = struct {
+    myFloat: f32,
+    myInt: i32,
+};
+
+const memory = try allocator.alloc(u8, 42);
+defer allocator.free(memory);
+
+try stdout.print("Len of the memory: {}\n", .{memory.len});
+
+var myStruct = try allocator.create(MyStruct); 
+defer allocator.destroy(myStruct);
+
+myStruct.*.myFloat = 3.1415;
+myStruct.*.myInt = 42;
+
+try stdout.print("myStruct: {}\n", .{myStruct});
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd8cb182" class="outline-3">
+<h3 id="orgd8cb182"><span class="section-number-3">2.3</span> Fixed buffer allocator</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+The <code>FixedBufferAllocator</code> will allocate memory into a fixed buffer, the size of the buffer needs to be known at comptime.
+The benefit of this allocator is that it will not make heap allocation. It's very useful for embedded systems and kernel development.
+This allocator is very performant and it will give an error if the allocator runs out of memory, with an <code>OutOfMemory</code> error.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig">const stdout = std.io.getStdOut().writer();
+
+var buffer: [100]u8 = undefined;
+var fixedBuffAlloc = std.heap.FixedBufferAllocator.init(&amp;buffer);
+const allocator = fixedBuffAlloc.allocator();
+
+const memory = try allocator.alloc(u8, 50);
+defer allocator.free(memory);
+
+try stdout.print("Len of the memory: {}\n", .{memory.len});
+
+// Example of OutOfMemory error
+_ = allocator.alloc(u8, 51) catch |err| {
+  try stdout.print("There is an error: {}\n", .{err});
+};
+
+</pre>
+</div>
+
+<p>
+Moreover, there is also a thread-safe fixed buffer allocator for thread-safety use case: <code>std.heap.ThreadSafeFixedBufferAllocator</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org94ab2b2" class="outline-3">
+<h3 id="org94ab2b2"><span class="section-number-3">2.4</span> Arena allocator</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+The arena allocator takes a child allocator as input. This pattern is used to allocate multiple pieces of memory and free them at once.
+There is no need in the arena allocator to free memory manually, it's the function <code>deinit</code> that is responsible for freeing all to allocated memory.
+</p>
+
+<p>
+The Zig documentation recommends this pattern when an application runs from start to end without a cyclic pattern.
+For example: command line application.
+</p>
+
+<p>
+Here's an example of how to use the arena allocator.
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">const stdout = std.io.getStdOut().writer();
+
+const MyStruct = struct {
+    myFloat: f32,
+    myInt: i32,
+};
+
+const page_allocator = std.heap.page_allocator;
+var arena = std.heap.ArenaAllocator.init(page_allocator);
+defer arena.deinit();
+const allocator = arena.allocator();
+
+var myStruct = try allocator.create(MyStruct);
+
+myStruct.*.myFloat = 3.1415;
+myStruct.*.myInt = 42;
+
+try stdout.print("myStruct: {}\n", .{myStruct});
+// No need to manual free myStuct
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org04d7e4e" class="outline-4">
+<h4 id="org04d7e4e"><span class="section-number-4">2.4.1</span> Internal working of arena allocator</h4>
+<div class="outline-text-4" id="text-2-4-1">
+<p>
+<a href="https://www.huy.rocks/everyday/01-12-2022-zig-how-arenaallocator-works">Zig how arena allocator works</a>
+Internally, the arena allocator uses a linked list to keep track of the created buffers.
+</p>
+
+<p>
+The example below shows a code snippet of the arena allocation (from the standard library <a href="https://github.com/ziglang/zig/blob/0.11.x/lib/std/heap/arena_allocator.zig">arena<sub>allocator.zig</sub></a>).
+The internals of the arena allocator are the child allocator and a state that contains a singly linked list of buffers.
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">pub const ArenaAllocator = struct {
+  child_allocator: Allocator,
+  state: State,
+
+  /// Inner state of ArenaAllocator. Can be stored rather than the entire ArenaAllocator
+  /// as a memory-saving optimization.
+  pub const State = struct {
+      buffer_list: std.SinglyLinkedList(usize) = .{},
+      end_index: usize = 0,
+
+      pub fn promote(self: State, child_allocator: Allocator) ArenaAllocator {
+	  return .{
+	      .child_allocator = child_allocator,
+	      .state = self,
+	  };
+      }
+  };
+  /// ...
+};
+</pre>
+</div>
+
+<p>
+The <code>deinit</code> function of the arena allocator will free all the buffers by iterating over each node and calling the <code>rawFree</code> from the child allocator.
+(this code snippet comes from the standard library <a href="https://github.com/ziglang/zig/blob/0.11.x/lib/std/heap/arena_allocator.zig">arena<sub>allocator.zig</sub></a>)
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">  pub fn deinit(self: ArenaAllocator) void {
+    // NOTE: When changing this, make sure `reset()` is adjusted accordingly!
+
+    var it = self.state.buffer_list.first;
+    while (it) |node| {
+	// this has to occur before the free because the free frees node
+	const next_it = node.next;
+	const align_bits = std.math.log2_int(usize, @alignOf(BufNode));
+	const alloc_buf = @as([*]u8, @ptrCast(node))[0..node.data];
+	self.child_allocator.rawFree(alloc_buf, align_bits, @returnAddress());
+	it = next_it;
+    }
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9e1d1ce" class="outline-3">
+<h3 id="org9e1d1ce"><span class="section-number-3">2.5</span> General purpose allocator</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+A general purpose allocator is available in Zig, this is a safe allocator that can prevent double free memory, "use after free" and detect memory leaks.
+The general purpose allocator is safety first design, but it's still faster than the page allocator (<a href="https://zig.guide/standard-library/allocators/">Zig guide allocator</a>)
+</p>
+
+<p>
+The general purpose allocator is a function that takes as argument a comptime configuration struct and return a type.
+(this code snippet comes from the standard library <a href="https://github.com/ziglang/zig/blob/0.11.x/lib/std/heap/general_purpose_allocator.zig">general<sub>purpose</sub><sub>allocator.zig</sub></a>)
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">pub fn GeneralPurposeAllocator(comptime config: Config) type {
+    return struct {
+	/// Implementation ....
+    };
+}
+</pre>
+</div>
+
+<p>
+The configuration struct of the general purpose allocator shown below, has different options, like thread safety, memory limit, and debug utils.
+(this code snippet comes from the standard library <a href="https://github.com/ziglang/zig/blob/0.11.x/lib/std/heap/general_purpose_allocator.zig">general<sub>purpose</sub><sub>allocator.zig</sub></a>)
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">pub const Config = struct {
+    /// Number of stack frames to capture.
+    stack_trace_frames: usize = default_stack_trace_frames,
+
+    /// If true, the allocator will have two fields:
+    ///  * `total_requested_bytes` which tracks the total allocated bytes of memory requested.
+    ///  * `requested_memory_limit` which causes allocations to return `error.OutOfMemory`
+    ///    when the `total_requested_bytes` exceeds this limit.
+    /// If false, these fields will be `void`.
+    enable_memory_limit: bool = false,
+
+    /// Whether to enable safety checks.
+    safety: bool = std.debug.runtime_safety,
+
+    /// Whether the allocator may be used simultaneously from multiple threads.
+    thread_safe: bool = !builtin.single_threaded,
+
+    /// What type of mutex you'd like to use, for thread safety.
+    /// when specified, the mutex type must have the same shape as `std.Thread.Mutex` and
+    /// `DummyMutex`, and have no required fields. Specifying this field causes
+    /// the `thread_safe` field to be ignored.
+    ///
+    /// when null (default):
+    /// * the mutex type defaults to `std.Thread.Mutex` when thread_safe is enabled.
+    /// * the mutex type defaults to `DummyMutex` otherwise.
+    MutexType: ?type = null,
+
+    /// This is a temporary debugging trick you can use to turn segfaults into more helpful
+    /// logged error messages with stack trace details. The downside is that every allocation
+    /// will be leaked, unless used with retain_metadata!
+    never_unmap: bool = false,
+
+    /// This is a temporary debugging aid that retains metadata about allocations indefinitely.
+    /// This allows a greater range of double frees to be reported. All metadata is freed when
+    /// deinit is called. When used with never_unmap, deliberately leaked memory is also freed
+    /// during deinit. Currently should be used with never_unmap to avoid segfaults.
+    /// TODO https://github.com/ziglang/zig/issues/4298 will allow use without never_unmap
+    retain_metadata: bool = false,
+
+    /// Enables emitting info messages with the size and address of every allocation.
+    verbose_log: bool = false,
+};
+</pre>
+</div>
+
+<p>
+The example below shows a basic usage of the Zig's GPA:
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">const stdout = std.io.getStdOut().writer();
+
+const MyStruct = struct {
+    myFloat: f32,
+    myInt: i32,
+};
+
+var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+const allocator = gpa.allocator();
+
+// Returns `Check.leak` if there were leaks; `Check.ok` otherwise.
+defer {
+    const checkStatus = gpa.deinit();
+    if (checkStatus == std.heap.Check.leak) {
+	std.log.err("Leaks detected !!!", .{});
+    }
+}
+
+var myStruct = try allocator.create(MyStruct);
+defer allocator.destroy(myStruct);
+
+myStruct.*.myFloat = 3.1415;
+myStruct.*.myInt = 42;
+
+try stdout.print("myStruct: {}\n", .{myStruct});
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc2cc355" class="outline-3">
+<h3 id="orgc2cc355"><span class="section-number-3">2.6</span> Testing allocator</h3>
+<div class="outline-text-3" id="text-2-6">
+<p>
+The testing allocator is available in tests and the test runner will report all the memory leaks that have occurred during testing.[cite:@LearningZigHeap] [cite:@ZiglangZig2024]
+</p>
+
+<p>
+The example below shows how to use the testing allocator.
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">test "Test ArrayList" {
+    var array = std.ArrayList(i32).init(std.testing.allocator);
+    defer array.deinit();
+
+    const expected: i32 = 42;
+    try array.append(expected);
+
+    try std.testing.expectEqual(expected, array.items[0]);
+}
+</pre>
+</div>
+
+<p>
+If the code below is run, the test will fail and it will display a leaked test memory.
+Zig will help the programmer to detect memory leaks using code tests.
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">test "Test ArrayList" {
+    var array = std.ArrayList(i32).init(std.testing.allocator);
+    //defer array.deinit(); -&gt; the array will not be free
+
+    const expected: i32 = 42;
+    try array.append(expected);
+
+    try std.testing.expectEqual(expected, array.items[0]);
+}
+</pre>
+</div>
+
+<p>
+Under the hood, the testing allocator is an instance of the general purpose allocator.
+Below, an extract of testing allocator of the standard library <a href="https://github.com/ziglang/zig/blob/0.11.x/lib/std/testing.zig">testing.zig</a>.
+If the testing allocator is used outside of the tests, a compilation error will be thrown.
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">/// This should only be used in temporary test programs.
+pub const allocator = allocator_instance.allocator();
+pub var allocator_instance = b: {
+    if (!builtin.is_test)
+	@compileError("Cannot use testing allocator outside of test block");
+    break :b std.heap.GeneralPurposeAllocator(.{}){};
+};
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8fc8e24" class="outline-3">
+<h3 id="org8fc8e24"><span class="section-number-3">2.7</span> <span class="todo TODO">TODO</span> Failing allocator</h3>
+<div class="outline-text-3" id="text-2-7">
+<p>
+The failing allocator can be used to ensure that the <code>error.OutOfMemory</code> is well handled.
+</p>
+
+<p>
+The failling allocator need to have a child allocator to run.
+In fact, the failing allocator can set in his <code>init</code> function the number of allocation that will be performed without errors (see the <code>numberOfAllocation</code> variable).
+This pattern is pretty useful in restricted memory environments such as embedded development.
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">test "test alloc falling" {
+  const numberOfAllocation = 0;
+  var failingAlloc = std.testing.FailingAllocator.init(std.testing.allocator, numberOfAllocation);
+  var list = std.ArrayList(i32).init(failingAlloc.allocator());
+  defer list.deinit();
+
+  const expected = 45;
+
+  try std.testing.expectError(std.mem.Allocator.Error.OutOfMemory, list.append(expected));
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org40a5218" class="outline-3">
+<h3 id="org40a5218"><span class="section-number-3">2.8</span> <span class="todo TODO">TODO</span> C allocator</h3>
+<div class="outline-text-3" id="text-2-8">
+<p>
+The <code>C</code> standard allocator can also be used, this allocator has high performance but it has less safety feature.
+</p>
+
+<p>
+However, to use this allocator, the <code>libC</code> is required.
+Adding the <code>libC</code> in the project will add more dependencies.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgd03e676" class="outline-3">
+<h3 id="orgd03e676"><span class="section-number-3">2.9</span> <span class="todo TODO">TODO</span> How to use Zig to detect memory leaks</h3>
+<div class="outline-text-3" id="text-2-9">
+</div>
+<div id="outline-container-org2dfecc6" class="outline-4">
+<h4 id="org2dfecc6"><span class="section-number-4">2.9.1</span> <span class="todo TODO">TODO</span> Comparison between gcc-utils sanitizer, Valgrind, and Zig memory leak detection</h4>
+<div class="outline-text-4" id="text-2-9-1">
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9975b3c" class="outline-2">
+<h2 id="org9975b3c"><span class="section-number-2">3</span> Compilation - build system</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-org4e7d84b" class="outline-3">
+<h3 id="org4e7d84b"><span class="section-number-3">3.1</span> <span class="todo TODO">TODO</span> Comptime</h3>
+</div>
+
+<div id="outline-container-org5786384" class="outline-3">
+<h3 id="org5786384"><span class="section-number-3">3.2</span> <span class="todo TODO">TODO</span> How to use the build system</h3>
+</div>
+
+<div id="outline-container-org6e7d468" class="outline-3">
+<h3 id="org6e7d468"><span class="section-number-3">3.3</span> <span class="todo TODO">TODO</span> Build modes</h3>
+<div class="outline-text-3" id="text-3-3">
+</div>
+<div id="outline-container-org1699d40" class="outline-4">
+<h4 id="org1699d40"><span class="section-number-4">3.3.1</span> <span class="todo TODO">TODO</span> Build steps</h4>
+<div class="outline-text-4" id="text-3-3-1">
+<p>
+<a href="https://zig.guide/build-system/build-steps">https://zig.guide/build-system/build-steps</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-org90bba46" class="outline-4">
+<h4 id="org90bba46"><span class="section-number-4">3.3.2</span> <span class="todo TODO">TODO</span> Generate automatically documentation</h4>
+<div class="outline-text-4" id="text-3-3-2">
+<p>
+In Zig there is an experimental feature, it's automatically generated documentation.
+It will scan all the public structures and functions and will create documentation.
+Moreover, the comments like <code>///</code> are used to give more information to types.
+</p>
+
+<p>
+This example is created with the help of the <code>build.zig</code> of the Zig language GitHub repository.
+This is used the same way as the Zig teams auto-generate the standard library documentation. See: <a href="https://github.com/ziglang/zig/blob/master/build.zig">build.zig</a>
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">pub fn build(b: *std.Build) void {
+    const autodoc_test = b.addTest(.{
+	 .root_source_file = .{ .path = "src/main.zig" },
+     });
+     const install_std_docs = b.addInstallDirectory(.{
+	 .source_dir = autodoc_test.getEmittedDocs(),
+	 .install_dir = .prefix,
+	 .install_subdir = "doc",
+     });
+
+     const doc_step = b.step("docs", "Generate documentation");
+     doc_step.dependOn(&amp;install_std_docs.step);
+     doc_step.makeFn = generateDocumentation;
+ }
+
+ fn generateDocumentation(self: *std.build.Step, progress: *std.Progress.Node) !void {
+     _ = self;
+     _ = progress;
+     std.log.info("The documentation has been generated", .{});
+ }
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd671f02" class="outline-4">
+<h4 id="orgd671f02"><span class="section-number-4">3.3.3</span> Strip output binary in Zig in Linux</h4>
+<div class="outline-text-4" id="text-3-3-3">
+<p>
+<a href="http://flint.cs.yale.edu/cs422/doc/ELF_Format.pdf">ELF format</a>
+In an <code>ELF</code> executable there are various sections that hold program and control information.
+For example:
+</p>
+<ul class="org-ul">
+<li><code>.bss</code>: it holds uninitialized variables and data.</li>
+<li><code>.text</code>: it holds the instruction of the program</li>
+<li><code>.debug</code>: it holds unspecified information for debugging</li>
+</ul>
+
+<p>
+Removing the debug symbols will reduce his size, make it harder to reverse engineering, and improve speed performance.
+</p>
+
+<p>
+By default, Zig will produce an executable that has all the debug symbols.
+However, Zig has reproduced a drop-in replacement for the program GNU <code>objcopy</code>.
+</p>
+
+<p>
+To strip an output in the zig command line :
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">zig build-exe -fstrip src/main.zig
+</pre>
+</div>
+
+<p>
+To be sure that the output executable is stripped, the command <code>file</code> can be useful :
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">file main
+</pre>
+</div>
+<p>
+And the output : 
+</p>
+<pre class="example">
+main: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, stripped
+</pre>
+
+<p>
+With the Zig build system (<code>build.zig</code>) there is an option to strip an executable :
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">const target = b.standardTargetOptions(.{});
+const optimize = b.standardOptimizeOption(.{});
+
+var exe = b.addExecutable(.{
+    .name = "linkedlist",
+    .root_source_file = .{ .path = "src/main.zig" },
+    .target = target,
+    .optimize = optimize,
+});
+
+exe.strip = true;
+</pre>
+</div>
+
+<p>
+If the option strip is set to false, we have :
+</p>
+<pre class="example">
+$file linkedlist
+linkedlist: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, with debug_info, not stripped
+</pre>
+
+<p>
+And with the option to <code>true</code> :
+</p>
+<pre class="example">
+$file linkedlist
+linkedlist: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, stripped
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orge79c6af" class="outline-4">
+<h4 id="orge79c6af"><span class="section-number-4">3.3.4</span> Separate debug symbols from ELF executable</h4>
+<div class="outline-text-4" id="text-3-3-4">
+<p>
+The chapter above shows how to remove all the symbols for the executable directly in the Zig build system.
+In this section, the interest is more about the Zig objcopy command.
+In fact, Zig has implemented his own <code>objcopy</code> utils to strip, and remove symbols like the objcopy from the bin utils (GNU utils).
+(<i>Note: for now, the Zig objcopy has fewer features</i>)
+</p>
+
+<p>
+The interest in having objcopy directly in Zig is there is no need to have multiple objcopy executables.
+Indeed, in a cross-compilation world, each binutil needs to be compatible with the CPU architecture target.
+So, it avoids using different toolchains and scripts to build on various targets.
+</p>
+
+<p>
+Here's how to invoke the help of the Zig build objcopy:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">zig objcopy --help
+</pre>
+</div>
+
+<p>
+The following example illustrates several applications of the objcopy command.
+First, remove the debug symbols of the executable.
+After that, keep only the debug symbols in a separate file.
+And finally, how to link the debug symbols file to an executable (that has no debug file).
+</p>
+
+<p>
+For this example, the output executable of the Zig build toolchain is named <code>main</code>.
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$file main
+main: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, with debug_info, not stripped
+</pre>
+</div>
+
+<p>
+The first step is to strip the debug file from the executable:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">zig objcopy --strip-debug main mainStripped
+</pre>
+</div>
+
+<p>
+The small flag alternative can also be used:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">zig objcopy -g main mainNoDebugInfo
+</pre>
+</div>
+
+<p>
+After this command, the new executable has no longer the debug info.
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$file mainNoDebugInfo
+mainNoDebugInfo: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, not stripped
+</pre>
+</div>
+
+<p>
+The second step shows how to keep only the debug symbols in the <code>main.dbg</code> file:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">zig objcopy --only-keep-debug main main.dbg
+</pre>
+</div>
+
+<p>
+Finally, to recreate an executable with a link to a debug symbols file, the following command can be used:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">zig objcopy --add-gnu-debuglink=main.dbg mainNoDebugInfo mainWithDbgSymbols
+</pre>
+</div>
+
+<p>
+Now, the executable named <code>mainWithDbgSymbols</code> can be used, for example in GDB to debug it (GDB will know where its debug symbols file is located).
+</p>
+
+<p>
+Removing the debug symbol will create a smaller executable.
+Bellow shows the process with a mini-example:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">executable name</th>
+<th scope="col" class="org-left">size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">main</td>
+<td class="org-left">1.9M</td>
+</tr>
+
+<tr>
+<td class="org-left">main.dbg</td>
+<td class="org-left">1.2M</td>
+</tr>
+
+<tr>
+<td class="org-left">mainNoDebugInfo</td>
+<td class="org-left">690K</td>
+</tr>
+
+<tr>
+<td class="org-left">mainWithDbgSymbols</td>
+<td class="org-left">690K</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+The advantage of this method is that the executable can be sent to production without debug symbols (it's more difficult to reverse engineering the exe, and it has a smaller size).
+But when a bug is reported, it is always possible to debug it because all you have to do is link the debug symbol to the executable.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgca2a40f" class="outline-3">
+<h3 id="orgca2a40f"><span class="section-number-3">3.4</span> Cross-compilation</h3>
+<div class="outline-text-3" id="text-3-4">
+</div>
+<div id="outline-container-org086ef20" class="outline-4">
+<h4 id="org086ef20"><span class="section-number-4">3.4.1</span> <span class="todo TODO">TODO</span> Cross-compile with an embedded linux</h4>
+<div class="outline-text-4" id="text-3-4-1">
+<p>
+TODO: Add iterate programming to cross compile automaticlly the app
+</p>
+
+<p>
+The <code>-target</code> flag of <code>zig build-exe</code> can select the target architecture for the cross-compilation.
+There are multiple target selections, see [cite:@CrossCompilationZig2024] to have the entire list of targets.
+</p>
+
+<p>
+Here's an example of a test that was performed, the aim being to run an executable produced by Zig (from a <code>x86_64</code>) for a -nanopi neo plus 2- which has an arm64 architecture and runs a Linux kernel.
+The information of the embedded target :
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">uname -a
+Linux csel 5.15.148 #2 SMP PREEMPT Mon Mar 4 21:21:00 UTC 2024 aarch64 GNU/Linux
+</pre>
+</div>
+
+<p>
+Here's the command to cross-compile the executable (the executable is also stripped to have a smaller size):
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">zig build-exe src/main.zig -target aarch64-linux -fstrip
+</pre>
+</div>
+
+<p>
+The executable on the embedded target runs flawlessly, below is shown the output of the target:
+</p>
+<pre class="example">
+# ./main
+All your codebase are belong to us.
+Run `zig build test` to run the tests.
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org567d591" class="outline-2">
+<h2 id="org567d591"><span class="section-number-2">4</span> Concurrency</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org7c68929" class="outline-3">
+<h3 id="org7c68929"><span class="section-number-3">4.1</span> Definitions</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+Coroutine (cooperative multitasking): 
+</p>
+<ul class="org-ul">
+<li>a coroutine itself is not concurrent !, it allows to manage concurrent tasks in the same way as callbacks for example</li>
+<li>single threaded</li>
+<li>allows to write code in a sequential manner</li>
+<li>allows not to have context switch</li>
+<li>2 types of coroutine: symmetric vs asymmetric (relative to the control-transfer mechanism, explained a bit below)</li>
+<li>coroutines are not preemptive, they are cooperative, therefore they must explicitly give back control by <b><b>yielding</b></b></li>
+<li>usually uses keywords like <b><b>yield</b></b>, <b><b>resume</b></b>, <b><b>suspend</b></b>, &#x2026;</li>
+<li>Coroutines can be either stackful or stackless, we are not gonna dive deep into this concept since most of the time you are going to use stackful coroutines since they allow you to suspend from within a nested stackframe (strength of stacless coroutines: efficiency)</li>
+</ul>
+
+<p>
+Symmetric coroutines:
+</p>
+<ul class="org-ul">
+<li>Their only control-transfer mechanism is:</li>
+<li>explicitly passing control to another coroutine</li>
+</ul>
+
+<p>
+Asymmetric coroutines (called asymmetric because the control-transfer can go both ways):
+</p>
+<ul class="org-ul">
+<li>They have two control-transfer mechanisms:</li>
+<li>invoking another coroutine which is going to be the subcoroutine of the calling coroutine</li>
+<li>suspending itself and giving control back to the caller</li>
+</ul>
+
+<p>
+Green threads (userland threads):
+</p>
+<ul class="org-ul">
+<li>preemptive multitasking (PAS VRAI selon appel !)</li>
+<li>managed by a VM/runtime instead of the OS</li>
+<li>has the advantage to be managed in user space instead of kernel space which allows to avoid the overhead of making system calls to open and close threads</li>
+<li>still use several native threads behind the scenes</li>
+<li>used more for short-lived tasks</li>
+</ul>
+
+<p>
+Fibers :
+</p>
+<ul class="org-ul">
+<li>Same as green threads but cooperative multitasking instead of preemptive multitasking</li>
+</ul>
+
+<p>
+Preemptive multitasking:
+</p>
+<ul class="org-ul">
+<li>The underlying architecture (NOT us) is going to be deciding what to execute and when</li>
+<li>This means that our threads can be interrupted at any time</li>
+</ul>
+
+<p>
+Cooperative multitasking:
+</p>
+<ul class="org-ul">
+<li>A thread will continue to run until it decides to give up control (yielding)</li>
+<li>We are in full control of the execution flow of our threads</li>
+<li>The drawback of this method is that YOU have to think and code in a way to not have starving threads for exemple</li>
+</ul>
+
+<p>
+Thread (multithreading -&gt; the threads are still blocking):
+</p>
+<ul class="org-ul">
+<li>Main and historical way of doing concurrency</li>
+<li>Parallelism (eventually): Threads allow for true parallel execution on multi-core CPUs, enabling better utilization of hardware resources and potentially improving performance.</li>
+<li>Isolation: Threads provide strong isolation between concurrent tasks, with each thread having its own execution context, stack, and local variables.</li>
+<li>Scalability: Managing a large number of threads can be challenging and may lead to scalability issues, as the operating system kernel has to allocate resources for each thread.</li>
+<li>Usually used with a thread pool to avoid the overhead of creating and destroying threads for each task which is very expensive</li>
+</ul>
+<p>
+QUESTION: est ce que je parle pas des virtual threads la ?
+</p>
+
+<p>
+Event-driven programming (ex: NodeJS):
+</p>
+<ul class="org-ul">
+<li>Event loop that regularly checks if "events" are launched</li>
+<li>Scalability: Event-driven architectures are inherently scalable, as they can handle a large number of concurrent connections with low memory and CPU overhead.</li>
+<li>Code behind NodeJS: <a href="https://github.com/libuv/libuv">https://github.com/libuv/libuv</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgd24b0ee" class="outline-3">
+<h3 id="orgd24b0ee"><span class="section-number-3">4.2</span> Zig current state</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+There a multiple ways you currently can do concurent code in ZIG:
+</p>
+<ul class="org-ul">
+<li>Spawning OS threads (<a href="https://ziglang.org/documentation/master/std/#std.Thread">https://ziglang.org/documentation/master/std/#std.Thread</a>)</li>
+<li>Using old async/await from before 0.11 (not recommanded because unstable !!! <a href="https://github.com/ziglang/zig/issues/6025">https://github.com/ziglang/zig/issues/6025</a> and might probably never get back in the language <a href="https://ziglang.org/download/0.12.0/release-notes.html#AsyncAwait-Feature-Status">https://ziglang.org/download/0.12.0/release-notes.html#AsyncAwait-Feature-Status</a>)</li>
+<li>Using an event loop (by wrapping libuv or using libxev which is the equivalent buz in ZIG)</li>
+<li>Using fibers (<a href="https://github.com/kprotty/zefi">https://github.com/kprotty/zefi</a>, <a href="https://github.com/kassane/fiber">https://github.com/kassane/fiber</a>)</li>
+<li>async/await built on top of libxev (<a href="https://github.com/rsepassi/zigcoro">https://github.com/rsepassi/zigcoro</a>)</li>
+<li>Low level single threaded concurrency if you want to craft your owng thing (<a href="https://github.com/kassane/context">https://github.com/kassane/context</a>)</li>
+<li>&#x2026; obviously you can still use C libraries that do async stuff :)</li>
+</ul>
+</div>
+
+<div id="outline-container-org4f239aa" class="outline-4">
+<h4 id="org4f239aa"><span class="section-number-4">4.2.1</span> Feedbacks from thoses methods:</h4>
+<div class="outline-text-4" id="text-4-2-1">
+</div>
+<ol class="org-ol">
+<li><a id="org8ace826"></a>OS threads<br /></li>
+<li><a id="org214896b"></a>Old async/await<br /></li>
+<li><a id="orgec9c7ae"></a>libxev<br /></li>
+<li><a id="org1ca96c2"></a>CHOISIR UNE DES 2 fibers<br /></li>
+<li><a id="org4d1aa70"></a>zigcoro<br /></li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org1f1af1b" class="outline-3">
+<h3 id="org1f1af1b"><span class="section-number-3">4.3</span> Function coloring</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+Green threads make function colors disapear ???? (dependences entre threads)
+</p>
+</div>
+</div>
+
+<div id="outline-container-org26a772f" class="outline-3">
+<h3 id="org26a772f"><span class="section-number-3">4.4</span> <span class="todo TODO">TODO</span> MES NOTES ---&#x2013;&#x2014; pas besoin de lire ca, cest juste pour moi pour approfondir certains sujets plus tard</h3>
+<div class="outline-text-3" id="text-4-4">
+<ul class="org-ul">
+<li>"libuv and OSes will usually run background/worker threads and/or polling to perform tasks in a non-blocking manner." est ce que cest comment ca under the hood les non blocking async ?</li>
+
+<li>"The event loop follows the rather usual single threaded asynchronous I/O approach: all (network) I/O is performed on non-blocking sockets which are polled using the best mechanism available on the given platform: epoll on Linux, kqueue on OSX and other BSDs, event ports on SunOS and IOCP on"</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org6bf5231" class="outline-3">
+<h3 id="org6bf5231"><span class="section-number-3">4.5</span> Sources:</h3>
+<div class="outline-text-3" id="text-4-5">
+<ul class="org-ul">
+<li><a href="https://dl.acm.org/doi/pdf/10.1145/1462166.1462167">https://dl.acm.org/doi/pdf/10.1145/1462166.1462167</a></li>
+<li><a href="https://www.lua.org/pil/9.1.html">https://www.lua.org/pil/9.1.html</a></li>
+<li><a href="https://blog.orhun.dev/zig-bits-04/">https://blog.orhun.dev/zig-bits-04/</a> (regarder regul pour voir si il m a rep)</li>
+<li><a href="https://github.com/mitchellh/libxev/issues/92">https://github.com/mitchellh/libxev/issues/92</a> (regul &#x2026;)</li>
+<li>ChatGPT et GH Copilot</li>
+<li><a href="https://github.com/lewissbaker/cppcoro">https://github.com/lewissbaker/cppcoro</a></li>
+<li><a href="https://ericniebler.com/2020/11/08/structured-concurrency/">https://ericniebler.com/2020/11/08/structured-concurrency/</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Fiber_(computer_science)">https://en.wikipedia.org/wiki/Fiber_(computer_science)</a></li>
+<li><a href="https://github.com/rsepassi/zigcoro">https://github.com/rsepassi/zigcoro</a></li>
+<li><a href="https://github.com/mitchellh/libxev">https://github.com/mitchellh/libxev</a></li>
+<li><a href="https://github.com/libuv/libuv">https://github.com/libuv/libuv</a></li>
+<li><a href="https://github.com/libuv/libuv/blob/v1.x/docs/src/guide/basics.rst">https://github.com/libuv/libuv/blob/v1.x/docs/src/guide/basics.rst</a></li>
+<li><a href="https://docs.libuv.org/en/v1.x/guide/basics.html">https://docs.libuv.org/en/v1.x/guide/basics.html</a> (ptetre le meme que celui au dessus)</li>
+<li><a href="https://github.com/dotnet/runtimelab/issues/2398">https://github.com/dotnet/runtimelab/issues/2398</a></li>
+<li><a href="https://kristoff.it/blog/zig-colorblind-async-await/">https://kristoff.it/blog/zig-colorblind-async-await/</a></li>
+<li><a href="https://tigerbeetle.com/blog/a-friendly-abstraction-over-iouring-and-kqueue/">https://tigerbeetle.com/blog/a-friendly-abstraction-over-iouring-and-kqueue/</a></li>
+<li><a href="https://docs.libuv.org/en/v1.x/design.html#the-i-o-loop">https://docs.libuv.org/en/v1.x/design.html#the-i-o-loop</a></li>
+<li><a href="https://docs.libuv.org/en/v1.x/guide/threads.html">https://docs.libuv.org/en/v1.x/guide/threads.html</a></li>
+<li><a href="https://softwareengineering.stackexchange.com/questions/254140/is-there-a-difference-between-fibers-coroutines-and-green-threads-and-if-that-i">https://softwareengineering.stackexchange.com/questions/254140/is-there-a-difference-between-fibers-coroutines-and-green-threads-and-if-that-i</a></li>
+<li><a href="https://github.com/ziglang/zig/issues/6025">https://github.com/ziglang/zig/issues/6025</a></li>
+<li><a href="https://www.reddit.com/r/Zig/comments/177e4cb/what_are_you_doing_for_async/">https://www.reddit.com/r/Zig/comments/177e4cb/what_are_you_doing_for_async/</a></li>
+<li><a href="https://github.com/catdevnull/awesome-zig?tab=readme-ov-file#network">https://github.com/catdevnull/awesome-zig?tab=readme-ov-file#network</a></li>
+<li><a href="https://stackoverflow.com/questions/41891989/what-is-the-difference-between-asymmetric-and-symmetric-coroutines">https://stackoverflow.com/questions/41891989/what-is-the-difference-between-asymmetric-and-symmetric-coroutines</a></li>
+<li><a href="https://www.baeldung.com/java-threading-models#:~:text=The%20big%20difference%20between%20green,executing%20at%20any%20given%20time">https://www.baeldung.com/java-threading-models#:~:text=The%20big%20difference%20between%20green,executing%20at%20any%20given%20time</a>.</li>
+<li><a href="https://stackoverflow.com/questions/28977302/how-do-stackless-coroutines-differ-from-stackful-coroutines">https://stackoverflow.com/questions/28977302/how-do-stackless-coroutines-differ-from-stackful-coroutines</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org950c106" class="outline-2">
+<h2 id="org950c106"><span class="section-number-2">5</span> Web frameworks</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+In this section we are going to explore the different ways of doing WEB servers in Zig.
+</p>
+</div>
+
+<div id="outline-container-org9f98b91" class="outline-3">
+<h3 id="org9f98b91"><span class="section-number-3">5.1</span> Zap</h3>
+<div class="outline-text-3" id="text-5-1">
+</div>
+<div id="outline-container-orgee2807f" class="outline-4">
+<h4 id="orgee2807f"><span class="section-number-4">5.1.1</span> Description</h4>
+<div class="outline-text-4" id="text-5-1-1">
+<p>
+TODO
+Callback based, we define certain callbacks, we configure from there
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org02bb9e6" class="outline-3">
+<h3 id="org02bb9e6"><span class="section-number-3">5.2</span> HTTP from the std</h3>
+<div class="outline-text-3" id="text-5-2">
+</div>
+<div id="outline-container-org5c412bc" class="outline-4">
+<h4 id="org5c412bc"><span class="section-number-4">5.2.1</span> Description</h4>
+<div class="outline-text-4" id="text-5-2-1">
+<p>
+Http.zig: Dispatcher based, you create the dispatch chai (As far as I understand it)
+</p>
+</div>
+</div>
+<div id="outline-container-orge5abb4b" class="outline-4">
+<h4 id="orge5abb4b"><span class="section-number-4">5.2.2</span> Exemples</h4>
+<div class="outline-text-4" id="text-5-2-2">
+<p>
+TODO
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcc1d3bd" class="outline-3">
+<h3 id="orgcc1d3bd"><span class="section-number-3">5.3</span> Tokamak</h3>
+<div class="outline-text-3" id="text-5-3">
+<p>
+Middleware (scoped) and DI Based
+</p>
+</div>
+</div>
+
+<div id="outline-container-org346106f" class="outline-3">
+<h3 id="org346106f"><span class="section-number-3">5.4</span> Jetzig</h3>
+<div class="outline-text-3" id="text-5-4">
+<p>
+Middleware (as part of a request chain) and Convention based
+</p>
+
+<p>
+TODO: faire un benchmark avec plein de techo (rust, go, node, bun, &#x2026;) ET toutes les methodes vues au dessus
+points forts/points faibles de chacun
+</p>
+
+<p>
+Sources:
+<a href="https://www.reddit.com/r/reactjs/comments/16blsh3/how_do_i_use_react_with_an_express_application/">https://www.reddit.com/r/reactjs/comments/16blsh3/how_do_i_use_react_with_an_express_application/</a>
+<a href="https://lemire.me/blog/2023/10/07/web-server-hello-world-benchmark-go-vs-node-js-vs-nim-vs-bun/">https://lemire.me/blog/2023/10/07/web-server-hello-world-benchmark-go-vs-node-js-vs-nim-vs-bun/</a>
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5cab439" class="outline-2">
+<h2 id="org5cab439"><span class="section-number-2">6</span> Utils</h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-orgb78f721" class="outline-3">
+<h3 id="orgb78f721"><span class="section-number-3">6.1</span> Zig package manager</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+Since 0.11, Zig has now an official built-in package manager named.
+</p>
+
+<p>
+There is no global repository like <a href="https://crates.io">crates.io</a>(Rust) or <a href="https://npm.js.com">npmjs</a>(Node.js) for Zig packages. Instead, Zig packages are distributed as git repositories.
+</p>
+
+<p>
+In order to add packages to your project you are going to create and edit a file in the root of your project named "build.zig.zon" (zon stands for Zig Object Notation, which is an equivalent to json).
+</p>
+</div>
+
+<div id="outline-container-orga93e6f6" class="outline-4">
+<h4 id="orga93e6f6"><span class="section-number-4">6.1.1</span> Add a package in your project</h4>
+<div class="outline-text-4" id="text-6-1-1">
+<ol class="org-ol">
+<li>Add the packages you want in your build.zig.zon file</li>
+</ol>
+<div class="org-src-container">
+<pre class="src src-zon">.{
+    .name = "name-of-my-project",
+    .version = "0.0.1",
+
+    .dependencies = .{
+	// Here you add all the packages you want, in this exemple I have imported zap which is a web framework
+	.zap = .{
+	    .url = "https://github.com/zigzap/zap/archive/refs/tags/v0.1.7-pre.tar.gz",
+	    .hash = "1220002d24d73672fe8b1e39717c0671598acc8ec27b8af2e1caf623a4fd0ce0d1bd",
+	},
+    }
+}
+</pre>
+</div>
+<p>
+You can get further understanding in how to write your build.zig.zon following the official doc: <a href="https://github.com/ziglang/zig/blob/master/doc/build.zig.zon.md">https://github.com/ziglang/zig/blob/master/doc/build.zig.zon.md</a>
+</p>
+
+<p>
+TODO: comment trouver le hash ? zig fetch avec 0.12 ou ?
+Jai des erreurs Tls
+</p>
+
+<ol class="org-ol">
+<li>Add those added packages in your build.zig</li>
+</ol>
+<p>
+Simply add the following code after the "addExectuable" function
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">const zap = b.dependency("zap", .{
+	.target = target,
+	.optimize = optimize,
+});
+exe.addModule("zap", zap.module("zap"));
+exe.linkLibrary(zap.artifact("facil.io"));
+</pre>
+</div>
+<p>
+Note: here it is specific to the zap package, you might have different options and no need to link a library for an other package (zap uses facil.io under the hood)
+</p>
+
+<ol class="org-ol">
+<li>Simply "@import" them and use them in your code :)</li>
+</ol>
+<div class="org-src-container">
+<pre class="src src-zig">const zap = @import("zap");
+</pre>
+</div>
+
+<p>
+Your packages will be downloaded and compiled when you build your project.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1f5559c" class="outline-4">
+<h4 id="org1f5559c"><span class="section-number-4">6.1.2</span> Sources</h4>
+<div class="outline-text-4" id="text-6-1-2">
+<p>
+<a href="https://zig.news/edyu/zig-package-manager-wtf-is-zon-558e">https://zig.news/edyu/zig-package-manager-wtf-is-zon-558e</a>
+<a href="https://zig.news/edyu/zig-package-manager-wtf-is-zon-2-0110-update-1jo3">https://zig.news/edyu/zig-package-manager-wtf-is-zon-2-0110-update-1jo3</a>
+<a href="https://ziglang.org/download/0.11.0/release-notes.html#Package-Management">https://ziglang.org/download/0.11.0/release-notes.html#Package-Management</a>
+<a href="https://ziggit.dev/t/how-to-package-a-zig-source-module-and-how-to-use-it/3457">https://ziggit.dev/t/how-to-package-a-zig-source-module-and-how-to-use-it/3457</a>
+<a href="https://github.com/ziglang/zig/blob/master/doc/build.zig.zon.md">https://github.com/ziglang/zig/blob/master/doc/build.zig.zon.md</a>
+<a href="https://ziglang.org/download/0.11.0/release-notes.html#Package-Management">https://ziglang.org/download/0.11.0/release-notes.html#Package-Management</a>
+<a href="https://github.com/zigzap/zap">https://github.com/zigzap/zap</a>
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org60fcd12" class="outline-3">
+<h3 id="org60fcd12"><span class="section-number-3">6.2</span> Zig version manager</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+Using ZIG before 1.0 might require you to often switch between master and the last official release.
+</p>
+
+<p>
+One solution would be to install both (or more) versions of ZIG and switch the PATH environment variable to the version you want to use.
+</p>
+
+<p>
+But the best solution is to use the ZIG version manager, which is a tool that allows you to install and switch between different versions of ZIG.
+</p>
+
+<p>
+We recommend using ZVM (Zig Version Manager ^^) which is a simple and easy to use tool. (<a href="https://github.com/tristanisham/zvm">https://github.com/tristanisham/zvm</a>)
+</p>
+</div>
+
+<div id="outline-container-org71ba961" class="outline-4">
+<h4 id="org71ba961"><span class="section-number-4">6.2.1</span> Basic usage</h4>
+<div class="outline-text-4" id="text-6-2-1">
+<p>
+Installing the tool:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">curl https://raw.githubusercontent.com/tristanisham/zvm/master/install.sh | bash
+echo "# ZVM" &gt;&gt; $HOME/.profile
+echo export ZVM_INSTALL="$HOME/.zvm/self" &gt;&gt; $HOME/.profile
+echo export PATH="$PATH:$HOME/.zvm/bin" &gt;&gt; $HOME/.profile
+echo export PATH="$PATH:$ZVM_INSTALL/" &gt;&gt; $HOME/.profile
+</pre>
+</div>
+
+<p>
+Listing all the versions available to download:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">zvm ls --all
+</pre>
+</div>
+
+<p>
+Downloading a specific version:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">zvm i master
+</pre>
+</div>
+
+<p>
+Display all your downloaded versions:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">zvm ls
+</pre>
+</div>
+
+<p>
+Use one of those versions:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">zvm use master
+</pre>
+</div>
+
+<p>
+There are other commands available, you can check them by running: 'zvm help' or checking the repository: <a href="https://github.com/tristanisham/zvm">https://github.com/tristanisham/zvm</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbab1910" class="outline-2">
+<h2 id="orgbab1910"><span class="section-number-2">7</span> Standard library</h2>
+<div class="outline-text-2" id="text-7">
+</div>
+<div id="outline-container-orgdb11d19" class="outline-3">
+<h3 id="orgdb11d19"><span class="section-number-3">7.1</span> TCP stream</h3>
+<div class="outline-text-3" id="text-7-1">
+</div>
+<div id="outline-container-orgf2804ae" class="outline-4">
+<h4 id="orgf2804ae"><span class="section-number-4">7.1.1</span> <span class="todo TODO">TODO</span> How Zig manages stream</h4>
+<div class="outline-text-4" id="text-7-1-1">
+<p>
+Does Zig manage tcp stream with the OS stream or has it created its own implementation ?
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgef9a8ff" class="outline-3">
+<h3 id="orgef9a8ff"><span class="section-number-3">7.2</span> Threading</h3>
+<div class="outline-text-3" id="text-7-2">
+</div>
+<div id="outline-container-org4089008" class="outline-4">
+<h4 id="org4089008"><span class="section-number-4">7.2.1</span> Compare Zig threading library with <code>p_thread</code></h4>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org969d825" class="outline-2">
+<h2 id="org969d825"><span class="section-number-2">8</span> Others</h2>
+<div class="outline-text-2" id="text-8">
+</div>
+<div id="outline-container-org5f02a97" class="outline-3">
+<h3 id="org5f02a97"><span class="section-number-3">8.1</span> Reading external files</h3>
+<div class="outline-text-3" id="text-8-1">
+<p>
+There are multiple ways to do it in ZIG:
+</p>
+</div>
+<div id="outline-container-org05dca18" class="outline-4">
+<h4 id="org05dca18"><span class="section-number-4">8.1.1</span> @embedFile</h4>
+<div class="outline-text-4" id="text-8-1-1">
+<p>
+This method is simply going to embed the file in the binary.
+</p>
+
+<p>
+Beware that by using this method the path to the file is going to be relative to the file you are calling it from and that the file must be in the same package.
+</p>
+
+<p>
+By using the other methods below you can use a file from anywhere but relative to your root folder and not main.zig.
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">const input = @embedFile("input.txt");
+std.debug.print("{s}", .{input});
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga41dd0f" class="outline-4">
+<h4 id="orga41dd0f"><span class="section-number-4">8.1.2</span> Use an allocator to dynamically store the content of the file</h4>
+<div class="outline-text-4" id="text-8-1-2">
+<p>
+By using the method: readToEndAlloc 
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">// Alocator
+var gp = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
+defer gp.deinit();
+const allocator = gp.allocator();
+
+// Path
+var path_buffer: [std.fs.MAX_PATH_BYTES]u8 = undefined;
+const path = try std.fs.realpath("./input.txt", &amp;path_buffer);
+
+// Open file
+const file = try std.fs.openFileAbsolute(path, .{});
+defer file.close();
+
+// Read
+const file_content = try file.readToEndAlloc(allocator, std.math.maxInt(usize));
+defer allocator.free(file_content);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org467c319" class="outline-4">
+<h4 id="org467c319"><span class="section-number-4">8.1.3</span> Read the file and put it in a buffer</h4>
+<div class="outline-text-4" id="text-8-1-3">
+<p>
+By using the method readAll 
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">// Path
+var path_buffer: [std.fs.MAX_PATH_BYTES]u8 = undefined;
+const path = try std.fs.realpath("./input.txt", &amp;path_buffer);
+
+// Open file
+const file = try std.fs.openFileAbsolute(path, .{});
+defer file.close();
+
+// Read
+var content_buffer: [1024]u8 = undefined;
+const size = try file.readAll(&amp;content_buffer);
+
+std.debug.print("{s}", .{content_buffer[0..size]});
+</pre>
+</div>
+
+<p>
+TODO reading files with org babel doesnt work yet idk why
+</p>
+
+<p>
+Sources: 
+</p>
+<ul class="org-ul">
+<li><a href="https://ziglang.org/documentation/master/std/#std.fs.File.readToEndAlloc">https://ziglang.org/documentation/master/std/#std.fs.File.readToEndAlloc</a></li>
+<li><a href="https://ziglang.org/documentation/master/std/#std.fs.File.readAll">https://ziglang.org/documentation/master/std/#std.fs.File.readAll</a></li>
+<li><a href="https://ziglang.org/documentation/master/#embedFile">https://ziglang.org/documentation/master/#embedFile</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgda1c697" class="outline-3">
+<h3 id="orgda1c697"><span class="section-number-3">8.2</span> Errors</h3>
+<div class="outline-text-3" id="text-8-2">
+<p>
+<a href="https://ziglang.org/documentation/0.11.1/#Errors">https://ziglang.org/documentation/0.11.1/#Errors</a>
+In ZIG errors are juste values.
+Those values are those of an special type of enum "error".
+When you declare your enum using this keyword instead of "enum", the compiler is going to know that those values are going to be errors, therefore they can be catched, tried, &#x2026;
+</p>
+</div>
+
+
+<div id="outline-container-org6dbeb65" class="outline-4">
+<h4 id="org6dbeb65"><span class="section-number-4">8.2.1</span> Handling errors in the application flow</h4>
+<div class="outline-text-4" id="text-8-2-1">
+<p>
+Functions can return either a value or an error, this is done by adding the "!" to the return type of a function
+With the "!" the return type of the function below is the coerced "anyerror!u8"
+</p>
+
+<p>
+Note 1: "anyerror" is just a u16 under the hood.
+Note 2: It is important that the syntax is ErrorSet!Payload if you write it by hand and NOT Payload!ErrorSet
+</p>
+
+<p>
+When a function can return an error we have to either "try" or "catch" it.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig" id="orgd8f0109">fn maybeErrorMaybeValue(isError: bool) !u8 {
+    // ... might return an u8 or an error
+    if (isError) {
+	return error.Bar;
+    } else {
+	return 2;
+    }
+}
+
+test "return value or error" {
+    // "try" version
+    const res = try maybeErrorMaybeValue(false); // if error, return the error
+    try std.testing.expect(res == 2);
+
+    // "catch" version
+    const err = maybeErrorMaybeValue(true) catch 3;
+    try std.testing.expect(err == 3);
+}
+
+test "should panic" {
+    _ = maybeErrorMaybeValue(true) catch unreachable;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6417685" class="outline-4">
+<h4 id="org6417685"><span class="section-number-4">8.2.2</span> Errdefer</h4>
+<div class="outline-text-4" id="text-8-2-2">
+<p>
+This exemple is taken from: <a href="https://ziglang.org/documentation/0.11.1/#errdefer">https://ziglang.org/documentation/0.11.1/#errdefer</a>
+Errdefer is a particularity of ZIG, it allows the user to execute some code when the function returns an error, it is useful exemple for deallocating variables you would have normally returned from the function, but since the function failed you deallocate that memory to avoid a memory leak.
+</p>
+<div class="org-src-container">
+<pre class="src src-zig" id="org620e820">fn createFoo(param: i32) !Foo {
+    const foo = try tryToAllocateFoo();
+    // now we have allocated foo. we need to free it if the function fails.
+    // but we want to return it if the function succeeds.
+    errdefer deallocateFoo(foo);
+
+    const tmp_buf = allocateTmpBuffer() orelse return error.OutOfMemory;
+    // tmp_buf is truly a temporary resource, and we for sure want to clean it up
+    // before this block leaves scope
+    defer deallocateTmpBuffer(tmp_buf);
+
+    if (param &gt; 1337) return error.InvalidParam;
+
+    // here the errdefer will not run since we're returning success from the function.
+    // but the defer will run!
+    return foo;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org790f489" class="outline-4">
+<h4 id="org790f489"><span class="section-number-4">8.2.3</span> Coercing</h4>
+<div class="outline-text-4" id="text-8-2-3">
+<p>
+The rule is simple: you can coerce an error from a subset to a superset but you cannot coerce an error from a superset to a subset
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig" id="orgff7738b">const SuperErrors = error{
+    Foo,
+    Bar,
+    Baz,
+};
+const SubErrors = error{
+    Foo,
+    Bar,
+};
+
+test "coerce subset to superset" {
+    tac(SubErrors.Foo) catch {}; // PASSED
+}
+
+test "coerce superset to subset" {
+    tic(SuperErrors.Foo) catch {}; // FAILED
+}
+
+fn tic(err: SuperErrors) SubErrors {
+    return err;
+}
+
+fn tac(err: SubErrors) SuperErrors {
+    return err;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org60115ac" class="outline-2">
+<h2 id="org60115ac"><span class="section-number-2">9</span> Bibliography</h2>
+<div class="outline-text-2" id="text-9">
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: tetratrux</p>
+<p class="date">Created: 2024-04-25 gio 19:13</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

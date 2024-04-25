@@ -1,3 +1,4 @@
+* Concurrency
 ** Definitions
 Coroutine (cooperative multitasking): 
 - a coroutine itself is not concurrent !, it allows to manage concurrent tasks in the same way as callbacks for example
@@ -19,15 +20,14 @@ Asymmetric coroutines (called asymmetric because the control-transfer can go bot
 2. suspending itself and giving control back to the caller
 
 Green threads (userland threads):
-- preemptive multitasking (PAS VRAI !)
-- managed by a VM/runtime instead of the OS (TODO: A CONIRMER AVEC LE PROF JLUI POSERAI LA QUESTION)
+- preemptive multitasking (PAS VRAI selon appel !)
+- managed by a VM/runtime instead of the OS 
 - has the advantage to be managed in user space instead of kernel space which allows to avoid the overhead of making system calls to open and close threads
 - still use several native threads behind the scenes
 - used more for short-lived tasks
 
 Fibers :
 - Same as green threads but cooperative multitasking instead of preemptive multitasking
-- TODO: confirmer avec le prof si ya pas autre chose
 
 Preemptive multitasking:
 - The underlying architecture (NOT us) is going to be deciding what to execute and when
@@ -54,17 +54,24 @@ Event-driven programming (ex: NodeJS):
 ** Zig current state
 There a multiple ways you currently can do concurent code in ZIG:
 - Spawning OS threads (https://ziglang.org/documentation/master/std/#std.Thread)
-- Using old async/await from before 0.11 (not recommanded because unstable !!! https://github.com/ziglang/zig/issues/6025)
+- Using old async/await from before 0.11 (not recommanded because unstable !!! https://github.com/ziglang/zig/issues/6025 and might probably never get back in the language https://ziglang.org/download/0.12.0/release-notes.html#AsyncAwait-Feature-Status)
 - Using an event loop (by wrapping libuv or using libxev which is the equivalent buz in ZIG)
 - Using fibers (https://github.com/kprotty/zefi, https://github.com/kassane/fiber)
 - async/await built on top of libxev (https://github.com/rsepassi/zigcoro)
 - Low level single threaded concurrency if you want to craft your owng thing (https://github.com/kassane/context)
 - ... obviously you can still use C libraries that do async stuff :)
 
+*** Feedbacks from thoses methods:
+**** OS threads
+**** Old async/await
+**** libxev
+**** CHOISIR UNE DES 2 fibers
+**** zigcoro
+
 ** Function coloring
 Green threads make function colors disapear ???? (dependences entre threads)
 
-** MES NOTES -------- pas besoin de lire ca, cest juste pour moi
+** TODO MES NOTES -------- pas besoin de lire ca, cest juste pour moi pour approfondir certains sujets plus tard
 
 - "libuv and OSes will usually run background/worker threads and/or polling to perform tasks in a non-blocking manner." est ce que cest comment ca under the hood les non blocking async ?
 

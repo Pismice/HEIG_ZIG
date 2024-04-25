@@ -1,6 +1,5 @@
+** HTTP from the std
+*** Description
 Http.zig: Dispatcher based, you create the dispatch chai (As far as I understand it)
-Zap: Callback based, we define certain callbacks, we configure from there
-Tokamak: Middleware (scoped) and DI Based
-Jetzig: Middleware (as part of a request chain) and Convention based
-
-https://www.reddit.com/r/reactjs/comments/16blsh3/how_do_i_use_react_with_an_express_application/
+*** Exemples
+TODO
