@@ -50,3 +50,5 @@ https://zig.news/edyu/zig-package-manager-wtf-is-zon-2-0110-update-1jo3
 https://ziglang.org/download/0.11.0/release-notes.html#Package-Management
 https://ziggit.dev/t/how-to-package-a-zig-source-module-and-how-to-use-it/3457
 https://github.com/ziglang/zig/blob/master/doc/build.zig.zon.md
+https://ziglang.org/download/0.11.0/release-notes.html#Package-Management
+https://github.com/zigzap/zap
