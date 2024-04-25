@@ -15,9 +15,9 @@
 
 * Utils
 
-#+INCLUDE: "./zig-package-manager.org
+#+INCLUDE: "./zig-package-manager.org :minlevel 2
 
-#+INCLUDE: "./zig-version-manager.org
+#+INCLUDE: "./zig-version-manager.org :minlevel 2
 
 * Standard library
 ** TCP stream
@@ -25,7 +25,7 @@
 Does Zig manage tcp stream with the OS stream or has it created its own implementation ?
 
 ** Threading
-ca*** Compare Zig threading library with ~p_thread~
+*** Compare Zig threading library with ~p_thread~
 
 * Bibliography
 #+print_bibliography: :section 2 :heading subbibliography
