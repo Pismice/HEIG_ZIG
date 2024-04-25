@@ -1,0 +1,249 @@
+
+https://ziglang.org/documentation/master/#cImport-vs-translate-c
+
+TODO enlever le import std car est juste un exemple de code
+ :imports '(std)
+
+cImport doit etre fait une seule fois sinon on peut avoir des générations à double (2 import qui devraient etre les memes vont creer 2 types différents)
+
+on utilise casi tout le temps les boucles while sauf si on itere sur une liste
+
+beaucoup de conversion explicites (aucune conversion implicite en zig sauf si on elargit le type -> zig ne nous cache rien)
+
+** Zig and C
+*** Main differences between Zig and C in the syntax
+There are a few main differences between the 2 languages that you have high chance of encountering but obviously not all of them are listed here.
+
+**** Types
+Here you can find all the primitive types in Zig and their C equivalent:
+
+https://ziglang.org/documentation/master/#Primitive-Types
+
+https://ziglang.org/documentation/master/#C-Type-Primitives
+
+TODO would it be better if i do the array in the doc rather than having a link to it ?
+
+**** Loops
+In Zig, the for loop is not used as much as in C. 
+Instead, the while loop is used more often. The for loop is used when iterating over multiples elements of a container (typically slices or arrays), so it basically is a kind of foreach loop. In all the other cases the while loop is used.
+
+#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+const items = [_]u16 { 1, 4, 0, 1 };
+var sum: u16 = 0;
+for (items) |value| {
+    sum += value;
+}
+std.debug.print("Sum: {}\n", .{sum});
+#+end_src
+
+#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+var i: usize = 0;
+while (i < 3) {
+    i += 1;
+    std.debug.print("i: {}\n", .{i});
+}
+#+end_src
+
+**** Pointers
+Zig has 2 different pointers:
+- Single-item pointers: *T
+- Many-item pointers: [*]T
+Which can both be optional by adding a "?".
+
+But actually.... there is a third pointer type:
+- The C pointer: [*c]T
+This one is to be avoided as much as possible. The only reasons for its existence is for the translation from C code to Zig code, when the translater is not able to know what to convert it to in Zig (eg. sometimes it does not know if it can convert it to a non-optional pointer or not which could cause UBs).
+
+**** Type conversions
+Since in Zig there is no implicit conversions, depending on the project you might end up having "ugly" code with a lot of explicit type conversions. The code is more verbose but it is also less error-prone.
+Exemple:
+ZIG:
+#+begin_src zig
+fn rgb_to_grayscale_1d(img: *imageh.img_1D_t, result: *imageh.img_1D_t) void {
+    var i: usize = 0;
+    while (i < @as(usize, @intCast(img.height * img.width))) : (i += 1) {
+        const index = i * @as(usize, @intCast(img.components));
+        const grayscale_value: u8 = @intFromFloat(imageh.FACTOR_R * @as(f64, @floatFromInt(img.data[imageh.R_OFFSET + index])) +
+            imageh.FACTOR_G * @as(f64, @floatFromInt(img.data[imageh.G_OFFSET + index])) +
+            imageh.FACTOR_B * @as(f64, @floatFromInt(img.data[imageh.B_OFFSET + index])));
+        result.data[i] = grayscale_value;
+    }
+}
+#+end_src
+C:
+#+begin_src c
+void rgb_to_grayscale_1D(const struct img_1D_t *img, struct img_1D_t *result) {
+  printf("height: %d", img->height);
+  for (size_t i = 0; i < img->height * img->width; i++) {
+    int index = i * img->components;
+    uint8_t grayscale_value = (uint8_t)(FACTOR_R * img->data[R_OFFSET] +
+                                        FACTOR_G * img->data[G_OFFSET] +
+                                        FACTOR_B * img->data[B_OFFSET]);
+    result->data[i] = grayscale_value;
+  }
+}
+#+end_src
+
+
+*** How to call a C function from Zig
+Add those lines to your build.zig file:
+#+begin_src zig
+exe.addIncludePath(.{ .path = "c-src" }); // Folder containing the C files
+exe.linkLibC(); // Link the C standard library (which is zig own libc btw)
+#+end_src
+
+Then you can call the C functions like this from your Zig code:
+#+begin_src zig
+const std = @import("std");
+const c_hello = @cImport({
+    @cInclude("hello.c");
+});
+
+pub fn main() !void {
+    c_hello.hello();
+
+    const res = c_hello.add(1, 2);
+    std.debug.print("1 + 2 = {d}\n", .{res});
+}
+#+end_src
+Note that you can only do 1 @cImport per project. So what i recommend you to do is create a file containing all the c libraries you need in a file like so:
+#+begin_src zig
+pub const c = @cImport({
+    @cInclude("stdio.h");
+    @cInclude("stdlib.h");
+    @cInclude("image.h");
+});
+#+end_src
+Then call this zig file in your other zig files.
+
+*** How to call a Zig function from C / Continuing a C project with Zig
+You can continue your C project without using Clang or GCC but by using Zig with all its toolchain it comes with.
+
+In order to have a c file (main.c) as the entry point of your project using the zig build tool you have to add/comment the following lines to your build.zig file:
+#+begin_src zig
+const exe = b.addExecutable(.{
+    .name = "c_project",
+    // .root_source_file = b.path("src/main.zig"),
+    .target = target,
+    .optimize = optimize,
+});
+exe.root_module.addCSourceFile(.{ .file = .{ .path = "src/main.c" }, .flags = &.{"-std=c99"} });
+exe.linkLibC();
+#+end_src
+
+If you want to have more C files than just main.c you can add them like so:
+#+begin_src zig
+exe.addCSourceFile(.{ .file = .{ .path = "c-src/image.c" }, .flags = &.{"-std=c99"} });
+#+end_src
+
+TODO pros and cons of using zig toolchain instead of clang or gcc
+
+*** How is it done under the hood
+When you do @cImport(@cInclude("foo.h")) in your zig code it runs translate-c and exposes the function and type definitions.
+
+TODO talk about C ABI
+
+*** Util to translate C code to Zig
+zig translate-c is an util built in the zig toolchains that allows you to translate C code to Zig code.
+You can translate any code but the code is going to be UNREADABLE, so I would not recommend this tool if you plan on modifying the code afterwards.
+You have better time importing the C code in your Zig code.
+Note that if you want to translate a C file that uses the libc you have to add the -lc flag like so:
+#+begin_src shell
+zig translate-c main.c -lc
+#+end_src
+
+**** Comparison with other langauges that use C code
+To test if integrating C code in Zig projects is really as seemless as some claims, I have decided to compare the C integration with Python aswell.
+
+In order to do that I wrote a small C library:
+#+begin_src c
+int add(int a, int b) { return a + b; }
+#+end_src
+
+What I am going to do is test how much time it takes each program to run this function x times. (in this case x = 100'000'000)
+
+Note: I didnt use any optimization in flag in python (because it did not change anything) and neither in Zig because I didnt want the compiler to try to optimize the code and be lazy.
+
+Then in order to compare the 2 languages I wrote 4 programs:
+- Zig code that has and add function implementation in Zig
+#+begin_src zig
+const std = @import("std");
+
+fn add(a: u32, b: u32) u32 {
+    return a + b;
+}
+
+pub fn main() !void {
+    var i: usize = 0;
+    while (i < 100000000) : (i += 1) {
+        _ = add(3, 7);
+    }
+    std.debug.print("done\n", .{});
+}
+#+end_src
+Result: ~0.38sec
+
+- Vanilla Python code that has and add function implementation in Python
+#+begin_src python
+def add(a, b):
+    return a + b
+
+
+for i in range(100000000):
+    add(3, 7)
+print("done!")
+#+end_src
+Result: ~10sec
+
+- Zig code that imports the C library
+#+begin_src zig
+const std = @import("std");
+pub const c = @cImport({
+    @cInclude("mylib.c");
+});
+
+pub fn main() !void {
+    var i: usize = 0;
+    while (i < 100000000) : (i += 1) {
+        _ = c.add(3, 7);
+    }
+    std.debug.print("done!\n", .{});
+}
+#+end_src
+Result: ~0.41sec
+
+- Python code that imports the C library
+#+begin_src python
+import ctypes
+
+mylib = ctypes.CDLL('./mylib.so')
+
+mylib.add.argtypes = (ctypes.c_int, ctypes.c_int)
+mylib.add.restype = ctypes.c_int
+
+for i in range(100000000):
+    result = mylib.add(3, 4)
+
+print("Result of last addition:", result)
+#+end_src
+Result: ~50sec
+
+TODO faire un joli graphique quand jaurai d autres languages
+TODO idk if it would be possible to compile my c library and then use it in my python code, and all of that all in emacs, that would be cool :)
+TODO do with other languages aswell
+
+***** Conclusion
+First thing that we notice immediately is how much faster the Zig code is compared to the Python code. This is not surprising since Zig is a compiled language and Python is an interpreted language.
+
+The second interesting thing is that the 2 Zig codes dont vary that much (if they even do) compared to the 2 python codes which have a 5x ratio. This is interesting because it shows that the overhead of calling a C function from Zig is not that big (in fact it is even not existent since all the compiler does is translating the C code to Zig code at compilation time).
+
+We can conclude that calling C code from Zig is really seemless, because at runtime ... everything is Zig code.
+
+*** Notes
+TODO For some unkown reason yet my LSP becomes very slow when working in a Zig project with C files and sometimes crashes. I have to investigate this further.
+
+Sources:
+- https://ziglang.org/documentation/master/#C-Pointers
+- https://ziglang.org/documentation/master/#C-Type-Primitives
+- https://zig.news/sobeston/using-zig-and-translate-c-to-understand-weird-c-code-4f8
+- https://mtlynch.io/notes/zig-call-c-simple/

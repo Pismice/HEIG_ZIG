@@ -14,6 +14,8 @@ Zig offers different allocators that have different purposes, but some can detec
 
 In the sections below, certain aspects of this programming language will be explored in greater depth.
 
+Note that this documentation is generated from emacs with org-mode and that you can find the Github repository [[https://pismice.github.io/HEIG_ZIG/][here]].
+
 ** What this documentation is not
 This is *not* a guide to learn Zig as first-language, this documentation wants to go in-depth in certain parts of the language.
 
