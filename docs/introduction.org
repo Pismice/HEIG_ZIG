@@ -9,12 +9,12 @@ The Rust language relies strongly on its borrow checker to ensure safe memory bu
 
 In another case, the Zig language has a purpose to replace the C language.
 Zig wants to simplify the programming development experience with no hidden control flow and no macro to avoid complex mistakes.
-In comparison with the Rust language, Zig uses explicit memory allocation to track the allocation and deallocation.
+In contrary to rust, in Zig the memory is managed explicitly, you have to manually allocate and deallocate memory, just as in C.
 Zig offers different allocators that have different purposes, but some can detect memory leaks ([[file:./allocators.org::#General purpose allocator][General purpose allocator]]).
 
 In the sections below, certain aspects of this programming language will be explored in greater depth.
 
-** What is not this documentation
+** What this documentation is not
 This is *not* a guide to learn Zig as first-language, this documentation wants to go in-depth in certain parts of the language.
 
 To understand what is described in this documentation, you should first read up on the basics of the Zig language, in particular, its guide, which contains a wealth of information.
