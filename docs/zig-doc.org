@@ -1,3 +1,4 @@
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
 #+title: Zig documentation
 
 #+bibliography: bibliography.bib
@@ -5,25 +6,18 @@
 
 
 * Intro
-** TODO UTF-8 encoding
-Write about string UTF-8 encoding in Zig.
-
-** TODO Undefined
-Write about ~undefined~ and how it behaves between debug and release mode.
 
 #+INCLUDE: "./allocators.org" :minlevel 1
-
-* Log
-*** TODO log comptime
-Write about how Zig's log module uses ~comptime~ and whether the log system will be or not in the executable thanks to the log configuration.
-
-* Errors
-** Compilation mode
-Check whether compilation modes will affect the error behaviors.
 
 #+INCLUDE: "./errors.org" :minlevel 1
 
 #+INCLUDE: "./build-system.org" :minlevel 1
+
+* Utils
+
+#+INCLUDE: "./zig-package-manager.org :minlevel 2
+
+#+INCLUDE: "./zig-version-manager.org :minlevel 2
 
 * Standard library
 ** TCP stream
@@ -32,7 +26,6 @@ Does Zig manage tcp stream with the OS stream or has it created its own implemen
 
 ** Threading
 *** Compare Zig threading library with ~p_thread~
-
 
 * Bibliography
 #+print_bibliography: :section 2 :heading subbibliography

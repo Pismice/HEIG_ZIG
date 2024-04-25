@@ -1,7 +1,40 @@
-Using ZIG before 1.0 might require that you ofter switch between master and the last official release.
+** Zig version manager
+Using ZIG before 1.0 might require you to often switch between master and the last official release.
 
 One solution would be to install both (or more) versions of ZIG and switch the PATH environment variable to the version you want to use.
 
 But the best solution is to use the ZIG version manager, which is a tool that allows you to install and switch between different versions of ZIG.
 
 We recommend using ZVM (Zig Version Manager ^^) which is a simple and easy to use tool. (https://github.com/tristanisham/zvm)
+
+*** Basic usage
+Installing the tool:
+#+begin_src bash
+curl https://raw.githubusercontent.com/tristanisham/zvm/master/install.sh | bash
+echo "# ZVM" >> $HOME/.profile
+echo export ZVM_INSTALL="$HOME/.zvm/self" >> $HOME/.profile
+echo export PATH="$PATH:$HOME/.zvm/bin" >> $HOME/.profile
+echo export PATH="$PATH:$ZVM_INSTALL/" >> $HOME/.profile
+#+end_src
+
+Listing all the versions available to download:
+#+begin_src bash
+zvm ls --all
+#+end_src
+
+Downloading a specific version:
+#+begin_src bash
+zvm i master
+#+end_src
+
+Display all your downloaded versions:
+#+begin_src bash
+zvm ls
+#+end_src
+
+Use one of those versions:
+#+begin_src bash
+zvm use master
+#+end_src
+
+There are other commands available, you can check them by running: 'zvm help' or checking the repository: https://github.com/tristanisham/zvm
