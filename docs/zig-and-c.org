@@ -37,8 +37,7 @@ std.debug.print("Sum: {}\n", .{sum});
 #+end_src
 
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
-var i: usize = 0;
-while (i < 3) {
+for (0..3) |i| {
     i += 1;
     std.debug.print("i: {}\n", .{i});
 }
@@ -234,6 +233,8 @@ TODO do with other languages aswell
 
 ***** Conclusion
 First thing that we notice immediately is how much faster the Zig code is compared to the Python code. This is not surprising since Zig is a compiled language and Python is an interpreted language.
+
+TODO why is python so slow ?
 
 The second interesting thing is that the 2 Zig codes dont vary that much (if they even do) compared to the 2 python codes which have a 5x ratio. This is interesting because it shows that the overhead of calling a C function from Zig is not that big (in fact it is even not existent since all the compiler does is translating the C code to Zig code at compilation time).
 
