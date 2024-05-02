@@ -4,8 +4,6 @@
 #+HTML_MATHJAX: align: left indent: 5em tagside: left
 
 * Compilation - build system
-** TODO Comptime
-
 ** TODO How to use the build system
 
 ** TODO Build modes
@@ -163,11 +161,10 @@ Bellow shows the process with a mini-example:
 
 The advantage of this method is that the executable can be sent to production without debug symbols (it's more difficult to reverse engineering the exe, and it has a smaller size).
 But when a bug is reported, it is always possible to debug it because all you have to do is link the debug symbol to the executable.
-*** TODO Separate object file from ELF executable
 
 ** Cross-compilation
 
-*** TODO Cross-compile with an embedded linux
+*** Cross-compile with an embedded linux
 TODO: Add iterate programming to cross compile automaticlly the app
 
 The ~-target~ flag of ~zig build-exe~ can select the target architecture for the cross-compilation.
@@ -193,21 +190,294 @@ Run `zig build test` to run the tests.
 #+end_example
 
 
-* Performance comparaison + SMID
+** Performance comparaison & SMID
 
-Leibniz algorithm :
-https://en.wikipedia.org/wiki/Leibniz_formula_for_%CF%80
+The following chapters will explain different benchmark and code.
+
+*** Vectors
+A Zig vector is an array of child type: booleans, integers, floats or pointers.
+It provides SIMD instructions for parallelizing operations where possible.
+
+As described in the standard documentation, the vectors small than the target machine's SIMD instruction will be compile to a single SIMD instruction.
+In other hands, the vectors longer than the the target machine's SIMD will be compile to multiple SIMD instructions. [cite:@DocumentationZigProgramming]
+
+The Zig vector does not work in the same way as the C++ vector. [cite:@WelcomeZigGuide2024]
+
+We can use multiple opteration on Zig vectors: 
+- Arithmetics
+- Bitwise operation
+- Comparaison operator
+
+#+begin_src zig :imports '(std) :main no
+  const stdout = std.io.getStdOut();
+  const size = 4;
+  fn print(comptime T: type, name: []const u8, vector: T) !void {
+      try stdout.writer().print("{s}: ", .{name});
+      for (0..size) |index| {
+          try switch (T) {
+              @Vector(size, bool) => stdout.writer().print("{}, ", .{vector[index]}),
+              @Vector(size, u8) => stdout.writer().print("{c}, ", .{vector[index]}),
+              else => stdout.writer().print("{d}, ", .{vector[index]}),
+          };
+      }
+      try stdout.writer().print("\n", .{});
+  }
+
+  pub fn main() !void {
+      const a: @Vector(size, i32) = .{ 1, 2, 3, 4 };
+      const b: @Vector(size, i32) = .{ 5, 6, 7, 8 };
+
+      try stdout.writer().print("Access to an item: {d}\n", .{a[2]});
+
+      const c = a + b;
+      try print(@TypeOf(c), "c", c);
+
+      const d = a * b;
+      try print(@TypeOf(d), "d", d);
+
+      const e = a << b;
+      try print(@TypeOf(e), "e", e);
+
+      const f = a == b;
+      try print(@TypeOf(f), "f", f);
+  }
+#+end_src
+
+#+RESULTS:
+| Access to an item: 3 |       |       |       |   |
+| c: 6                 |     8 |    10 |    12 |   |
+| d: 5                 |    12 |    21 |    32 |   |
+| e: 32                |   128 |   384 |  1024 |   |
+| f: false             | false | false | false |   |
+
+Zig support a vector size of:
+\begin{equation}
+2^{32} - 1
+\end{equation}
+But currently on the last Zig version, a long size (2^20) can crash at compile-time.
+
+There are utility functions to simplify the use of vectors:
+1. ~@splat~, this function will create a vector of a given size with the same value:
+2. ~@Reduce~, this function will reduce the vector into a scalar. We can specify the operation.
+   For intergers, every operation is available, for booleans plus there's ~.And~, ~.Or~, ~.Xor~.
+   And finally, for floating points they have also ~.Min~, ~.Max~, ~.Add~, ~.Mul~. [cite:@DocumentationZigProgramming]
+3. ~@shuffle~, this function will construct a new vector by selecting the elements of two vectors (a and b) with a mask.
+   If the number of the mask is 0 or upper, it will select the index of the first vector (a).
+   If the number of the mask is -1 or less, it will select the index starting at -1 and decrementing. (read example to be more clear)
+4. ~@select~, this function will select from two vectors (a and b) based on a ~pred~ vector.
+   If ~pred[i]~ is positif, the element will be ~a[i]~ otherwise ~b[i]~
+   
+#+begin_src zig :imports '(std) :main no
+  const stdout = std.io.getStdOut();
+  const size = 4;
+  fn print(comptime T: type, name: []const u8, vector: T) !void {
+      try stdout.writer().print("{s}: ", .{name});
+      for (0..size) |index| {
+          try switch (T) {
+              @Vector(size, bool) => stdout.writer().print("{}, ", .{vector[index]}),
+              @Vector(size, u8) => stdout.writer().print("{c}, ", .{vector[index]}),
+              else => stdout.writer().print("{d}, ", .{vector[index]}),
+          };
+      }
+      try stdout.writer().print("\n", .{});
+  }
+
+  pub fn main() !void {
+      const a: @Vector(size, i32) = @splat(3);
+      try print(@TypeOf(a), "a", a);
+
+      const b = @reduce(.Add, a);
+      try stdout.writer().print("b: {d}\n", .{b});
+
+      const mask: @Vector(size, i32) = .{ 1, -2, -1, 0};
+      const c: @Vector(size, u8) = .{ 't', 't', 'q', 'q'};
+      const d: @Vector(size, u8) = .{ 's', 'e', 't', 'a'};
+      const e = @shuffle(u8, c, d, mask);
+      try print(@TypeOf(e), "e", e);
+
+      const pred: @Vector(size, bool) = .{ true, false, false, true};
+      const f: @Vector(size, u8) = .{ 'a', 'a', 'a', 'a'};
+      const g: @Vector(size, u8) = .{ 'b', 'b', 'b', 'b'};
+      const h = @select(u8, pred, f, g);
+      try print(@TypeOf(h), "h", h);
+  }
+#+end_src
+
+#+RESULTS:
+| a: | 3, | 3, | 3, | 3, |
+| b: | 12 |    |    |    |
+| e: | t, | e, | s, | t, |
+| h: | a, | b, | b, | a, |
+   
+
+*** Leibniz algorithm
+This chapter shows the performance of Zig compared to other language, in particular with C.
+
+The [[https://github.com/niklas-heer/speed-comparison/tree/master][speed-comparaison]] github repository [cite:@NiklasheerSpeedcomparisonRepo] has differents examples code that shows the [[https://en.wikipedia.org/wiki/Leibniz_formula_for_%CF%80][Leibniz algorithm]] [cite:@LeibnizFormula2024] in action.
+This algorithm has puspose to compute the PI number with the following formula:
 
 \begin{equation}
 \frac{\pi}{4} = 1 - \frac{1}{3} + \frac{1}{5} - \frac{1}{7} + \frac{1}{9} - \ldots = \sum_{k = 0}^{\infty} \frac{(-1)^k}{2k + 1}
 \end{equation}
 
-https://github.com/niklas-heer/speed-comparison/tree/master
+The C code shows the standard way to compute the Leibniz algorithm, at each iteration, PI will improve.
+#+begin_src C :includes <stdio.h> :tangle leibniz.c
+  unsigned rounds = 1000000000;
+  double pi = 1.0;
 
+  rounds += 2u; // do this outside the loop
+
+  for (unsigned i=2u; i < rounds; ++i) // use ++i instead of i++
+    {
+      double x = -1.0 + 2.0 * (i & 0x1); // allows vectorization
+      pi += (x / (2u * i - 1u)); // double / unsigned = double
+    }
+
+  pi *= 4;
+  printf("%.16f\n", pi); // print 16 decimal digits of pi
+#+end_src
+
+#+RESULTS:
+: 3.1415926545880506
+
+The code below shows the adaptation of the C code but for the Zig language.
+#+begin_src zig :imports '(std) :tangle leibniz.zig
+  var rounds: u64 = 1000000000;
+  rounds += 2;
+
+  var pi: f64 = 1.0;
+  var i: usize = 2;
+  while (i < rounds) : (i += 1) {
+      const isOdd: f64 = @floatFromInt(i & 0x1);
+      const x: f64 = -1.0 + 2.0 * isOdd;
+      const den: f64 = @floatFromInt(2 * i - 1);
+      pi += (x / den);
+  }
+  pi *= 4;
+  try std.io.getStdOut().writer().print("{}", .{pi});
+#+end_src
+
+#+RESULTS:
+: 3.1415926545880506
+
+This Zig optmized code will produce a simalar output that the two other codes but it use SIMD instruction to try to manually optimize the code.
+Now the number of iteration is dived by 4, because the calculations are parallelized by 4.
+Note: you can see that the length of a ~vector~ is 4. 
+And the end of the code, we find a code that is not vectorized, it will only use for the last iterations.
+Indeed, the vectorization will only work for a number of rounds divisible by 4 (%4).
+#+begin_src zig :imports '(std) :tangle leibniz_simd.zig
+    var rounds: u64 = 1000000000;
+    rounds += 2;
+    const unroll = 4;
+
+    const x = @Vector(4, f64){ -1.0, 1.0, -1.0, 1.0 };
+    var den: @Vector(4, f64) = @splat(0.0);
+    const inc: @Vector(4, f64) = @splat(4.0);
+    const two: @Vector(4, f64) = @splat(2.0);
+    const mone: @Vector(4, f64) = @splat(-1.0);
+    var ivec = @Vector(4, f64){ 2.0, 3.0, 4.0, 5.0 };
+    var pivec: @Vector(4, f64) = @splat(0.0);
+
+    const vec_end: u64 = rounds - rounds % unroll;
+
+    var i: u64 = 2;
+    while (i < vec_end) : (i += unroll) {
+        den = mone + (two * ivec);
+        ivec = ivec + inc;
+        pivec = pivec + (x / den);
+    }
+
+    var _x: f64 = 1.0;
+    var pi: f64 = 1.0;
+    pi += @reduce(.Add, pivec);
+    while (i < vec_end) : (i += 1) {
+        _x = -_x;
+        const i_2: f64 = @floatFromInt(i);
+        pi += (_x / 2 * i_2 - 1);
+    }
+    pi *= 4;
+
+    try std.io.getStdOut().writer().print("{d:.16}\n", .{pi});
+#+end_src
+
+#+RESULTS:
+: 3.14159265458942
+
+*** Benchmark your x86\_64 CPU 
+
+The code below shows the comamnds to compile the three examples explains upper.
+Moreover before to execute the code block, you need to tangle the examples with the shortcut ~C-c C-v t~.
+
+The command to compile the C code (with gcc) is specific to an x86_64 architecture, if you want to follow the examples make sure to have a compatible CPU.
+Note: If emacs is unable to find the path to Zig during execution, the environment variable must be exported to the ~.zshenv~ file for a ~zsh~ shell.
+#+begin_src shell
+  gcc leibniz.c -o leibniz_c -O3 -s -flto -march=native -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
+  zig build-exe leibniz.zig -OReleaseFast -femit-bin=leibniz_zig -fstrip
+  zig build-exe leibniz_simd.zig -OReleaseFast -femit-bin=leibniz_simd_zig -fstrip
+#+end_src
+
+#+RESULTS:
+
+You will find the three executables in your directory.
+
+Now to benchmark your code you need a tool to run the analysis, it's called [[https://github.com/sharkdp/hyperfine][hyperfine]] [cite:@peterHyperfine2023].
+Il faut installer hyperfine pour faire le benchmark : https://github.com/sharkdp/hyperfine
+
+To code bellow will run a benchmark with the ~hyperfine~ tool.
+To use this tool, you need to install it and have in your path.
+#+begin_src shell :results scalar
+  hyperfine --warmup=3 './leibniz_c' './leibniz_zig' './leibniz_simd_zig' -i -N
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Benchmark 1: ./leibniz_c
+  Time (mean ± σ):     458.2 ms ±   3.9 ms    [User: 457.3 ms, System: 0.3 ms]
+  Range (min … max):   452.8 ms … 465.4 ms    10 runs
+ 
+Benchmark 2: ./leibniz_zig
+  Time (mean ± σ):     898.0 ms ±   1.6 ms    [User: 896.9 ms, System: 0.0 ms]
+  Range (min … max):   894.1 ms … 899.7 ms    10 runs
+ 
+Benchmark 3: ./leibniz_simd_zig
+  Time (mean ± σ):     464.4 ms ±   5.0 ms    [User: 463.7 ms, System: 0.0 ms]
+  Range (min … max):   450.7 ms … 467.5 ms    10 runs
+ 
+Summary
+  ./leibniz_c ran
+    1.01 ± 0.01 times faster than ./leibniz_simd_zig
+    1.96 ± 0.02 times faster than ./leibniz_zig
+#+end_example
+
+If you run the benchmark in your computer, you can see the result in the block upper.
+
+*** ARM benchmark example
+
+We made the same benchmark but for an arm CPU, here are the compilers's options used.
+The target is a nanopi neo plus 2.
+#+begin_src shell
+  aarch64-buildroot-linux-gnu-gcc leibniz.c -o leibniz_c -O3 -march=armv8-a -mtune=cortex-a53 -s -fno-signed-zeros -fno-trapping-math -fassociative-math
+  zig build-exe leibniz_smid.zig -OReleaseFast -femit-bin=leibniz_zig_simd_aarch -target aarch64-native -mcpu cortex_a53 -fstrip
+  zig build-exe leibniz.zig -OReleaseFast -femit-bin=leibniz_zig_aarch -target aarch64-native -mcpu cortex_a53 -fstrip
+#+end_src
+
+#+RESULTS:
+
+On our arm target we cannot execute ~hyperfine~, we measure 8 times the each program and we made statistics.
+| Program                    | Mean [s] | Max [s] | Min [s] |
+|----------------------------+----------+---------+---------|
+| =./leibniz_c=              |    20.57 |   20.58 |   20.57 |
+| =./leibniz_zig_aarch=      |    19.95 |   19.96 |   19.95 |
+| =./leibniz_zig_simd_aarch= |    14.43 |   14.44 |   14.43 |
+
+
+*** Differents code examples benchmark
+
+Mes benchmarks sur mon ordi :
 | Command              | Mean [ms]  | Min [ms] | Max [ms] | Relative    |
 |----------------------+------------+----------+----------+-------------|
 | =./leibniz_zig=      | 85.9 ± 0.4 |     85.0 |     87.0 | 2.02 ± 0.03 |
-| =./leibniz_zig_smid= | 42.5 ± 0.5 |     41.6 |     43.7 | 1.00        |
+| =./leibniz_zig_simd= | 42.5 ± 0.5 |     41.6 |     43.7 | 1.00        |
 | =./leibniz_c=        | 43.3 ± 0.8 |     42.2 |     45.4 | 1.02 ± 0.02 |
 | =./leibniz_rs=       | 86.4 ± 1.5 |     85.2 |     94.3 | 2.03 ± 0.04 |
 | =./leibniz_avx2=     | 43.3 ± 0.5 |     42.1 |     44.3 | 1.02 ± 0.02 |
@@ -215,7 +485,7 @@ https://github.com/niklas-heer/speed-comparison/tree/master
 | Command              | Mean [ms]   | Min [ms] | Max [ms] | Relative    |
 |----------------------+-------------+----------+----------+-------------|
 | =./leibniz_zig=      | 883.9 ± 9.5 |    864.1 |    896.0 | 1.99 ± 0.03 |
-| =./leibniz_zig_smid= | 443.8 ± 5.2 |    437.2 |    452.0 | 1.00        |
+| =./leibniz_zig_simd= | 443.8 ± 5.2 |    437.2 |    452.0 | 1.00        |
 | =./leibniz_c=        | 481.5 ± 4.4 |    476.8 |    489.2 | 1.08 ± 0.02 |
 | =./leibniz_rs=       | 912.7 ± 9.7 |    897.1 |    925.1 | 2.06 ± 0.03 |
 | =./leibniz_avx2=     | 451.2 ± 6.3 |    443.8 |    465.7 | 1.02 ± 0.02 |
@@ -224,8 +494,161 @@ https://github.com/niklas-heer/speed-comparison/tree/master
 | Command              | Mean [s]      | Min [s] | Max [s] | Relative     |
 |----------------------+---------------+---------+---------+--------------|
 | =./leibniz_zig=      | 8.889 ± 0.095 |   8.722 |   9.058 | 13.91 ± 0.33 |
-| =./leibniz_zig_smid= | 4.386 ± 0.028 |   4.357 |   4.420 | 6.86 ± 0.15  |
+| =./leibniz_zig_simd= | 4.386 ± 0.028 |   4.357 |   4.420 | 6.86 ± 0.15  |
 | =./leibniz_c=        | 0.665 ± 0.003 |   0.658 |   0.669 | 1.04 ± 0.02  |
 | =./leibniz_rs=       | 8.903 ± 0.053 |   8.855 |   8.973 | 13.93 ± 0.31 |
 | =./leibniz_avx2=     | 0.639 ± 0.013 |   0.618 |   0.657 | 1.00         |
+
+
+** Programming language Benchmarks
+
+Another way of seeing the difference in performance between C and zig is to use slightly more complex code.
+The [[https://github.com/hanabi1224/Programming-Language-Benchmarks][Programming Language Benchmark]] git repository shows diffrent codes writting in different languages.
+Their website shows benchmarks made with their hardware [[https://programming-language-benchmarks.vercel.app/zig-vs-c][zig-vs-c]].
+We then reproduced the benchmarks between the C and the Zig to see if there were any differences with our hardware.
+
+Here's our results:
+CPU INFO:[x86\_64][8 cores] Intel(R) Core(TM) i7-8565U CPU @ 1.80GHz (Model 142)
+
+Here's what you need to know about file naming:
+#+begin_quote
+- *-m in a file name stands for multi-threading or multi-processing
+- *-i in a file name stands for direct intrinsics usage. (Usage of simd intrinsics via libraries is not counted)
+- *-ffi in a file name stands for non-stdlib FFI usage
+- *(You may find time < time(user) + time(sys) for some non-parallelized programs, the overhead is from GC or JIT compiler, which are allowed to take advantage of multi-cores as that's more close to real-world scenarios.) 
+#+end_quote
+
+You can find in the repo how the examples are compiled [[https://github.com/hanabi1224/Programming-Language-Benchmarks/tree/main/bench][here]].
+
+*knucleotide*
+
+Input: 2500000:
+| lang | code  | time  | stddev | peak-mem mem | time(user) | time(sys) | compiler compiler/runtime |
+|------+-------+-------+--------+--------------+------------+-----------+---------------------------|
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/knucleotide/1.c][1-m.c]] | 185ms | 8.3ms  | 23.6MB       | 623ms      | 13ms      | gcc 13.2.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/knucleotide/1.c][1-m.c]] | 308ms | 19ms   | 27.5MB       | 2143ms     | 80ms      | clang 17.0.6              |
+| zig  | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/knucleotide/1.zig][1.zig]] | 856ms | 6.0ms  | 19.9MB       | 907ms      | 10ms      | zig 0.12.0                |
+
+Input: 250000:
+| lang | code  | time | stddev | peak-mem mem | time(user) | time(sys) | compiler compiler/runtime |
+|------+-------+------+--------+--------------+------------+-----------+---------------------------|
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/knucleotide/1.c][1-m.c]] | 33ms | 1.8ms  | 11.9MB       | 153ms      | 0ms       | gcc 13.2.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/knucleotide/1.c][1-m.c]] | 47ms | 7.8ms  | 16.8MB       | 310ms      | 15ms      | clang 17.0.6              |
+| zig  | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/knucleotide/1.zig][1.zig]] | 90ms | 2.1ms  | 7.6MB        | 90ms       | 0ms       | zig 0.12.0                |
+
+
+*nbody*
+Input: 5000000
+| lang | code  | time  | stddev | peak-mem mem | time(user) | time(sys) | compiler compiler/runtime |
+|------+-------+-------+--------+--------------+------------+-----------+---------------------------|
+| zig  | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.zig][2.zig]] | 179ms | 2.1ms  | 1.3MB        | 187ms      | 0ms       | zig 0.12.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/5.c][5.c]]   | 193ms | 1.7ms  | 2.1MB        | 200ms      | 0ms       | clang 17.0.6              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/5.c][5.c]]   | 211ms | 7.9ms  | 1.4MB        | 220ms      | 0ms       | zigcc 0.12.0              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/8-i.c][8-i.c]] | 215ms | 2.9ms  | 1.4MB        | 223ms      | 0ms       | zigcc 0.12.0              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/8-i.c][8-i.c]] | 222ms | 2.9ms  | 2.0MB        | 233ms      | 0ms       | gcc 13.2.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/8-i.c][8-i.c]] | 225ms | 3.5ms  | 2.1MB        | 233ms      | 0ms       | clang 17.0.6              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.c][2.c]]   | 225ms | 1.4ms  | 2.0MB        | 233ms      | 0ms       | clang 17.0.6              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.c][2.c]]   | 240ms | 5.2ms  | 2.0MB        | 253ms      | 0ms       | gcc 13.2.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/5.c][5.c]]   | 242ms | 11ms   | 2.0MB        | 250ms      | 0ms       | gcc 13.2.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.c][2.c]]   | 254ms | 2.5ms  | 1.4MB        | 267ms      | 0ms       | zigcc 0.12.0              |
+| zig  | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/1.zig][1.zig]] | 265ms | 7.1ms  | 1.3MB        | 280ms      | 0ms       | zig 0.12.0                |
+
+Input: 500000
+| lang | code  | time | stddev | peak-mem mem | time(user) | time(sys) | compiler compiler/runtime |
+|------+-------+------+--------+--------------+------------+-----------+---------------------------|
+| zig  | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.zig][2.zig]] | 18ms | 0.2ms  | 1.3MB        | 10ms       | 0ms       | zig 0.12.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/5.c][5.c]]   | 21ms | 0.3ms  | 2.0MB        | 13ms       | 0ms       | clang 17.0.6              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/8-i.c][8-i.c]] | 21ms | 0.3ms  | 1.5MB        | 17ms       | 0ms       | zigcc 0.12.0              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/5.c][5.c]]   | 21ms | 0.9ms  | 1.4MB        | 13ms       | 0ms       | zigcc 0.12.0              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/8-i.c][8-i.c]] | 22ms | 1.4ms  | 2.3MB        | 17ms       | 0ms       | gcc 13.2.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/8-i.c][8-i.c]] | 25ms | 0.2ms  | 2.1MB        | 20ms       | 0ms       | clang 17.0.6              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/5.c][5.c]]   | 25ms | 1.2ms  | 2.3MB        | 20ms       | 0ms       | gcc 13.2.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.c][2.c]]   | 25ms | 0.4ms  | 2.1MB        | 20ms       | 0ms       | clang 17.0.6              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.c][2.c]]   | 25ms | 1.0ms  | 2.0MB        | 20ms       | 0ms       | gcc 13.2.0                |
+| zig  | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/1.zig][1.zig]] | 27ms | 0.4ms  | 1.1MB        | 20ms       | 0ms       | zig 0.12.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.c][2.c]]   | 28ms | 1.7ms  | 1.4MB        | 20ms       | 0ms       | zigcc 0.12.0              |
+
+*spectral-norm*
+Input: 8000
+| lang | code    | time   | stddev | peak-mem mem | time(user) | time(sys) | compiler compiler/runtime |
+|------+---------+--------+--------+--------------+------------+-----------+---------------------------|
+| zig  | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/2-m.zig][2-m.zig]] | 340ms  | 1.5ms  | 1.6MB        | 2550ms     | 3ms       | zig 0.12.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/6-im.c][6-im.c]]  | 547ms  | 11ms   | 4.6MB        | 4593ms     | 17ms      | clang 17.0.6              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/4.c][4-m.c]]   | 566ms  | 7.7ms  | 4.6MB        | 4780ms     | 13ms      | clang 17.0.6              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/6-im.c][6-im.c]]  | 568ms  | 14ms   | 2.1MB        | 4820ms     | 0ms       | gcc 13.2.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/4.c][4-m.c]]   | 586ms  | 11ms   | 2.1MB        | 4980ms     | 0ms       | gcc 13.2.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/5-im.c][5-im.c]]  | 727ms  | 4.5ms  | 2.1MB        | 6203ms     | 0ms       | gcc 13.2.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/3.c][3-m.c]]   | 749ms  | 13ms   | 4.6MB        | 6327ms     | 7ms       | clang 17.0.6              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/5-im.c][5-im.c]]  | 799ms  | 11ms   | 4.6MB        | 6770ms     | 23ms      | clang 17.0.6              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/3.c][3-m.c]]   | 833ms  | 23ms   | 2.1MB        | 7070ms     | 0ms       | gcc 13.2.0                |
+| zig  | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/2.zig][2.zig]]   | 1168ms | 3.1ms  | 1.5MB        | 1257ms     | 0ms       | zig 0.12.0                |
+| zig  | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/1.zig][1.zig]]   | 2774ms | 59ms   | 1.5MB        | 3010ms     | 0ms       | zig 0.12.0                |
+
+Input: 4000
+| lang | code    | time  | stddev | peak-mem mem | time(user) | time(sys) | compiler compiler/runtime |
+|------+---------+-------+--------+--------------+------------+-----------+---------------------------|
+| zig  | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/2-m.zig][2-m.zig]] | 89ms  | 1.6ms  | 1.6MB        | 493ms      | 0ms       | zig 0.12.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/6-im.c][6-im.c]]  | 157ms | 11ms   | 4.9MB        | 1237ms     | 3ms       | clang 17.0.6              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/6-im.c][6-im.c]]  | 163ms | 8.7ms  | 2.1MB        | 1327ms     | 0ms       | gcc 13.2.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/4.c][4-m.c]]   | 164ms | 4.2ms  | 4.8MB        | 1300ms     | 3ms       | clang 17.0.6              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/4.c][4-m.c]]   | 176ms | 5.4ms  | 2.0MB        | 1420ms     | 0ms       | gcc 13.2.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/5-im.c][5-im.c]]  | 205ms | 17ms   | 2.0MB        | 1683ms     | 0ms       | gcc 13.2.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/3.c][3-m.c]]   | 224ms | 26ms   | 4.8MB        | 1797ms     | 10ms      | clang 17.0.6              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/5-im.c][5-im.c]]  | 226ms | 2.9ms  | 4.9MB        | 1820ms     | 10ms      | clang 17.0.6              |
+| zig  | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/2.zig][2.zig]]   | 292ms | 1.1ms  | 1.4MB        | 310ms      | 0ms       | zig 0.12.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/3.c][3-m.c]]   | 488ms | 33ms   | 2.1MB        | 3600ms     | 0ms       | gcc 13.2.0                |
+| zig  | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/1.zig][1.zig]]   | 720ms | 11ms   | 1.3MB        | 773ms      | 0ms       | zig 0.12.0                |
+
+Input: 2000
+| lang | code    | time  | stddev | peak-mem mem | time(user) | time(sys) | compiler compiler/runtime |
+|------+---------+-------+--------+--------------+------------+-----------+---------------------------|
+| zig  | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/2-m.zig][2-m.zig]] | 28ms  | 0.6ms  | 1.4MB        | 47ms       | 0ms       | zig 0.12.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/6-im.c][6-im.c]]  | 54ms  | 12ms   | 4.6MB        | 363ms      | 0ms       | clang 17.0.6              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/3.c][3-m.c]]   | 61ms  | 4.1ms  | 4.6MB        | 427ms      | 0ms       | clang 17.0.6              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/4.c][4-m.c]]   | 65ms  | 3.5ms  | 4.9MB        | 433ms      | 7ms       | clang 17.0.6              |
+| zig  | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/2.zig][2.zig]]   | 72ms  | 1.0ms  | 1.4MB        | 70ms       | 0ms       | zig 0.12.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/5-im.c][5-im.c]]  | 73ms  | 11ms   | 4.6MB        | 520ms      | 3ms       | clang 17.0.6              |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/6-im.c][6-im.c]]  | 78ms  | 9.4ms  | 2.0MB        | 577ms      | 0ms       | gcc 13.2.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/3.c][3-m.c]]   | 78ms  | 10ms   | 2.1MB        | 600ms      | 0ms       | gcc 13.2.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/4.c][4-m.c]]   | 80ms  | 12ms   | 2.1MB        | 590ms      | 0ms       | gcc 13.2.0                |
+| c    | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/5-im.c][5-im.c]]  | 81ms  | 13ms   | 2.3MB        | 620ms      | 0ms       | gcc 13.2.0                |
+| zig  | [[https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/1.zig][1.zig]]   | 192ms | 3.6ms  | 1.3MB        | 203ms      | 0ms       | zig 0.12.0                |
+
+
+*** Results
+We can see that execution times vary greatly depending on the programming language, the implementation and finally the compiler used.
+In addition, we found that the best-performing Zig codes use vectors that are optimised by the compiler.
+On the other hand, Zig codes that are not optimised tend to perform less well than C codes.
+
+On the other hand, we can see that Zig codes consume less memory than C codes. 
+But for the comparison to be fair, the allocator used in Zig is the libC allocator.
+And finally, we can see that best performing code depend also on the input.
+
+We can't say that one language is faster than the other, as this will depend enormously on the context, the optimisations used and the complexity of the code.
+On the other hand, we can make a hypothesis based on the measurements taken: if dynamic memory allocation is carried out correctly, we can expect Zig code to generally consume less memory than C code.
+
+As a reminder, the results obtained are specific to the machine and operating system used.
+In addition, we can compare the differences in performance between the benchmarks obtained on my machine and the machine used by the [[https://github.com/hanabi1224/Programming-Language-Benchmarks][Programming Language Benchmark]] site.
+For their part, the  [[https://github.com/hanabi1224/Programming-Language-Benchmarks][Programming Language Benchmark]] site uses a machine with the following information:
+- CPU INFO:[x86_64][4 cores] AMD EPYC 7763 64-Core Processor (Model 1)
+- We should also note that compiler versions have changed, which can also add variability to the results
+  1. gcc 13.2.0
+  2. clang 14.0.0-1ubuntu1.1 
+  3. zig 0.12.0-dev.2341+92211135f 
+  4. zigcc 0.12.0-dev.2341+92211135f
+
+For the knucleotide example, we obtain a comparable ranking in the two results, however, we notice that my x86 target is 85 ms slower for the version of Zig with an input of 2500000, but it consumes less memory (around 500KB).
+
+For the nbody example, we can note that on average, the performance obtained is better on my x86 target, but the memory used remains in the same order of magnitude.
+We also see that the ~8-i.c~ implementation is faster under AMD Epics for the ~zigcc~ compiler and for ~gcc~.
+And that the ~5.c~ implementation with the ~Clang~ compiler is among the first in the x86 test, but is among the last for AMD.
+We note that the difference between version 14 and version 17 of clang can also affect the results.
+This is the only example where the zigcc compiler is used for benchmarking, and we can see that the performance results obtained are similar to those we can get with gcc or clang.
+We can also observe that the same code compiled with zigcc uses less memory than the other compilers.
+Further tests would be needed to confirm this, as the nbody example does not allocate memory dynamically.
+
+In the last example, we notice a big difference between the result of the ~2.zig~ code for an input of 8000: it is second to last for performance on x86, while it is second best on AMD.
+Furthermore, we can see that the standard deviation may be higher for certain codes, but the results are different depending on the target.
+Finally, the ~1.zig~ code is the worst-performing code for both benchmarks.
+It runs 2x slower than the second-worst code
 
