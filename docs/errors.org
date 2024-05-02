@@ -1,7 +1,10 @@
 ** Errors
 https://ziglang.org/documentation/0.11.1/#Errors
+
 In ZIG errors are juste values.
+
 Those values are those of an special type of enum "error".
+
 When you declare your enum using this keyword instead of "enum", the compiler is going to know that those values are going to be errors, therefore they can be catched, tried, ...
 
 

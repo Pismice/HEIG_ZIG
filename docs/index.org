@@ -8,6 +8,10 @@
 
 #+INCLUDE: "./allocators.org" :minlevel 1
 
+#+INCLUDE: "./comptime.org" :minlevel 1
+
+#+INCLUDE: "./zig-and-c.org" :minlevel 1
+
 #+INCLUDE: "./build-system.org" :minlevel 1
 
 #+INCLUDE: "./concurrency.org" :minlevel 1

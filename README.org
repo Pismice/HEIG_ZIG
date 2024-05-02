@@ -3,9 +3,11 @@ The purpose of this repository is to document the features of the Zig language, 
 
 You can use this documentation with 2 different ways:
 - Using emacs org mode so that you can execute codes on the fly(litterate programming)
-- Opening the index.html file in your browser or navigating to our [[hosted guide][https://pismice.github.io/HEIG_ZIG/]] 
+- Opening the index.html file in your browser or navigating to our [[https://pismice.github.io/HEIG_ZIG/][hosted guide]] (this link always host the last commmit of the master branch)
 
 ** Remarks
 - We are going to move all the "Sources" to the "Bilbliography" chapter using Zotero
 - Some exemples are not working with emacs yet
 - You might see a few TODO or empty chapters, those are the ones we are working on or plan to work on in the future
+- Not all the code blocks are org mode compatible yet
+- We are going to make it nicer by adding themes to the code (I hope)
