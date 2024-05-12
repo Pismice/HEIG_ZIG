@@ -1,3 +1,4 @@
+
 #+bibliography: bibliography.bib
 #+cite_export: csl ieee.csl
 
@@ -503,8 +504,8 @@ Mes benchmarks sur mon ordi :
 ** Programming language Benchmarks
 
 Another way of seeing the difference in performance between C and zig is to use slightly more complex code.
-The [[https://github.com/hanabi1224/Programming-Language-Benchmarks][Programming Language Benchmark]] git repository shows diffrent codes writting in different languages.
-Their website shows benchmarks made with their hardware [[https://programming-language-benchmarks.vercel.app/zig-vs-c][zig-vs-c]].
+The [[https://github.com/hanabi1224/Programming-Language-Benchmarks][Programming Language Benchmark]] [cite:@Hanabi1224ProgrammingLanguageBenchmarksAnother] git repository shows diffrent codes writting in different languages.
+Their website shows benchmarks made with their hardware [[https://programming-language-benchmarks.vercel.app/zig-vs-c][zig-vs-c]]. [cite:@ZigVSBenchmarks]
 We then reproduced the benchmarks between the C and the Zig to see if there were any differences with our hardware.
 
 Here's our results:
@@ -651,4 +652,100 @@ In the last example, we notice a big difference between the result of the ~2.zig
 Furthermore, we can see that the standard deviation may be higher for certain codes, but the results are different depending on the target.
 Finally, the ~1.zig~ code is the worst-performing code for both benchmarks.
 It runs 2x slower than the second-worst code
+
+** 1BRC
+
+The /one billion row challenge/ is a challenge that involves calculing the min, max and average of 1 billion row of measurments (a 12 Gio file). [cite:@BillionRowChallenge]
+Everone can submit a code to try to have the better implementation.
+Originaly the challenge was for java, but now we can find multiple solutions in many languages.
+
+In this documentation, we tried to see the differences between three implementation: one in C and two in Zig:
+- [[https://github.com/almmiko/1brc-zig][1brc C]] [cite:@kootenDannyvankooten1brc2024] [cite:@OneBillionRows2024]
+- [[https://github.com/candrewlee14/1brc-zig][1brc-zig]] [cite:@leeCandrewlee141brczig2024]
+- [[https://github.com/almmiko/1brc-zig][1brc-zig - second implementation]] [cite:@mykolaichukAlmmiko1brczig2024]
+
+In each repository, we can find how to compile their binary, we followed their instructions.
+
+After each implementation build, we benchmark with hyperfine to have the restults:
+
+1. First, we used =hyperfine= to benchmark the three implementations one after the other:
+#+begin_src shell
+  hyperfine --warmup=3 './1brc/bin/analyze ~/Documents/1brc/measurements.txt' './1brc-zig/zig-out/bin/1brc-zig ~/Documents/1brc/measurements.txt' './1brc-zig2/zig-out/bin/1brc-zig ~/Documents/1brc/measurements.txt' --export-orgmode "benchmark-1brc.org" --output null -i
+#+end_src
+
+And we have the results:
+| Command                                                              | Mean [s]       | Min [s] | Max [s] | Relative    |
+|----------------------------------------------------------------------+----------------+---------+---------+-------------|
+| =./1brc/bin/analyze ~/Documents/1brc/measurements.txt=               | 11.774 ± 2.051 |   7.582 |  13.034 | 1.00        |
+| =./1brc-zig/zig-out/bin/1brc-zig ~/Documents/1brc/measurements.txt=  | 21.283 ± 0.051 |  21.228 |  21.390 | 1.81 ± 0.31 |
+| =./1brc-zig2/zig-out/bin/1brc-zig ~/Documents/1brc/measurements.txt= | 24.788 ± 0.187 |  24.332 |  24.931 | 2.11 ± 0.37 |
+
+We can see the differences in performances between C and Zig, but we note that the differences between the best C result and the worst C result has a difference of 6 seconds.
+
+To see if we get different performances, we benchmark each implementation on its own:
+
+The first Zig implementation [[https://github.com/candrewlee14/1brc-zig][1brc-zig]]
+| Command                                        | Mean [s]       | Min [s] | Max [s] | Relative |
+|------------------------------------------------+----------------+---------+---------+----------|
+| =./1brc-zig ~/Documents/1brc/measurements.txt= | 15.647 ± 2.206 |  13.301 |  21.649 |     1.00 |
+
+Sometimes when we redo the benchmark we don't get this huge difference.
+| Command                                        | Mean [s]       | Min [s] | Max [s] | Relative |
+|------------------------------------------------+----------------+---------+---------+----------|
+| =./1brc-zig ~/Documents/1brc/measurements.txt= | 12.749 ± 0.345 |  12.202 |  13.545 |     1.00 |
+
+
+The second Zig implementation [[https://github.com/almmiko/1brc-zig][1brc-zig - second implementation]]
+| Command                                        | Mean [s]       | Min [s] | Max [s] | Relative |
+|------------------------------------------------+----------------+---------+---------+----------|
+| =./1brc-zig ~/Documents/1brc/measurements.txt= | 18.730 ± 2.837 |  15.192 |  24.906 |     1.00 |
+
+And the C implementation
+| Command                                       | Mean [s]      | Min [s] | Max [s] | Relative |
+|-----------------------------------------------+---------------+---------+---------+----------|
+| =./analyze ~/Documents/1brc/measurements.txt= | 8.898 ± 0.591 |   7.507 |   9.510 |     1.00 |
+
+
+In the C implementation, we note that his writer use a custom hashmap to hash the city names.
+He use a fast multiplication hash combined with a linear search probing.
+The load factor of his hashmap is 0.5. [cite:@BillionRowChallenge]
+
+We find out that in the first Zig implementation, use also a hashmap but the Zig standard library hashmap for string hash with the wyhash [cite:@wangyiWangyifudanWyhash2024] algorithm.
+
+The ~Hotspot~ program has been used to create flamegraph of the implementations:
+
+If you look at Zig's flamegraph, you can see that 40% of the cycle time is used to insert the city into the hashmap.
+#+CAPTION: Flamegrph of the Zig's 1brc implementation
+[[../images/flamegraph_1brc_zig_1.png]]
+
+In C, on the other hand, the insertion time in the hashmap is not measurable because it is included in the ~process_chunck~ function but does not require any complex hash calculation.
+Calculating the base index is mapped into an array, and then, if there are any collisions, the index is incremented.
+#+CAPTION: Flamegrph of the C's 1brc implementation
+[[../images/flamegrah_1brc_c.png]]
+
+In the example below, this is how the hash is calculated for each city: [cite:@OneBillionRows2024a]
+#+begin_example c
+// hash everything up to ';'
+// assumption: key (city name) is at least 1 char
+unsigned int len = 1;
+unsigned int hash = (unsigned char)buf[0];
+while (buf[len] != ';') {
+  hash = (hash * 31) + (unsigned char)buf[len++];
+}
+
+// probe map until free spot or matching key
+unsigned int idx = hashmap[hash & cap-1];
+while (idx != 0 && memcmp(results[idx], buf, len) != 0) {
+    hash++;
+    idx = hashmap[hash & cap-1];
+}
+
+// idx is now either 0 (new entry)
+// or contains the index of our key in the results a
+#+end_example
+
+
+For the second implementation of the Zig code, we note that it has been implemented with a =btree=, used for data merge.
+This merge is carried out because there are several threads processing the data.
+However, it also uses the same hashmap as the one used in the first version.
 
