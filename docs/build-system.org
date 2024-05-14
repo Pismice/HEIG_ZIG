@@ -503,8 +503,8 @@ Mes benchmarks sur mon ordi :
 
 ** Programming language Benchmarks
 
-Another way of seeing the difference in performance between C and zig is to use slightly more complex code.
-The [[https://github.com/hanabi1224/Programming-Language-Benchmarks][Programming Language Benchmark]] [cite:@Hanabi1224ProgrammingLanguageBenchmarksAnother] git repository shows diffrent codes writting in different languages.
+Another way of seeing the difference in performance between C and Zig is to use slightly more complex code.
+The [[https://github.com/hanabi1224/Programming-Language-Benchmarks][Programming Language Benchmark]] [cite:@Hanabi1224ProgrammingLanguageBenchmarksAnother] git repository shows differents codes writing in different languages.
 Their website shows benchmarks made with their hardware [[https://programming-language-benchmarks.vercel.app/zig-vs-c][zig-vs-c]]. [cite:@ZigVSBenchmarks]
 We then reproduced the benchmarks between the C and the Zig to see if there were any differences with our hardware.
 
@@ -617,15 +617,15 @@ Input: 2000
 
 
 *** Results
-We can see that execution times vary greatly depending on the programming language, the implementation and finally the compiler used.
+We can see that execution times vary greatly depending on the programming language, the implementation, and finally, the compiler used.
 In addition, we found that the best-performing Zig codes use vectors that are optimised by the compiler.
 On the other hand, Zig codes that are not optimised tend to perform less well than C codes.
 
 On the other hand, we can see that Zig codes consume less memory than C codes. 
 But for the comparison to be fair, the allocator used in Zig is the libC allocator.
-And finally, we can see that best performing code depend also on the input.
+And finally, we can see that the best-performing code depend also on the input.
 
-We can't say that one language is faster than the other, as this will depend enormously on the context, the optimisations used and the complexity of the code.
+We can't say that one language is faster than the other, as this will depend enormously on the context, the optimisations used, and the complexity of the code.
 On the other hand, we can make a hypothesis based on the measurements taken: if dynamic memory allocation is carried out correctly, we can expect Zig code to generally consume less memory than C code.
 
 As a reminder, the results obtained are specific to the machine and operating system used.
@@ -655,18 +655,18 @@ It runs 2x slower than the second-worst code
 
 ** 1BRC
 
-The /one billion row challenge/ is a challenge that involves calculing the min, max and average of 1 billion row of measurments (a 12 Gio file). [cite:@BillionRowChallenge]
-Everone can submit a code to try to have the better implementation.
-Originaly the challenge was for java, but now we can find multiple solutions in many languages.
+The /one billion row challenge/ is a challenge that involves calculating the min, max, and average of 1 billion rows of measurements (a 12 Gio file). [cite:@BillionRowChallenge]
+Everyone can submit a code to try to have a better implementation.
+Originally the challenge was for Java, but now we can find multiple solutions in many languages.
 
-In this documentation, we tried to see the differences between three implementation: one in C and two in Zig:
+In this documentation, we tried to see the differences between three implementations: one in C and two in Zig:
 - [[https://github.com/almmiko/1brc-zig][1brc C]] [cite:@kootenDannyvankooten1brc2024] [cite:@OneBillionRows2024]
 - [[https://github.com/candrewlee14/1brc-zig][1brc-zig]] [cite:@leeCandrewlee141brczig2024]
 - [[https://github.com/almmiko/1brc-zig][1brc-zig - second implementation]] [cite:@mykolaichukAlmmiko1brczig2024]
 
 In each repository, we can find how to compile their binary, we followed their instructions.
 
-After each implementation build, we benchmark with hyperfine to have the restults:
+After each implementation build, we benchmark with hyperfine to have the results:
 
 1. First, we used =hyperfine= to benchmark the three implementations one after the other:
 #+begin_src shell
@@ -680,7 +680,7 @@ And we have the results:
 | =./1brc-zig/zig-out/bin/1brc-zig ~/Documents/1brc/measurements.txt=  | 21.283 ± 0.051 |  21.228 |  21.390 | 1.81 ± 0.31 |
 | =./1brc-zig2/zig-out/bin/1brc-zig ~/Documents/1brc/measurements.txt= | 24.788 ± 0.187 |  24.332 |  24.931 | 2.11 ± 0.37 |
 
-We can see the differences in performances between C and Zig, but we note that the differences between the best C result and the worst C result has a difference of 6 seconds.
+We can see the differences in performances between C and Zig, but we note that the differences between the best C result and the worst C result have a difference of 6 seconds.
 
 To see if we get different performances, we benchmark each implementation on its own:
 
@@ -706,8 +706,8 @@ And the C implementation
 | =./analyze ~/Documents/1brc/measurements.txt= | 8.898 ± 0.591 |   7.507 |   9.510 |     1.00 |
 
 
-In the C implementation, we note that his writer use a custom hashmap to hash the city names.
-He use a fast multiplication hash combined with a linear search probing.
+In the C implementation, we note that his writer uses a custom hashmap to hash the city names.
+He uses a fast multiplication hash combined with a linear search probing.
 The load factor of his hashmap is 0.5. [cite:@BillionRowChallenge]
 
 We find out that in the first Zig implementation, use also a hashmap but the Zig standard library hashmap for string hash with the wyhash [cite:@wangyiWangyifudanWyhash2024] algorithm.
