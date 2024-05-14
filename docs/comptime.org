@@ -7,6 +7,27 @@ In comparison with C, Zig comptime has the purpose of replacing marco with a mor
 In fact, C's macro tends to be error-prone when using it.
 The advantage of using comptime over macro is the type safety of Zig when writing comptime.
 
+** When to use and when NOT to use it
+*** When to use it
+Because the compiler can now do things at compilation time, leaving less work to be done at runtime. (if the compiler gives you the power to do things at compile time so easily, you should use it ^^)
+
+So you should basically try to use it as much as you can.
+
+*** When NOT to use it (source: ziglings)
+The following contexts are already IMPLICITLY evaluated at
+compile time, and adding the 'comptime' keyword would be
+superfluous, redundant, and smelly:
+
+   - The container-level scope (outside of any function in a source file)
+   - Type declarations of:
+       - Variables
+       - Functions (types of parameters and return values)
+       - Structs
+       - Unions
+       - Enums
+   - The test expressions in inline for and while loops
+   - An expression passed to the @cImport() builtin
+
 ** Compile-time evaluation
 *** Compile-time variable
 
@@ -498,3 +519,6 @@ For this example, a basic struct named ~Person~ will be transformed to CSV.
 | M    | Lucas  | 2000 |
 | F    | Ava    | 2020 |
 | F    | Sophia | 1989 |
+
+** Bonus
+Here is a very nice blog written by a core member of the ZIG community if you want to dig further: https://kristoff.it/blog/what-is-zig-comptime/

@@ -1,0 +1,59 @@
+** Zig package manager
+Since 0.11, Zig has now an official built-in package manager named.
+
+There is no global repository like [[https://crates.io][crates.io]](Rust) or [[https://npm.js.com][npmjs]](Node.js) for Zig packages. Instead, Zig packages are distributed as git repositories.
+
+In order to add packages to your project you are going to create and edit a file in the root of your project named "build.zig.zon" (zon stands for Zig Object Notation, which is an equivalent to json).
+
+*** Add a package in your project
+1. Add the packages you want in your build.zig.zon file
+#+begin_src zon
+.{
+    .name = "name-of-my-project",
+    .version = "0.0.1",
+
+    .dependencies = .{
+        // Here you add all the packages you want, in this exemple I have imported zap which is a web framework
+        .zap = .{
+            .url = "https://github.com/zigzap/zap/archive/refs/tags/v0.1.7-pre.tar.gz",
+            .hash = "1220002d24d73672fe8b1e39717c0671598acc8ec27b8af2e1caf623a4fd0ce0d1bd",
+        },
+    }
+}
+#+end_src
+You can get further understanding in how to write your build.zig.zon following the official doc: https://github.com/ziglang/zig/blob/master/doc/build.zig.zon.md
+
+With 0.12.0 you can now use the "zig fetch" command from the root of your zig project to fetch the packages you need:
+#+begin_src shell
+zig fetch --save git+https://github.com/zigzap/zap/#HEAD
+#+end_src
+
+If you are prior to 0.12.0, you can write the "url" parameter without the "hash", then "zig build" and the outpout will give you the correct hash that you can then put back in your build.zig.zon file.
+
+2. Add those added packages in your build.zig
+Simply add the following code after the "addExectuable" function
+#+begin_src zig
+const zap = b.dependency("zap", .{
+        .target = target,
+        .optimize = optimize,
+});
+exe.addModule("zap", zap.module("zap"));
+exe.linkLibrary(zap.artifact("facil.io"));
+#+end_src
+Note: here it is specific to the zap package, you might have different options and no need to link a library for an other package (zap uses facil.io under the hood)
+
+3. Simply "@import" them and use them in your code :)
+#+begin_src zig
+const zap = @import("zap");
+#+end_src
+
+Your packages will be downloaded and compiled when you build your project.
+
+*** Sources
+https://zig.news/edyu/zig-package-manager-wtf-is-zon-558e
+https://zig.news/edyu/zig-package-manager-wtf-is-zon-2-0110-update-1jo3
+https://ziglang.org/download/0.11.0/release-notes.html#Package-Management
+https://ziggit.dev/t/how-to-package-a-zig-source-module-and-how-to-use-it/3457
+https://github.com/ziglang/zig/blob/master/doc/build.zig.zon.md
+https://ziglang.org/download/0.11.0/release-notes.html#Package-Management
+https://github.com/zigzap/zap
