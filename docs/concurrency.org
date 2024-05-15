@@ -1,68 +1,233 @@
 * Concurrency
+** Introduction
+The objectives of this chapter is to go in depth about the different ways to do concurrency in ZIG.
+
+We are going to explore the different ways to do concurrency in general (not Zig related) and then we could use a few of those solutions in ZIG.
+
+By the end you should be able to see the pros and cons of each solution and choose the one that fits you in Zig.
+
 ** Definitions
 Before diving into the different ways to do concurrency in ZIG, let's first define some terms that are useful to understand the basics of concurrency (not related to Zig).
 
-*** Coroutine (cooperative multitasking)
-- a coroutine in itself is not concurrent , it allows to manage concurrent tasks in the same way as callbacks for example
-- single threaded
-- allows to write code in a sequential manner
-- allows not to have context switch
-- 2 types of coroutine: symmetric vs asymmetric (relative to the control-transfer mechanism, explained a bit below)
-- coroutines are not preemptive, they are cooperative, therefore they must explicitly give back control by **yielding**
-- usually uses keywords like **yield**, **resume**, **suspend**, ...
-- Coroutines can be either stackful or stackless, we are not gonna dive deep into this concept since most of the time you are going to use stackful coroutines since they allow you to suspend from within a nested stackframe (the only strength of stackless coroutines: efficiency)
+*** Coroutine
+Courtines enable the management of concurrent tasks like callbacks do (which make them not concurrent by nature but they are a tool to achieve concurrency). Their great power lies in their ability to write concurent task like you would write sequential code. They achieve this by yielding control between them. They are used for cooperative multitasking, since the control flow is managed by themselves and not the OS. You might see them in a lot of languages like Python, Lua, Kotlin, ... with keywords like **yield**, **resume**, **suspend**, ...
+
+Coroutines can be either stackful or stackless, we are not gonna dive deep into this concept since most of the time you are going to use stackful coroutines since they allow you to suspend from within a nested stackframe (the only strength of stackless coroutines: efficiency)
+
+Coroutines can also be symmetric or asymmetric:
 
 **** Symmetric coroutines
-- Their only control-transfer mechanism is: 
-1. explicitly passing control to another coroutine
-
+The only way to transfer the control flow is by explicitly passing control **to another coroutine**.
 **** Asymmetric coroutines (called asymmetric because the control-transfer can go both ways)
 - They have two control-transfer mechanisms:
 1. invoking another coroutine which is going to be the subcoroutine of the calling coroutine
 2. suspending itself and giving control back to the caller
 
 *** Green threads (userland threads)
-- preemptive multitasking (PAS VRAI selon appel !)
-- managed by a VM/runtime instead of the OS 
-- has the advantage to be managed in user space instead of kernel space which allows to avoid the overhead of making system calls to open and close threads
-- still use several native threads behind the scenes
-- used more for short-lived tasks
+Green threads, also known as userland threads are managed by a runtime or VM instead of the OS with standard kernel threads. They are lightweight compared to OS threads as they have a lower overhead (since it is managed in userspace instead of kernel). Even though they are not real OS threads, there are still OS threads that manage them under the hood. Paritculary useful for short-lived tasks.
+- preemptive multitasking ou cooperative (TODO JE NE SAIS TOUJOURS PAS psq le runtime peut toujours les preempter)
 
 *** Fibers
-- Same as green threads but cooperative multitasking instead of preemptive multitasking
+Same as green threads but cooperative multitasking instead of preemptive multitasking
 
 *** Preemptive multitasking
-- The underlying architecture (NOT us, but the OS for exemple) is going to be deciding what to execute and when
-- This means that our threads can be interrupted at any time
+In preemptive multitasking it is the underlying architecture (not us, but the OS or the runtime for exemple) that is in charge of choosing which threads to execute and when. This implies that our threads can be stopped (preempted) at any time, even if in the middle of a task. This method gives the advantage of not having to worr about a thread being starved, since the underlying architecture is going to make sure that everyone gets enough CPU time.
 
 *** Cooperative multitasking
-- A thread will continue to run until it decides to give up control (yielding)
-- We are in full control of the execution flow of our threads
-- The drawback of this method is that YOU have to think and code in a way to not have starving threads for exemple
+Contrary to preemptive multitasking, it is the progammer job to choose which and when the differents threads are executed. Threads are going to run until they are explicitly yielding control back. This method gives the advantage to have the progammer to have a fine grained control over his ressources, but also implies that the programmer has to think about not starving threads.
 
-*** Thread
-- Multithreading
-- Each threads are still blocking
-- Main and historical way of doing concurrency
-- Parallelism (eventually): Threads allow for true parallel execution on multi-core CPUs, enabling better utilization of hardware resources and potentially improving performance.
-- Isolation: Threads provide strong isolation between concurrent tasks, with each thread having its own execution context, stack, and local variables.
-- Scalability: Managing a large number of threads can be challenging and may lead to scalability issues, as the operating system kernel has to allocate resources for each thread.
-- Usually used with a thread pool to avoid the overhead of creating and destroying threads for each task which is very expensive
+*** Thread (ChatGPT)
+Multithreading, a cornerstone of concurrency, operates by dividing tasks into multiple threads, each executing independently. Unlike asynchronous event-driven programming, threads typically block until their assigned task completes. This approach has long been the primary method for handling concurrency in software development.
 
-*** Event-driven programming (ex: NodeJS)
-- Event loop that regularly checks if "events" are launched
-- Scalability: Event-driven architectures are inherently scalable, as they can handle a large number of concurrent connections with low memory and CPU overhead.
-- Code behind NodeJS: https://github.com/libuv/libuv
+Parallelism becomes achievable through multithreading (even though its not 100% guaranteed), particularly on multi-core CPUs, facilitating genuine simultaneous execution and maximizing hardware utilization. Threads also offer robust isolation, with each thread possessing its own execution context, stack, and local variables, ensuring task independence and preventing interference.
 
-** Zig current state
+However, scalability can become a concern when managing numerous threads. The overhead of resource allocation by the operating system kernel for each thread may lead to scalability issues, particularly in high-demand environments. To mitigate this, thread pools are often employed to minimize the overhead of thread creation and destruction, thus optimizing performance and resource utilization.
+To avoid this overhead, thread pools are often used, which manage a set of threads that can be reused for multiple tasks. This approach reduces the overhead of creating and destroying threads for each task, making it more efficient and scalable.
+
+*** Event-driven programming (ChatGPT)
+Event-driven programming, exemplified by platforms like NodeJS, operates through an event loop that continuously monitors for triggered "events". This architecture boasts scalability, adeptly managing numerous concurrent connections while keeping memory and CPU usage minimal. The engine powering NodeJS lies in the codebase hosted on GitHub at https://github.com/libuv/libuv. Under the hood libuv is basically a single threaded [[https://docs.libuv.org/en/v1.x/design.html#the-i-o-loop][event-loop]] which is going to perform all IOs on non-blocking sockets that are polled by pollers like epoll, kqueue, ...
+
+** Zig solutions
 There are multiple ways you currently can do concurent code in ZIG, we are going to explore a few here:
 
 *** OS threads (std)
-Spawning OS threads (https://ziglang.org/documentation/master/std/#std.Thread)
-TODO exemple
+Spawning OS thread in Zig is quite simple, since it is built-in in the standard library. Here is an example of how to spawn 2 threads that are going to print numbers from 0 to x in parallel:
+#+begin_src zig :imports '(std) :main 'no :testsuite 'no
+pub fn main() !void {
+    //std.debug.print("Total CPU cores = {!}\n", .{std.Thread.getCpuCount()});
+    const thread1 = try std.Thread.spawn(.{}, goTo, .{ 1, 5 });
+    const thread2 = try std.Thread.spawn(.{}, goTo, .{ 2, 3 });
 
-*** Old async/await
-Using old async/await from before 0.11 (not recommanded because unstable !!! https://github.com/ziglang/zig/issues/6025 and might probably never get back in the language https://ziglang.org/download/0.12.0/release-notes.html#AsyncAwait-Feature-Status)
+    thread1.join();
+    thread2.join();
+}
+fn goTo(thread_id: u8, max: usize) void {
+    var i: u32 = 0;
+    while (i <= max) {
+        std.debug.print("{} = {}\n", .{ thread_id, i });
+        i += 1;
+    }
+}
+#+end_src
+Note that the std.Thread also offer few other useful functions like `std.Thread.getCpuCount()` to get the number of CPU cores available on the machine.
+#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+std.debug.print("Total CPU cores = {!}\n", .{std.Thread.getCpuCount()});
+#+end_src
+
+You could also use a thread pool in order to have a few threads to multiple jobs and not 1 thread = 1 job
+#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+pub fn main() !void {
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
+    const allocator = gpa.allocator();
+
+    var pool: std.Thread.Pool = undefined;
+    try pool.init(.{ .allocator = allocator, .n_jobs = 2 }); // if you dont set n_jobs it is simply going to use the total number of cores in your system, but alloactor is obligatory.
+    defer pool.deinit();
+
+    for (0..8) |i| {
+        try pool.spawn(goTo, .{ @as(u8, @intCast(i)), 3 });
+    }
+}
+
+fn goTo(thread_id: u8, max: usize) void {
+    var i: u32 = 0;
+    while (i <= max) {
+        std.debug.print("{} = {}\n", .{ thread_id, i });
+        i += 1;
+    }
+}
+#+end_src
+
+Under the hood the threads are either pthread ([[https://ziglang.org/documentation/master/std/#std.Thread.use_pthreads][if we are under linux AND linking libc]]) or it is simpy going to use native OS threads.
+
+The advantage of doing multi-threading in Zig is that you don't have to worry about what is the targer system going to be, since **std.Thread** implementation automatically chooses for which threads implementation to choose for the system your are compiling for. In C if you are using Windows for exemple, since **pthreads** it is not natively supported you would have to use a third-party implementation by adding a compilation tag like so:
+#+begin_src c
+gcc program.c -o program -pthread
+#+end_src
+
+Or worse, you would have to use a completly different library ending up with a lot of pre-processor directives to check if you are using Windows or not which is going to lead to messy code:
+#+begin_src c
+#include <stdio.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <pthread.h>
+#endif
+
+#ifdef _WIN32
+DWORD WINAPI ThreadFunc(LPVOID lpParam) {
+  printf("Thread running...\n");
+  return 0;
+}
+#else
+void *ThreadFunc(void *arg) {
+  printf("Thread running...\n");
+  return NULL;
+}
+#endif
+
+int main() {
+#ifdef _WIN32
+  HANDLE hThread;
+  DWORD dwThreadId;
+
+  hThread = CreateThread(NULL, 0, ThreadFunc, NULL, 0, &dwThreadId);
+  if (hThread == NULL) {
+    printf("Failed to create thread.\n");
+    return 1;
+  }
+
+  // Wait for the thread to finish
+  WaitForSingleObject(hThread, INFINITE);
+
+  // Close the thread handle
+  CloseHandle(hThread);
+#else
+  pthread_t thread;
+  int rc;
+
+  rc = pthread_create(&thread, NULL, ThreadFunc, NULL);
+  if (rc) {
+    printf("Failed to create thread. Return code: %d\n", rc);
+    return 1;
+  }
+
+  // Wait for the thread to finish
+  pthread_join(thread, NULL);
+#endif
+
+  printf("Everything is done.\n");
+
+  return 0;
+}
+#+end_src
+
+Or you could write your own wrapper kind of like the way Zig does (this is not going to work on Windows, but you get the idea):
+#+begin_src c
+#include <stdio.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <pthread.h>
+#endif
+
+int myCreate(unsigned long *thread, void *func) {
+#ifdef _WIN32
+  return hThread = CreateThread(NULL, 0, func, NULL, 0, thread);
+#else
+  return pthread_create(thread, NULL, func, NULL);
+#endif
+}
+
+void myJoin(unsigned long thread) {
+#ifdef _WIN32
+  return WaitForSingleObject(thread, INFINITE);
+#else
+  pthread_join(thread, NULL);
+#endif
+}
+
+void *ThreadFunc(void *arg) {
+  printf("Thread running...\n");
+  return NULL;
+}
+
+int main() {
+  pthread_t thread; // TODO I should also wrap that which is pthread specific
+
+  int rc = myCreate(&thread, ThreadFunc);
+  if (rc) {
+    printf("Failed to create thread. Return code: %d\n", rc);
+    return 1;
+  }
+
+  myJoin(thread);
+
+  printf("Everything is done.\n");
+
+  return 0;
+}
+#+end_src
+
+*** async/await
+This method uses suspensible stackless coroutines, this solution does not necessarly mean that you are going to have multiple threads or parallelism.
+
+We are not going to dive deeper into this solution because it has been deprecated since 0.11 and is not coming back soon.
+
+However it is still a good reading and way to understand concurency to read this [[https://zig.guide/async/introduction/][very good guide]] that was made for this solution.
+By reading this you might notice that **async/await** might **never** come out.
+
+Note that if this solution is to be brought again it might come with breaking changes, so the syntax might change.
+
+You can find a [[https://github.com/ziglang/zig/issues/6025][Github discussion]] about the progress of this feature and why it is not implemented in the current version.
+
+You can see [[https://ziglang.org/download/0.12.0/release-notes.html#AsyncAwait-Feature-Status][here]] the main reasons why this solution is not implemented yet.
+
+**** Function coloring
+Green threads make function colors disapear ???? (dependences entre threads)
 
 *** libxev
 Using an event loop (by wrapping libuv or using libxev which is the equivalent buz in ZIG)
@@ -73,6 +238,9 @@ Using fibers (https://github.com/kprotty/zefi, https://github.com/kassane/fiber)
 TODO exemple
 
 *** zigcoro
+This solution uses stackful asymmetric coroutines.
+stackful asymmetric coroutines
+This library is made to provide similar functionalities to async/await "old" model, so that if/when the official async/await solution is coming back, it will be easy to switch your project from using zigcoro to the official async/await.
 async/await built on top of libxev (https://github.com/rsepassi/zigcoro)
 TODO exemple
 
@@ -80,14 +248,17 @@ TODO exemple
 ... obviously you can still use C libraries that do async stuff :)
 TODO exemple
 
-** Function coloring
-Green threads make function colors disapear ???? (dependences entre threads)
 
 TODO MES NOTES -------- pas besoin de lire ca, cest juste pour moi pour approfondir certains sujets plus tard
 
 - "libuv and OSes will usually run background/worker threads and/or polling to perform tasks in a non-blocking manner." est ce que cest comment ca under the hood les non blocking async ?
 
 - "The event loop follows the rather usual single threaded asynchronous I/O approach: all (network) I/O is performed on non-blocking sockets which are polled using the best mechanism available on the given platform: epoll on Linux, kqueue on OSX and other BSDs, event ports on SunOS and IOCP on"
+
+- tokio equivalent in zig ? 
+
+** Conclusion
+TODO: qu est ce que je pourrais bien dire de + que dans le contenu, parler du potentiel ?
 
 ** Sources:
 - https://dl.acm.org/doi/pdf/10.1145/1462166.1462167
