@@ -8,6 +8,7 @@ Zap isn't really a fully Zig project, it just wraps and leverages the power of [
 
 **** Exemples
 The [[https://github.com/zigzap/zap][repo]] gives you a lot of [[https://github.com/zigzap/zap/tree/master/examples][exemples]] in order to get started.
+TODO jaimerais bien faire les exemples ici mais comment faire pour utiliser une librairie dans org babel ? je ne pense pas que se soit possible, du moins facilement
 
 **** Alternatives and performance comparaison
 TODO mettre le resultat de wrk bizzare

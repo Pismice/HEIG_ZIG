@@ -51,6 +51,7 @@ Event-driven programming, exemplified by platforms like NodeJS, operates through
 There are multiple ways you currently can do concurent code in ZIG, we are going to explore a few here:
 
 *** OS threads (std)
+**** Basics
 Spawning OS thread in Zig is quite simple, since it is built-in in the standard library. Here is an example of how to spawn 2 threads that are going to print numbers from 0 to x in parallel:
 #+begin_src zig :imports '(std) :main 'no :testsuite 'no
 pub fn main() !void {
@@ -74,6 +75,7 @@ Note that the std.Thread also offer few other useful functions like `std.Thread.
 std.debug.print("Total CPU cores = {!}\n", .{std.Thread.getCpuCount()});
 #+end_src
 
+**** Thread pool
 You could also use a thread pool in order to have a few threads to multiple jobs and not 1 thread = 1 job
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
 pub fn main() !void {
@@ -99,9 +101,12 @@ fn goTo(thread_id: u8, max: usize) void {
 }
 #+end_src
 
+**** Under the hood
 Under the hood the threads are either pthread ([[https://ziglang.org/documentation/master/std/#std.Thread.use_pthreads][if we are under linux AND linking libc]]) or it is simpy going to use native OS threads.
 
-The advantage of doing multi-threading in Zig is that you don't have to worry about what is the targer system going to be, since **std.Thread** implementation automatically chooses for which threads implementation to choose for the system your are compiling for. In C if you are using Windows for exemple, since **pthreads** it is not natively supported you would have to use a third-party implementation by adding a compilation tag like so:
+The advantage of doing multi-threading in Zig is that you don't have to worry about what is the target system going to be, since **std.Thread** implementation automatically chooses the native OS threads for the system your are compiling for (except if you want to enforce the use of pthreads). 
+
+In C if you are using Windows for exemple, since **pthreads** it is not natively supported you would have to use a third-party implementation by adding a compilation tag like so:
 #+begin_src c
 gcc program.c -o program -pthread
 #+end_src
@@ -211,6 +216,19 @@ int main() {
   return 0;
 }
 #+end_src
+
+**** Thread synchronization
+
+
+**** Leaky abstraction
+TODO: est ce que je peux fine tuned threads en Zig ? (priority, stack size, ...)
+
+**** Conclusion
+Zig threads are really useful since they have a very user-friendly abstraction with not a lot of functionalites that are almost never used anyway. This abstraction is also very useful for what we saw earlier, you don't have to worry about the target system, Zig is going to choose the right implementation for you.
+
+But this leaky abstraction comes at a cost, you can not fine-tune your threads as much as you would like to.
+
+If you need specific thread functionalities, like the ones we talked about, you can still do that in Zig by wrapping the C pthread library for exemple or directly use the OS native threads you want.
 
 *** async/await
 This method uses suspensible stackless coroutines, this solution does not necessarly mean that you are going to have multiple threads or parallelism.
