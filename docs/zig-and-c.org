@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ** Zig and C
 *** Introduction
 The interoperability between Zig and C is one of the most important feature of Zig. But why ?
@@ -140,6 +141,7 @@ TODO utiliser code zig dans project C https://zig.guide/working-with-c/calling-c
 [[https://ziglang.org/documentation/master/#Variables][Zig documentation for those 2 keywords.]]
 
 TODO jai oublie d ajouter du code zig, ne pas oublier export/extern
+
 TODO pros and cons of using zig toolchain instead of clang or gcc
 
 *** How is it done under the hood

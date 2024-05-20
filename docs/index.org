@@ -27,6 +27,10 @@
 Does Zig manage tcp stream with the OS stream or has it created its own implementation ?
 
 
+#+INCLUDE: "./comptime.org" :minlevel 1
+
+#+INCLUDE: "./zig-and-c.org" :minlevel 1
+
 #+INCLUDE: "./build-system.org" :minlevel 1
 
 #+INCLUDE: "./allocators.org" :minlevel 1

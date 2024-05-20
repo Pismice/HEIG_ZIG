@@ -18,6 +18,7 @@ Coroutines can also be symmetric or asymmetric:
 
 **** Symmetric coroutines
 The only way to transfer the control flow is by explicitly passing control **to another coroutine**.
+
 **** Asymmetric coroutines (called asymmetric because the control-transfer can go both ways)
 - They have two control-transfer mechanisms:
 1. invoking another coroutine which is going to be the subcoroutine of the calling coroutine
@@ -46,7 +47,6 @@ To avoid this overhead, thread pools are often used, which manage a set of threa
 
 *** Event-driven programming (ChatGPT)
 Event-driven programming, exemplified by platforms like NodeJS, operates through an event loop that continuously monitors for triggered "events". This architecture boasts scalability, adeptly managing numerous concurrent connections while keeping memory and CPU usage minimal. The engine powering NodeJS lies in the codebase hosted on GitHub at https://github.com/libuv/libuv. Under the hood libuv is basically a single threaded [[https://docs.libuv.org/en/v1.x/design.html#the-i-o-loop][event-loop]] which is going to perform all IOs on non-blocking sockets that are polled by pollers like epoll, kqueue, ...
-
 ** Zig solutions
 There are multiple ways you currently can do concurent code in ZIG, we are going to explore a few here:
 
@@ -266,6 +266,8 @@ TODO exemple
 ... obviously you can still use C libraries that do async stuff :)
 TODO exemple
 
+** Conclusion
+TODO: qu est ce que je pourrais bien dire de + que dans le contenu, parler du potentiel ?
 
 TODO MES NOTES -------- pas besoin de lire ca, cest juste pour moi pour approfondir certains sujets plus tard
 
@@ -274,9 +276,6 @@ TODO MES NOTES -------- pas besoin de lire ca, cest juste pour moi pour approfon
 - "The event loop follows the rather usual single threaded asynchronous I/O approach: all (network) I/O is performed on non-blocking sockets which are polled using the best mechanism available on the given platform: epoll on Linux, kqueue on OSX and other BSDs, event ports on SunOS and IOCP on"
 
 - tokio equivalent in zig ? 
-
-** Conclusion
-TODO: qu est ce que je pourrais bien dire de + que dans le contenu, parler du potentiel ?
 
 ** Sources:
 - https://dl.acm.org/doi/pdf/10.1145/1462166.1462167
