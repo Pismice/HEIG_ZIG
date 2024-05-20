@@ -1,3 +1,5 @@
+#+bibliography: bibliography.bib
+
 ** Code styles
 *** Style guide
 **** fmt
@@ -11,9 +13,9 @@ This util is going to enforce basic things for you like:
 - Line length
 - ....
 **** Naming conventions
-1. TitleCaseTypeName: for types and structs that are callable (for "classes" in other languages basically)
-2. camelCaseFunctionName: for functions
-3. snake\_case\_variable_name: for variables and everything else TODO formatter le snake_case_... car sur le web ca affiche pas comme il faut
+1. =TitleCaseTypeName=: for types and structs that are callable (for "classes" in other languages basically)
+2. =camelCaseFunctionName=: for functions
+3. =snake\_case\_variable_name=: for variables and everything else
 
 *** undefined and null values
 TODO for some reason the 2 org block code are not working, maybe i should "testsuite"
@@ -45,7 +47,7 @@ std.debug.print("my_var = {}\n", .{value});
 #+RESULTS:
 
 *** Zen
-Zig encourages you to use the Zen philosophy, I find them quite interesting to have in mind when coding, here they are:
+Zig encourages you to use the [[https://ziglang.org/documentation/0.12.0/#Zen][Zen philosophy]], they reflect well the spirit behind Zig, here they are:
 - Communicate intent precisely.
 - Edge cases matter.
 - Favor reading code over writing code.

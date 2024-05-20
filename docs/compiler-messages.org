@@ -1,17 +1,20 @@
 ** Compiler messages
-In a language that aims to report most of its issues at compilation time, it is important to have clear and concise error messages. However at the time I am writing this it is sadly not the case. Here are a few compiler messages that you might encounter that are very hard to understand:
+In a language that aims to report most of its issues at compilation time, it is important to have clear and concise error messages. However at the time we are writing this it is sadly not the case. Here are a few compiler messages that you might encounter that are very hard to understand:
 
-*** Trying to print
+*** Trying to print without the correct struct syntax
 We are going to start with the most basic one, everyone doing Zig did at least one time
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
 std.debug.print("Hello I am {} years old", 12);
 #+end_src
 
-TODO HOW TO FORMAT THAT
+#+begin_example
 /home/tetratrux/.zvm/0.11.0/lib/std/fmt.zig:87:9: error: expected tuple or struct argument, found comptime_int
         @compileError("expected tuple or struct argument, found " ++ @typeName(ArgsType));
+#+end_example
 
-Is the type of error you should get, from reading that we cant even know from where the problem is in our code, no line number, nothing, ...
+Is the type of error you should get, from reading that we cant even know from where the problem is in our code, no line number, no stacktrace, nothing.
+
+But if you read the message carefully and you know that [[https://ziglang.org/documentation/master/std/#std.debug.print][print]] second argument except a struct with the *.{}* syntax, you realize that you passed a value with the wrong type.
 
 So when you get that type of error message make sure that you are printing your message correctly with the second argument that should be a struct with the *.{}* syntax.
 

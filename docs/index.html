@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2024-05-20 lun 19:08 -->
+<!-- 2024-05-20 lun 20:41 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Zig documentation</title>
@@ -23,289 +23,293 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org9339fc0">1. Introduction</a>
+<li><a href="#org3ea39de">1. Introduction</a>
 <ul>
-<li><a href="#orgeb04ad2">1.1. What this documentation IS</a></li>
-<li><a href="#org95bdd2d">1.2. What this documentation IS NOT</a></li>
-<li><a href="#orgd8b5f9a">1.3. How to use this documentation</a></li>
-<li><a href="#org39e8087">1.4. Build Emacs configuration</a>
+<li><a href="#org218d711">1.1. What this documentation IS</a></li>
+<li><a href="#orgb126f95">1.2. What this documentation IS NOT</a></li>
+<li><a href="#org1b1f97c">1.3. How to use this documentation</a></li>
+<li><a href="#orgb928b47">1.4. Build Emacs configuration</a>
 <ul>
-<li><a href="#org3cda9dd">1.4.1. Install Zig emacs org babel plugin</a></li>
-<li><a href="#org6b55305">1.4.2. Create an emacs configuration file</a></li>
-<li><a href="#org1fd1e73">1.4.3. Execute the configuration file from the configuration</a></li>
+<li><a href="#org6e7003d">1.4.1. Install Zig emacs org babel plugin</a></li>
+<li><a href="#org498416e">1.4.2. Create an emacs configuration file</a></li>
+<li><a href="#orga9bd7c4">1.4.3. Execute the configuration file from the configuration</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#org840e583">2. Basics of the language</a>
+<li><a href="#orge5c9fb2">2. Basics of the language</a>
 <ul>
-<li><a href="#org2261ac0">2.1. Reading external files</a>
+<li><a href="#org7b8c612">2.1. Reading external files</a>
 <ul>
-<li><a href="#org1beddde">2.1.1. @embedFile</a></li>
-<li><a href="#orgc671a4e">2.1.2. Use an allocator to dynamically store the content of the file</a></li>
-<li><a href="#org9aa93f6">2.1.3. Read the file and put it in a buffer</a></li>
+<li><a href="#orgfea9e11">2.1.1. @embedFile</a></li>
+<li><a href="#orga357b84">2.1.2. Use an allocator to dynamically store the content of the file</a></li>
+<li><a href="#orgb4642ea">2.1.3. Read the file and put it in a buffer</a></li>
 </ul>
 </li>
-<li><a href="#org433e176">2.2. Errors</a>
+<li><a href="#org15f1d9f">2.2. Errors</a>
 <ul>
-<li><a href="#org3364e97">2.2.1. Handling errors in the application flow</a></li>
-<li><a href="#org094f5d8">2.2.2. Errdefer</a></li>
-<li><a href="#orgda5e33f">2.2.3. Coercing</a></li>
+<li><a href="#org994f5ee">2.2.1. Handling errors in the application flow</a></li>
+<li><a href="#org843e4d1">2.2.2. Errdefer</a></li>
+<li><a href="#org264823f">2.2.3. Coercing</a></li>
 </ul>
 </li>
-<li><a href="#org5227581">2.3. Code styles</a>
+<li><a href="#orgdeae058">2.3. Code styles</a>
 <ul>
-<li><a href="#org6035e73">2.3.1. Style guide</a></li>
-<li><a href="#orgbfdd526">2.3.2. undefined and null values</a></li>
-<li><a href="#org6871757">2.3.3. Zen</a></li>
+<li><a href="#orgcda364c">2.3.1. Style guide</a></li>
+<li><a href="#org580ffdb">2.3.2. undefined and null values</a></li>
+<li><a href="#org1df5e07">2.3.3. Zen</a></li>
 </ul>
 </li>
-<li><a href="#orge721d8d">2.4. Zig version manager</a>
+<li><a href="#org3f67ddd">2.4. Zig version manager</a>
 <ul>
-<li><a href="#orgd29176a">2.4.1. Basic usage</a></li>
+<li><a href="#org40ad1e8">2.4.1. Basic usage</a></li>
 </ul>
 </li>
-<li><a href="#orgcbad7dc">2.5. defer</a>
+<li><a href="#orgfd90b08">2.5. defer</a>
 <ul>
-<li><a href="#org59b9d34">2.5.1. Exemple</a></li>
-<li><a href="#orgde5e54d">2.5.2. Freeing memory</a></li>
+<li><a href="#org20b99ea">2.5.1. Exemple</a></li>
+<li><a href="#org2913ac4">2.5.2. Freeing memory</a></li>
 </ul>
 </li>
-<li><a href="#org2389fd9">2.6. Testing code</a></li>
-<li><a href="#orgcffde92">2.7. TCP stream</a>
+<li><a href="#org9a39777">2.6. Testing code</a></li>
+<li><a href="#orgc7b36ff">2.7. Compiler messages</a>
 <ul>
-<li><a href="#org7403460">2.7.1. <span class="todo TODO">TODO</span> How Zig manages stream</a></li>
+<li><a href="#org46303e2">2.7.1. Trying to print</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li><a href="#orgfd992fe">3. Comptime</a>
+<li><a href="#org2a35891">2.8. TCP stream</a>
 <ul>
-<li><a href="#orgef1190a">3.1. When to use and when NOT to use it</a>
-<ul>
-<li><a href="#orgaaa74d9">3.1.1. When to use it</a></li>
-<li><a href="#org2d1dd56">3.1.2. When NOT to use it (source: ziglings)</a></li>
-</ul>
-</li>
-<li><a href="#org0e6eb60">3.2. Compile-time evaluation</a>
-<ul>
-<li><a href="#org694dc09">3.2.1. Compile-time variable</a></li>
-<li><a href="#orgde0957e">3.2.2. Compile-time expression</a></li>
-<li><a href="#orgcb50963">3.2.3. Compile-time parameter</a></li>
-</ul>
-</li>
-<li><a href="#orgb9e0c1f">3.3. Metaprogramming</a>
-<ul>
-<li><a href="#org2ced803">3.3.1. <code>@TypeOf</code></a></li>
-<li><a href="#orgf0d87d7">3.3.2. <code>@typeInfo</code></a></li>
-</ul>
-</li>
-<li><a href="#orgdea1c44">3.4. <span class="todo TODO">TODO</span> Optimization</a>
-<ul>
-<li><a href="#org59cd52e">3.4.1. How log works in Zig</a></li>
-</ul>
-</li>
-<li><a href="#org7898e7b">3.5. Generic data structures</a></li>
-<li><a href="#org1aef0a7">3.6. Example with a custom CSV writer based on type</a></li>
-<li><a href="#org4871464">3.7. Bonus</a></li>
-</ul>
-</li>
-<li><a href="#org77eb809">4. Zig and C</a>
-<ul>
-<li><a href="#org9cc8339">4.1. Introduction</a></li>
-<li><a href="#org39c1a19">4.2. Main differences between Zig and C in the syntax</a>
-<ul>
-<li><a href="#org1df27a3">4.2.1. Types</a></li>
-<li><a href="#org79b9e25">4.2.2. Loops</a></li>
-<li><a href="#orge181b66">4.2.3. Pointers</a></li>
-<li><a href="#orgae92f18">4.2.4. Type conversions</a></li>
-</ul>
-</li>
-<li><a href="#org0212933">4.3. How to call a C function from Zig</a></li>
-<li><a href="#orgc476cce">4.4. How to call a Zig function from C / Continuing a C project with Zig</a>
-<ul>
-<li><a href="#org1b8cfad">4.4.1. export and extern keywords</a></li>
-</ul>
-</li>
-<li><a href="#orga6a57bf">4.5. How is it done under the hood</a></li>
-<li><a href="#orgfe9420c">4.6. Util to translate C code to Zig</a>
-<ul>
-<li><a href="#org1760d64">4.6.1. Comparison with other langauges that use C code</a></li>
-</ul>
-</li>
-<li><a href="#org876a864">4.7. Notes</a></li>
-</ul>
-</li>
-<li><a href="#orgd09189b">5. Compilation - build system</a>
-<ul>
-<li><a href="#orgaf08c17">5.1. Zig package manager</a>
-<ul>
-<li><a href="#org3cd0adf">5.1.1. Add a package in your project</a></li>
-<li><a href="#org3931586">5.1.2. Sources</a></li>
-</ul>
-</li>
-<li><a href="#org4befd80">5.2. <span class="todo TODO">TODO</span> Comptime</a></li>
-<li><a href="#orgeb47c8e">5.3. <span class="todo TODO">TODO</span> How to use the build system</a></li>
-<li><a href="#orgf079041">5.4. Build modes</a>
-<ul>
-<li><a href="#org712aa2d">5.4.1. <span class="todo TODO">TODO</span> Build steps</a></li>
-<li><a href="#org19356b5">5.4.2. <span class="todo TODO">TODO</span> Generate automatically documentation</a></li>
-<li><a href="#org65b97d4">5.4.3. Strip output binary in Zig in Linux</a></li>
-<li><a href="#org8a61df4">5.4.4. Separate debug symbols from ELF executable</a></li>
-</ul>
-</li>
-<li><a href="#org6ceb9df">5.5. Cross-compilation</a>
-<ul>
-<li><a href="#org08e5dab">5.5.1. <span class="todo TODO">TODO</span> Cross-compile with an embedded linux</a></li>
+<li><a href="#org4201e69">2.8.1. <span class="todo TODO">TODO</span> How Zig manages stream</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orgd4e6d23">6. Allocator</a>
+<li><a href="#orge3272aa">3. Comptime</a>
 <ul>
-<li><a href="#org55b4f94">6.1. General pattern</a></li>
-<li><a href="#orgc30d3bc">6.2. Page allocator (<code>page_allocator</code>)</a></li>
-<li><a href="#org20dc3da">6.3. Fixed buffer allocator</a></li>
-<li><a href="#orgadc6104">6.4. Arena allocator</a>
+<li><a href="#org0fcd91c">3.1. When to use and when NOT to use it</a>
 <ul>
-<li><a href="#org8f47dbd">6.4.1. Internal working of arena allocator</a></li>
+<li><a href="#orgfa85cef">3.1.1. When to use it</a></li>
+<li><a href="#orgb602f7c">3.1.2. When NOT to use it (source: ziglings)</a></li>
 </ul>
 </li>
-<li><a href="#orgd337121">6.5. General purpose allocator</a></li>
-<li><a href="#orgd4ce63c">6.6. Testing allocator</a></li>
-<li><a href="#orgdd261b3">6.7. <span class="todo TODO">TODO</span> Failing allocator</a></li>
-<li><a href="#orgec6dd94">6.8. <span class="todo TODO">TODO</span> C allocator</a></li>
-<li><a href="#orgb817ccb">6.9. <span class="todo TODO">TODO</span> implementing your own allocator</a></li>
-<li><a href="#org2ffb022">6.10. <span class="todo TODO">TODO</span> How to use Zig to detect memory leaks</a>
+<li><a href="#org2ea8d75">3.2. Compile-time evaluation</a>
 <ul>
-<li><a href="#org61b484a">6.10.1. <span class="todo TODO">TODO</span> Comparison between gcc-utils sanitizer, Valgrind, and Zig memory leak detection</a></li>
+<li><a href="#org8a45f5d">3.2.1. Compile-time variable</a></li>
+<li><a href="#org8655deb">3.2.2. Compile-time expression</a></li>
+<li><a href="#org3a4e6e3">3.2.3. Compile-time parameter</a></li>
 </ul>
 </li>
-<li><a href="#org2a23b62">6.11. <span class="todo TODO">TODO</span> ?</a></li>
-<li><a href="#orgf660e16">6.12. Conclusion</a></li>
-</ul>
-</li>
-<li><a href="#orga8c47f5">7. Comptime</a>
+<li><a href="#orgad282c4">3.3. Metaprogramming</a>
 <ul>
-<li><a href="#org231c379">7.1. When to use and when NOT to use it</a>
+<li><a href="#orga86bdc7">3.3.1. <code>@TypeOf</code></a></li>
+<li><a href="#org8a5763a">3.3.2. <code>@typeInfo</code></a></li>
+</ul>
+</li>
+<li><a href="#org328234f">3.4. <span class="todo TODO">TODO</span> Optimization</a>
 <ul>
-<li><a href="#orged446ad">7.1.1. When to use it</a></li>
-<li><a href="#orgadf217d">7.1.2. When NOT to use it (source: ziglings)</a></li>
+<li><a href="#org7fa759c">3.4.1. How log works in Zig</a></li>
 </ul>
 </li>
-<li><a href="#org9ea0827">7.2. Compile-time evaluation</a>
+<li><a href="#org4d5b0d3">3.5. Generic data structures</a></li>
+<li><a href="#orgdd61457">3.6. Example with a custom CSV writer based on type</a></li>
+<li><a href="#orgee5ee76">3.7. Bonus</a></li>
+</ul>
+</li>
+<li><a href="#org90ac208">4. Zig and C</a>
 <ul>
-<li><a href="#orgedcb2e7">7.2.1. Compile-time variable</a></li>
-<li><a href="#org435dc26">7.2.2. Compile-time expression</a></li>
-<li><a href="#org423defa">7.2.3. Compile-time parameter</a></li>
-</ul>
-</li>
-<li><a href="#org3fd7f54">7.3. Metaprogramming</a>
+<li><a href="#org5be1c9d">4.1. Introduction</a></li>
+<li><a href="#orgf468c8e">4.2. Main differences between Zig and C in the syntax</a>
 <ul>
-<li><a href="#org36de831">7.3.1. <code>@TypeOf</code></a></li>
-<li><a href="#org7aae3aa">7.3.2. <code>@typeInfo</code></a></li>
+<li><a href="#org6dd7e6e">4.2.1. Types</a></li>
+<li><a href="#orgbc30a47">4.2.2. Loops</a></li>
+<li><a href="#org28b7cea">4.2.3. Pointers</a></li>
+<li><a href="#org5363e41">4.2.4. Type conversions</a></li>
 </ul>
 </li>
-<li><a href="#org9609f79">7.4. <span class="todo TODO">TODO</span> Optimization</a>
+<li><a href="#orgb89fa5a">4.3. How to call a C function from Zig</a></li>
+<li><a href="#orgb24a5e1">4.4. How to call a Zig function from C / Continuing a C project with Zig</a>
 <ul>
-<li><a href="#orge094852">7.4.1. How log works in Zig</a></li>
+<li><a href="#org2f718dc">4.4.1. export and extern keywords</a></li>
 </ul>
 </li>
-<li><a href="#org525e3fa">7.5. Generic data structures</a></li>
-<li><a href="#orgd8fb10d">7.6. Example with a custom CSV writer based on type</a></li>
-<li><a href="#orgd648a82">7.7. Bonus</a></li>
-</ul>
-</li>
-<li><a href="#orga3127bc">8. Zig and C</a>
+<li><a href="#orgfb54f13">4.5. How is it done under the hood</a></li>
+<li><a href="#org1267bad">4.6. Util to translate C code to Zig</a>
 <ul>
-<li><a href="#org19d981b">8.1. Introduction</a></li>
-<li><a href="#org7064094">8.2. Main differences between Zig and C in the syntax</a>
+<li><a href="#org92b55a1">4.6.1. Comparison with other langauges that use C code</a></li>
+</ul>
+</li>
+<li><a href="#org0683789">4.7. Notes</a></li>
+</ul>
+</li>
+<li><a href="#org0977db4">5. Compilation - build system</a>
 <ul>
-<li><a href="#org3822581">8.2.1. Types</a></li>
-<li><a href="#org37334b5">8.2.2. Loops</a></li>
-<li><a href="#org2f36c4a">8.2.3. Pointers</a></li>
-<li><a href="#orgf48020f">8.2.4. Type conversions</a></li>
-</ul>
-</li>
-<li><a href="#orgef376cf">8.3. How to call a C function from Zig</a></li>
-<li><a href="#orgf496195">8.4. How to call a Zig function from C / Continuing a C project with Zig</a>
+<li><a href="#orgc7b10a8">5.1. Zig package manager</a>
 <ul>
-<li><a href="#org38dfb65">8.4.1. export and extern keywords</a></li>
+<li><a href="#orgc81652f">5.1.1. Add a package in your project</a></li>
+<li><a href="#org01624aa">5.1.2. Sources</a></li>
 </ul>
 </li>
-<li><a href="#org0767e2b">8.5. How is it done under the hood</a></li>
-<li><a href="#org202544d">8.6. Util to translate C code to Zig</a>
+<li><a href="#org3742028">5.2. <span class="todo TODO">TODO</span> Comptime</a></li>
+<li><a href="#org10bc112">5.3. <span class="todo TODO">TODO</span> How to use the build system</a></li>
+<li><a href="#orgb865291">5.4. Build modes</a>
 <ul>
-<li><a href="#orgc349102">8.6.1. Comparison with other langauges that use C code</a></li>
+<li><a href="#orga3f1b5c">5.4.1. <span class="todo TODO">TODO</span> Build steps</a></li>
+<li><a href="#orgf0e8eab">5.4.2. <span class="todo TODO">TODO</span> Generate automatically documentation</a></li>
+<li><a href="#org8382d11">5.4.3. Strip output binary in Zig in Linux</a></li>
+<li><a href="#org9c565d1">5.4.4. Separate debug symbols from ELF executable</a></li>
 </ul>
 </li>
-<li><a href="#org5d77ceb">8.7. Notes</a></li>
-</ul>
-</li>
-<li><a href="#org3deac6b">9. Concurrency</a>
+<li><a href="#orgfef432c">5.5. Cross-compilation</a>
 <ul>
-<li><a href="#orgd186a41">9.1. Introduction</a></li>
-<li><a href="#org2449088">9.2. Definitions</a>
+<li><a href="#org1602267">5.5.1. <span class="todo TODO">TODO</span> Cross-compile with an embedded linux</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orge0028eb">6. Allocator</a>
 <ul>
-<li><a href="#orgb1d2bbd">9.2.1. Coroutine</a></li>
-<li><a href="#orgfa2139c">9.2.2. Green threads (userland threads)</a></li>
-<li><a href="#org15c2c20">9.2.3. Fibers</a></li>
-<li><a href="#orgfa2060d">9.2.4. Preemptive multitasking</a></li>
-<li><a href="#org877bdce">9.2.5. Cooperative multitasking</a></li>
-<li><a href="#org405fd1d">9.2.6. Thread (ChatGPT)</a></li>
-<li><a href="#org1d434ca">9.2.7. Event-driven programming (ChatGPT)</a></li>
-</ul>
-</li>
-<li><a href="#org5b23eea">9.3. Zig solutions</a>
+<li><a href="#orgc103b42">6.1. General pattern</a></li>
+<li><a href="#orgc566d6e">6.2. Page allocator (<code>page_allocator</code>)</a></li>
+<li><a href="#orgafa98dc">6.3. Fixed buffer allocator</a></li>
+<li><a href="#org02dbfab">6.4. Arena allocator</a>
 <ul>
-<li><a href="#org5e85aaa">9.3.1. OS threads (std)</a></li>
-<li><a href="#org00ae371">9.3.2. async/await</a></li>
-<li><a href="#orgdbc74ec">9.3.3. libxev</a></li>
-<li><a href="#org87ff0fb">9.3.4. Fibers</a></li>
-<li><a href="#org1874f14">9.3.5. zigcoro</a></li>
-<li><a href="#orgf95f0b5">9.3.6. Using C libraries</a></li>
+<li><a href="#org2b08b1a">6.4.1. Internal working of arena allocator</a></li>
 </ul>
 </li>
-<li><a href="#org79ef113">9.4. Conclusion</a></li>
-<li><a href="#org9edddf2">9.5. Sources:</a></li>
-</ul>
-</li>
-<li><a href="#org8288288">10. Web frameworks</a>
+<li><a href="#org2287d05">6.5. General purpose allocator</a></li>
+<li><a href="#orgad61610">6.6. Testing allocator</a></li>
+<li><a href="#orgf555207">6.7. <span class="todo TODO">TODO</span> Failing allocator</a></li>
+<li><a href="#org557b71c">6.8. <span class="todo TODO">TODO</span> C allocator</a></li>
+<li><a href="#orgcc9210f">6.9. <span class="todo TODO">TODO</span> How to use Zig to detect memory leaks</a>
 <ul>
-<li><a href="#orgafc8260">10.1. Introduction</a></li>
-<li><a href="#org2075a5d">10.2. Zig solutions</a></li>
-<li><a href="#org7f8d6c8">10.3. Zap</a>
+<li><a href="#org97cabbf">6.9.1. <span class="todo TODO">TODO</span> Comparison between gcc-utils sanitizer, Valgrind, and Zig memory leak detection</a></li>
+</ul>
+</li>
+<li><a href="#org3f4f36f">6.10. <span class="todo TODO">TODO</span> ?</a></li>
+<li><a href="#org030f41a">6.11. Conclusion</a></li>
+</ul>
+</li>
+<li><a href="#org086b495">7. Comptime</a>
 <ul>
-<li><a href="#org2c361c4">10.3.1. Description</a></li>
-<li><a href="#org45a5c85">10.3.2. Exemples</a></li>
-<li><a href="#org7fa72d2">10.3.3. Alternatives and performance comparaison</a></li>
-<li><a href="#org5b4df12">10.3.4. Conclusion</a></li>
-<li><a href="#org9b01a45">10.3.5. Mes notes</a></li>
-</ul>
-</li>
-<li><a href="#org9ab3d03">10.4. HTTP from the std</a>
+<li><a href="#org9a39ef1">7.1. When to use and when NOT to use it</a>
 <ul>
-<li><a href="#orgd8207d3">10.4.1. Description</a></li>
-<li><a href="#org7cc084b">10.4.2. Exemples</a></li>
-<li><a href="#orgcd92717">10.4.3. Tokamak</a></li>
-<li><a href="#orgcd19c41">10.4.4. Jetzig</a></li>
+<li><a href="#org7c62110">7.1.1. When to use it</a></li>
+<li><a href="#org4e3a3da">7.1.2. When NOT to use it (source: ziglings)</a></li>
 </ul>
 </li>
-<li><a href="#orge6ad9cc">10.5. Conclusion</a></li>
-</ul>
-</li>
-<li><a href="#orga0c13ce">11. Case studies</a>
+<li><a href="#org2228847">7.2. Compile-time evaluation</a>
 <ul>
-<li><a href="#org2ceca91">11.1. Interacting with processuses</a></li>
+<li><a href="#org66f36ef">7.2.1. Compile-time variable</a></li>
+<li><a href="#org5fe0a67">7.2.2. Compile-time expression</a></li>
+<li><a href="#orga784a3c">7.2.3. Compile-time parameter</a></li>
 </ul>
 </li>
-<li><a href="#org047dfa0">12. Bibliography</a></li>
+<li><a href="#orga614d9e">7.3. Metaprogramming</a>
+<ul>
+<li><a href="#org1936f93">7.3.1. <code>@TypeOf</code></a></li>
+<li><a href="#org9f5da0e">7.3.2. <code>@typeInfo</code></a></li>
+</ul>
+</li>
+<li><a href="#org377727f">7.4. <span class="todo TODO">TODO</span> Optimization</a>
+<ul>
+<li><a href="#org6da2d85">7.4.1. How log works in Zig</a></li>
+</ul>
+</li>
+<li><a href="#org79a7b0d">7.5. Generic data structures</a></li>
+<li><a href="#orgbe49f8b">7.6. Example with a custom CSV writer based on type</a></li>
+<li><a href="#orgffe8e8a">7.7. Bonus</a></li>
+</ul>
+</li>
+<li><a href="#org648508c">8. Zig and C</a>
+<ul>
+<li><a href="#org9948a55">8.1. Introduction</a></li>
+<li><a href="#org679686a">8.2. Main differences between Zig and C in the syntax</a>
+<ul>
+<li><a href="#orgcd005a8">8.2.1. Types</a></li>
+<li><a href="#orgc59e3a2">8.2.2. Loops</a></li>
+<li><a href="#org5f22bee">8.2.3. Pointers</a></li>
+<li><a href="#orgecb6664">8.2.4. Type conversions</a></li>
+</ul>
+</li>
+<li><a href="#orgc3ac9f7">8.3. How to call a C function from Zig</a></li>
+<li><a href="#orgb5c6884">8.4. How to call a Zig function from C / Continuing a C project with Zig</a>
+<ul>
+<li><a href="#orgaa765c3">8.4.1. export and extern keywords</a></li>
+</ul>
+</li>
+<li><a href="#org579dea3">8.5. How is it done under the hood</a></li>
+<li><a href="#orgbce567f">8.6. Util to translate C code to Zig</a>
+<ul>
+<li><a href="#org11ffc14">8.6.1. Comparison with other langauges that use C code</a></li>
+</ul>
+</li>
+<li><a href="#org984f355">8.7. Notes</a></li>
+</ul>
+</li>
+<li><a href="#orged611de">9. Concurrency</a>
+<ul>
+<li><a href="#org8d617a8">9.1. Introduction</a></li>
+<li><a href="#org298774f">9.2. Definitions</a>
+<ul>
+<li><a href="#org03d3f7d">9.2.1. Coroutine</a></li>
+<li><a href="#org086d02e">9.2.2. Green threads (userland threads)</a></li>
+<li><a href="#org57656d9">9.2.3. Fibers</a></li>
+<li><a href="#orgb8da06c">9.2.4. Preemptive multitasking</a></li>
+<li><a href="#org5eb6f05">9.2.5. Cooperative multitasking</a></li>
+<li><a href="#orgc90b37b">9.2.6. Thread (ChatGPT)</a></li>
+<li><a href="#org2f98507">9.2.7. Event-driven programming (ChatGPT)</a></li>
+</ul>
+</li>
+<li><a href="#orgdb57e9c">9.3. Zig solutions</a>
+<ul>
+<li><a href="#org906b6b4">9.3.1. OS threads (std)</a></li>
+<li><a href="#orgbee4f96">9.3.2. async/await</a></li>
+<li><a href="#org52bb047">9.3.3. libxev</a></li>
+<li><a href="#org194ce31">9.3.4. Fibers</a></li>
+<li><a href="#org150870f">9.3.5. zigcoro</a></li>
+<li><a href="#orgb0c80be">9.3.6. Using C libraries</a></li>
+</ul>
+</li>
+<li><a href="#org3c21584">9.4. Conclusion</a></li>
+<li><a href="#org690002c">9.5. Sources:</a></li>
+</ul>
+</li>
+<li><a href="#org0f451f9">10. Web frameworks</a>
+<ul>
+<li><a href="#org8b83418">10.1. Introduction</a></li>
+<li><a href="#orgabcadec">10.2. Zig solutions</a></li>
+<li><a href="#org8a38329">10.3. Zap</a>
+<ul>
+<li><a href="#orgfd6a6f8">10.3.1. Description</a></li>
+<li><a href="#org0a7cb27">10.3.2. Exemples</a></li>
+<li><a href="#org094d85d">10.3.3. Alternatives and performance comparaison</a></li>
+<li><a href="#org5a92359">10.3.4. Conclusion</a></li>
+<li><a href="#orgb7b9ec9">10.3.5. Mes notes</a></li>
+</ul>
+</li>
+<li><a href="#orgbf3f9f2">10.4. HTTP from the std</a>
+<ul>
+<li><a href="#org51b997e">10.4.1. Description</a></li>
+<li><a href="#org907e326">10.4.2. Exemples</a></li>
+<li><a href="#org3c1204d">10.4.3. Tokamak</a></li>
+<li><a href="#orgb7ff0f0">10.4.4. Jetzig</a></li>
+</ul>
+</li>
+<li><a href="#org7476fae">10.5. Conclusion</a></li>
+</ul>
+</li>
+<li><a href="#org9836fde">11. Case studies</a>
+<ul>
+<li><a href="#org982e24f">11.1. Interacting with processuses</a></li>
+</ul>
+</li>
+<li><a href="#org0206a02">12. Bibliography</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org9339fc0" class="outline-2">
-<h2 id="org9339fc0"><span class="section-number-2">1.</span> Introduction</h2>
+<div id="outline-container-org3ea39de" class="outline-2">
+<h2 id="org3ea39de"><span class="section-number-2">1.</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 Nowadays, <a href="https://www.reddit.com/r/C_Programming/comments/nqkn93/what_do_people_think_of_the_c_replacements_are/">multiple languages</a> have emerged to compete with the well-established C language.
@@ -334,8 +338,8 @@ Note that this documentation is generated from emacs with org-mode and that you 
 </p>
 </div>
 
-<div id="outline-container-orgeb04ad2" class="outline-3">
-<h3 id="orgeb04ad2"><span class="section-number-3">1.1.</span> What this documentation IS</h3>
+<div id="outline-container-org218d711" class="outline-3">
+<h3 id="org218d711"><span class="section-number-3">1.1.</span> What this documentation IS</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 This documentation is being worked on by 2 students from the HEIG-VD, in the context of a course for one and a Bachelor Thesis for the other.
@@ -365,8 +369,8 @@ Note that we wrote this documentation with the help of AI assistants like ChatGP
 </div>
 </div>
 
-<div id="outline-container-org95bdd2d" class="outline-3">
-<h3 id="org95bdd2d"><span class="section-number-3">1.2.</span> What this documentation IS NOT</h3>
+<div id="outline-container-orgb126f95" class="outline-3">
+<h3 id="orgb126f95"><span class="section-number-3">1.2.</span> What this documentation IS NOT</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 This is <b>not</b> a guide to learn Zig as first-language, this documentation wants to go in-depth in certain parts of the language.
@@ -382,8 +386,8 @@ To understand what is described in this documentation, you should first read up 
 </div>
 </div>
 
-<div id="outline-container-orgd8b5f9a" class="outline-3">
-<h3 id="orgd8b5f9a"><span class="section-number-3">1.3.</span> How to use this documentation</h3>
+<div id="outline-container-org1b1f97c" class="outline-3">
+<h3 id="org1b1f97c"><span class="section-number-3">1.3.</span> How to use this documentation</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 This documentation is built to guide to user through different examples.
@@ -407,16 +411,16 @@ But Zig is in constant evolution we <b>may</b> have to use other versions at som
 </div>
 </div>
 
-<div id="outline-container-org39e8087" class="outline-3">
-<h3 id="org39e8087"><span class="section-number-3">1.4.</span> Build Emacs configuration</h3>
+<div id="outline-container-orgb928b47" class="outline-3">
+<h3 id="orgb928b47"><span class="section-number-3">1.4.</span> Build Emacs configuration</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 TODO RAJOUTER les etapes EN PARTANT DE 0, IL FAUT IMAGINER QUE L UTILISATEUR N AIT PAS EMACS, RIEN DU TOUT
 </p>
 </div>
 
-<div id="outline-container-org3cda9dd" class="outline-4">
-<h4 id="org3cda9dd"><span class="section-number-4">1.4.1.</span> Install Zig emacs org babel plugin</h4>
+<div id="outline-container-org6e7003d" class="outline-4">
+<h4 id="org6e7003d"><span class="section-number-4">1.4.1.</span> Install Zig emacs org babel plugin</h4>
 <div class="outline-text-4" id="text-1-4-1">
 <p>
 Use <code>C-c C-c</code> (<code>ctrl-c ctrl-c</code>) to evaluate the code below.
@@ -444,8 +448,8 @@ You can change the directory where the plugin will be installed (change the argu
 </div>
 </div>
 
-<div id="outline-container-org6b55305" class="outline-4">
-<h4 id="org6b55305"><span class="section-number-4">1.4.2.</span> Create an emacs configuration file</h4>
+<div id="outline-container-org498416e" class="outline-4">
+<h4 id="org498416e"><span class="section-number-4">1.4.2.</span> Create an emacs configuration file</h4>
 <div class="outline-text-4" id="text-1-4-2">
 <p>
 TODO le prof n a pas compris cette phrase entre guillemets et moi non plus apres relecture :-)
@@ -500,8 +504,8 @@ This file can be loaded from your emacs configuration (see section below).
 </div>
 </div>
 
-<div id="outline-container-org1fd1e73" class="outline-4">
-<h4 id="org1fd1e73"><span class="section-number-4">1.4.3.</span> Execute the configuration file from the configuration</h4>
+<div id="outline-container-orga9bd7c4" class="outline-4">
+<h4 id="orga9bd7c4"><span class="section-number-4">1.4.3.</span> Execute the configuration file from the configuration</h4>
 <div class="outline-text-4" id="text-1-4-3">
 <p>
 You can put the code below in your <code>init.el</code> it will load the file produced before and load the necessary package to learn Zig with literate programming.
@@ -518,19 +522,19 @@ But you need the specify the directory path of the <code>zigIterativeProgramming
 </div>
 </div>
 
-<div id="outline-container-org840e583" class="outline-2">
-<h2 id="org840e583"><span class="section-number-2">2.</span> Basics of the language</h2>
+<div id="outline-container-orge5c9fb2" class="outline-2">
+<h2 id="orge5c9fb2"><span class="section-number-2">2.</span> Basics of the language</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-org2261ac0" class="outline-3">
-<h3 id="org2261ac0"><span class="section-number-3">2.1.</span> Reading external files</h3>
+<div id="outline-container-org7b8c612" class="outline-3">
+<h3 id="org7b8c612"><span class="section-number-3">2.1.</span> Reading external files</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 There are multiple ways to do it in ZIG:
 </p>
 </div>
-<div id="outline-container-org1beddde" class="outline-4">
-<h4 id="org1beddde"><span class="section-number-4">2.1.1.</span> @embedFile</h4>
+<div id="outline-container-orgfea9e11" class="outline-4">
+<h4 id="orgfea9e11"><span class="section-number-4">2.1.1.</span> @embedFile</h4>
 <div class="outline-text-4" id="text-2-1-1">
 <p>
 This method is simply going to embed the file in the binary at compile time.
@@ -551,8 +555,8 @@ std.debug.print(<span style="color: #e9b96e;">"{s}"</span>, .{input});
 </div>
 </div>
 
-<div id="outline-container-orgc671a4e" class="outline-4">
-<h4 id="orgc671a4e"><span class="section-number-4">2.1.2.</span> Use an allocator to dynamically store the content of the file</h4>
+<div id="outline-container-orga357b84" class="outline-4">
+<h4 id="orga357b84"><span class="section-number-4">2.1.2.</span> Use an allocator to dynamically store the content of the file</h4>
 <div class="outline-text-4" id="text-2-1-2">
 <p>
 By using the method: readToEndAlloc 
@@ -579,8 +583,8 @@ By using the method: readToEndAlloc
 </div>
 </div>
 
-<div id="outline-container-org9aa93f6" class="outline-4">
-<h4 id="org9aa93f6"><span class="section-number-4">2.1.3.</span> Read the file and put it in a buffer</h4>
+<div id="outline-container-orgb4642ea" class="outline-4">
+<h4 id="orgb4642ea"><span class="section-number-4">2.1.3.</span> Read the file and put it in a buffer</h4>
 <div class="outline-text-4" id="text-2-1-3">
 <p>
 By using the method readAll 
@@ -618,8 +622,8 @@ Sources:
 </div>
 </div>
 
-<div id="outline-container-org433e176" class="outline-3">
-<h3 id="org433e176"><span class="section-number-3">2.2.</span> Errors</h3>
+<div id="outline-container-org15f1d9f" class="outline-3">
+<h3 id="org15f1d9f"><span class="section-number-3">2.2.</span> Errors</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 <a href="https://ziglang.org/documentation/0.11.1/#Errors">https://ziglang.org/documentation/0.11.1/#Errors</a>
@@ -639,8 +643,8 @@ When you declare your enum using this keyword instead of "enum", the compiler is
 </div>
 
 
-<div id="outline-container-org3364e97" class="outline-4">
-<h4 id="org3364e97"><span class="section-number-4">2.2.1.</span> Handling errors in the application flow</h4>
+<div id="outline-container-org994f5ee" class="outline-4">
+<h4 id="org994f5ee"><span class="section-number-4">2.2.1.</span> Handling errors in the application flow</h4>
 <div class="outline-text-4" id="text-2-2-1">
 <p>
 Functions can return either a value or an error, this is done by adding the "!" to the return type of a function
@@ -657,7 +661,7 @@ When a function can return an error we have to either "try" or "catch" it.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-zig" id="orgb6855d2"><span style="color: #b4fa70;">fn</span> <span style="color: #fce94f;">maybeErrorMaybeValue</span>(<span style="color: #fcaf3e;">isError</span>: <span style="color: #8cc4ff;">bool</span>) !<span style="color: #8cc4ff;">u8</span> {
+<pre class="src src-zig" id="org32dba18"><span style="color: #b4fa70;">fn</span> <span style="color: #fce94f;">maybeErrorMaybeValue</span>(<span style="color: #fcaf3e;">isError</span>: <span style="color: #8cc4ff;">bool</span>) !<span style="color: #8cc4ff;">u8</span> {
     <span style="color: #73d216;">// </span><span style="color: #73d216;">... might return an u8 or an error</span>
     <span style="color: #b4fa70;">if</span> (isError) {
         <span style="color: #b4fa70;">return</span> <span style="color: #b4fa70;">error</span>.Bar;
@@ -684,15 +688,15 @@ When a function can return an error we have to either "try" or "catch" it.
 </div>
 </div>
 
-<div id="outline-container-org094f5d8" class="outline-4">
-<h4 id="org094f5d8"><span class="section-number-4">2.2.2.</span> Errdefer</h4>
+<div id="outline-container-org843e4d1" class="outline-4">
+<h4 id="org843e4d1"><span class="section-number-4">2.2.2.</span> Errdefer</h4>
 <div class="outline-text-4" id="text-2-2-2">
 <p>
 This exemple is taken from the <a href="https://ziglang.org/documentation/master/#errdefer">official documentation</a>
 Errdefer is a particularity of ZIG, it allows the user to execute some code when the function returns an error, it is useful exemple for deallocating variables you would have normally returned from the function, but since the function failed you deallocate that memory to avoid a memory leak.
 </p>
 <div class="org-src-container">
-<pre class="src src-zig" id="org7ace9b4"><span style="color: #b4fa70;">fn</span> <span style="color: #fce94f;">createFoo</span>(<span style="color: #fcaf3e;">param</span>: <span style="color: #8cc4ff;">i32</span>) !Foo {
+<pre class="src src-zig" id="orga01c2a0"><span style="color: #b4fa70;">fn</span> <span style="color: #fce94f;">createFoo</span>(<span style="color: #fcaf3e;">param</span>: <span style="color: #8cc4ff;">i32</span>) !Foo {
     <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">foo</span> = <span style="color: #b4fa70;">try</span> tryToAllocateFoo();
     <span style="color: #73d216;">// </span><span style="color: #73d216;">now we have allocated foo. we need to free it if the function fails.</span>
     <span style="color: #73d216;">// </span><span style="color: #73d216;">but we want to return it if the function succeeds.</span>
@@ -715,15 +719,15 @@ Errdefer is a particularity of ZIG, it allows the user to execute some code when
 </div>
 
 
-<div id="outline-container-orgda5e33f" class="outline-4">
-<h4 id="orgda5e33f"><span class="section-number-4">2.2.3.</span> Coercing</h4>
+<div id="outline-container-org264823f" class="outline-4">
+<h4 id="org264823f"><span class="section-number-4">2.2.3.</span> Coercing</h4>
 <div class="outline-text-4" id="text-2-2-3">
 <p>
 The rule is simple: you can coerce an error from a subset to a superset but you cannot coerce an error from a superset to a subset
 </p>
 
 <div class="org-src-container">
-<pre class="src src-zig" id="org8316096"><span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">SuperErrors</span> = <span style="color: #b4fa70;">error</span>{
+<pre class="src src-zig" id="org959a87d"><span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">SuperErrors</span> = <span style="color: #b4fa70;">error</span>{
     Foo,
     Bar,
     Baz,
@@ -754,16 +758,16 @@ The rule is simple: you can coerce an error from a subset to a superset but you 
 </div>
 </div>
 
-<div id="outline-container-org5227581" class="outline-3">
-<h3 id="org5227581"><span class="section-number-3">2.3.</span> Code styles</h3>
+<div id="outline-container-orgdeae058" class="outline-3">
+<h3 id="orgdeae058"><span class="section-number-3">2.3.</span> Code styles</h3>
 <div class="outline-text-3" id="text-2-3">
 </div>
-<div id="outline-container-org6035e73" class="outline-4">
-<h4 id="org6035e73"><span class="section-number-4">2.3.1.</span> Style guide</h4>
+<div id="outline-container-orgcda364c" class="outline-4">
+<h4 id="orgcda364c"><span class="section-number-4">2.3.1.</span> Style guide</h4>
 <div class="outline-text-4" id="text-2-3-1">
 </div>
 <ol class="org-ol">
-<li><a id="org099d47c"></a>fmt<br />
+<li><a id="org4d1654f"></a>fmt<br />
 <div class="outline-text-5" id="text-2-3-1-1">
 <p>
 First it is important to know that Zig comes with a formatter that you can use using:
@@ -783,20 +787,20 @@ This util is going to enforce basic things for you like:
 </ul>
 </div>
 </li>
-<li><a id="orgc2e0b21"></a>Naming conventions<br />
+<li><a id="org2203e17"></a>Naming conventions<br />
 <div class="outline-text-5" id="text-2-3-1-2">
 <ol class="org-ol">
-<li>TitleCaseTypeName: for types and structs that are callable (for "classes" in other languages basically)</li>
-<li>camelCaseFunctionName: for functions</li>
-<li>snake\<sub>case</sub>\<sub>variable</sub><sub>name</sub>: for variables and everything else TODO formatter le snake<sub>case</sub>_&#x2026; car sur le web ca affiche pas comme il faut</li>
+<li><code>TitleCaseTypeName</code>: for types and structs that are callable (for "classes" in other languages basically)</li>
+<li><code>camelCaseFunctionName</code>: for functions</li>
+<li><code>snake\_case\_variable_name</code>: for variables and everything else</li>
 </ol>
 </div>
 </li>
 </ol>
 </div>
 
-<div id="outline-container-orgbfdd526" class="outline-4">
-<h4 id="orgbfdd526"><span class="section-number-4">2.3.2.</span> undefined and null values</h4>
+<div id="outline-container-org580ffdb" class="outline-4">
+<h4 id="org580ffdb"><span class="section-number-4">2.3.2.</span> undefined and null values</h4>
 <div class="outline-text-4" id="text-2-3-2">
 <p>
 TODO for some reason the 2 org block code are not working, maybe i should "testsuite"
@@ -833,11 +837,11 @@ std.debug.print(<span style="color: #e9b96e;">"my_var = {}\n"</span>, .{value});
 </div>
 </div>
 
-<div id="outline-container-org6871757" class="outline-4">
-<h4 id="org6871757"><span class="section-number-4">2.3.3.</span> Zen</h4>
+<div id="outline-container-org1df5e07" class="outline-4">
+<h4 id="org1df5e07"><span class="section-number-4">2.3.3.</span> Zen</h4>
 <div class="outline-text-4" id="text-2-3-3">
 <p>
-Zig encourages you to use the Zen philosophy, I find them quite interesting to have in mind when coding, here they are:
+Zig encourages you to use the <a href="https://ziglang.org/documentation/0.12.0/#Zen">Zen philosophy</a>, they reflect well the spirit behind Zig, here they are:
 </p>
 <ul class="org-ul">
 <li>Communicate intent precisely.</li>
@@ -867,8 +871,8 @@ Sources:
 </div>
 </div>
 
-<div id="outline-container-orge721d8d" class="outline-3">
-<h3 id="orge721d8d"><span class="section-number-3">2.4.</span> Zig version manager</h3>
+<div id="outline-container-org3f67ddd" class="outline-3">
+<h3 id="org3f67ddd"><span class="section-number-3">2.4.</span> Zig version manager</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
 Using ZIG before 1.0 might require you to often switch between master and the last official release.
@@ -887,8 +891,8 @@ We recommend using ZVM (Zig Version Manager ^^) which is a simple and easy to us
 </p>
 </div>
 
-<div id="outline-container-orgd29176a" class="outline-4">
-<h4 id="orgd29176a"><span class="section-number-4">2.4.1.</span> Basic usage</h4>
+<div id="outline-container-org40ad1e8" class="outline-4">
+<h4 id="org40ad1e8"><span class="section-number-4">2.4.1.</span> Basic usage</h4>
 <div class="outline-text-4" id="text-2-4-1">
 <p>
 Installing the tool:
@@ -941,8 +945,8 @@ There are other commands available, you can check them by running: 'zvm help' or
 </div>
 </div>
 
-<div id="outline-container-orgcbad7dc" class="outline-3">
-<h3 id="orgcbad7dc"><span class="section-number-3">2.5.</span> defer</h3>
+<div id="outline-container-orgfd90b08" class="outline-3">
+<h3 id="orgfd90b08"><span class="section-number-3">2.5.</span> defer</h3>
 <div class="outline-text-3" id="text-2-5">
 <p>
 If you are coming from the C world, this keyword might surprise you and greatly impact your life, if you already know it from other languages like Go, bear with us to see how it is particulary useful in a language that has to manage its own memory.
@@ -965,8 +969,8 @@ TODO mettre un lien vers errors/errdefer
 </p>
 </div>
 
-<div id="outline-container-org59b9d34" class="outline-4">
-<h4 id="org59b9d34"><span class="section-number-4">2.5.1.</span> Exemple</h4>
+<div id="outline-container-org20b99ea" class="outline-4">
+<h4 id="org20b99ea"><span class="section-number-4">2.5.1.</span> Exemple</h4>
 <div class="outline-text-4" id="text-2-5-1">
 <p>
 Here is an exemple where `defer` really shines:
@@ -974,8 +978,8 @@ Here is an exemple where `defer` really shines:
 </div>
 </div>
 
-<div id="outline-container-orgde5e54d" class="outline-4">
-<h4 id="orgde5e54d"><span class="section-number-4">2.5.2.</span> Freeing memory</h4>
+<div id="outline-container-org2913ac4" class="outline-4">
+<h4 id="org2913ac4"><span class="section-number-4">2.5.2.</span> Freeing memory</h4>
 <div class="outline-text-4" id="text-2-5-2">
 <p>
 In the following code, the programmer forgot to free the memory assigned to ptr<sub>cool</sub><sub>number</sub> by calling <b>destroy</b>. Memeory leaks like that could be hard to find in a large codebase because you would have to check every single allocation and find its corresponding free somewhere in the code.
@@ -1028,8 +1032,8 @@ But this could be better by using the <b>defer</b> keyword and writing the deall
 </div>
 </div>
 
-<div id="outline-container-org2389fd9" class="outline-3">
-<h3 id="org2389fd9"><span class="section-number-3">2.6.</span> Testing code</h3>
+<div id="outline-container-org9a39777" class="outline-3">
+<h3 id="org9a39777"><span class="section-number-3">2.6.</span> Testing code</h3>
 <div class="outline-text-3" id="text-2-6">
 <p>
 ## Tracking
@@ -1145,13 +1149,60 @@ allocator.destroy(a); <span style="color: #73d216;">// </span><span style="color
 </div>
 </div>
 
-<div id="outline-container-orgcffde92" class="outline-3">
-<h3 id="orgcffde92"><span class="section-number-3">2.7.</span> TCP stream</h3>
+<div id="outline-container-orgc7b36ff" class="outline-3">
+<h3 id="orgc7b36ff"><span class="section-number-3">2.7.</span> Compiler messages</h3>
 <div class="outline-text-3" id="text-2-7">
+<p>
+In a language that aims to report most of its issues at compilation time, it is important to have clear and concise error messages. However at the time we are writing this it is sadly not the case. Here are a few compiler messages that you might encounter that are very hard to understand:
+</p>
 </div>
-<div id="outline-container-org7403460" class="outline-4">
-<h4 id="org7403460"><span class="section-number-4">2.7.1.</span> <span class="todo TODO">TODO</span> How Zig manages stream</h4>
+
+<div id="outline-container-org46303e2" class="outline-4">
+<h4 id="org46303e2"><span class="section-number-4">2.7.1.</span> Trying to print</h4>
 <div class="outline-text-4" id="text-2-7-1">
+<p>
+We are going to start with the most basic one, everyone doing Zig did at least one time
+</p>
+<div class="org-src-container">
+<pre class="src src-zig">std.debug.print(<span style="color: #e9b96e;">"Hello I am {} years old"</span>, 12);
+</pre>
+</div>
+
+<p>
+TODO HOW TO FORMAT THAT
+</p>
+<pre class="example" id="org7445b99">
+/home/tetratrux/.zvm/0.11.0/lib/std/fmt.zig:87:9: error: expected tuple or struct argument, found comptime_int
+        @compileError("expected tuple or struct argument, found " ++ @typeName(ArgsType));
+</pre>
+
+<p>
+Is the type of error you should get, from reading that we cant even know from where the problem is in our code, no line number, nothing, &#x2026;
+</p>
+
+<p>
+So when you get that type of error message make sure that you are printing your message correctly with the second argument that should be a struct with the <b>.{}</b> syntax.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-zig">std.debug.print(<span style="color: #e9b96e;">"Hello I am {} years old"</span>, .{12});
+</pre>
+</div>
+
+<p>
+This is an <a href="https://github.com/ziglang/zig/issues/19158">ongoing issue</a> by the time I am writing this in 0.12.0
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2a35891" class="outline-3">
+<h3 id="org2a35891"><span class="section-number-3">2.8.</span> TCP stream</h3>
+<div class="outline-text-3" id="text-2-8">
+</div>
+<div id="outline-container-org4201e69" class="outline-4">
+<h4 id="org4201e69"><span class="section-number-4">2.8.1.</span> <span class="todo TODO">TODO</span> How Zig manages stream</h4>
+<div class="outline-text-4" id="text-2-8-1">
 <p>
 Does Zig manage tcp stream with the OS stream or has it created its own implementation ?
 </p>
@@ -1160,8 +1211,8 @@ Does Zig manage tcp stream with the OS stream or has it created its own implemen
 </div>
 </div>
 
-<div id="outline-container-orgfd992fe" class="outline-2">
-<h2 id="orgfd992fe"><span class="section-number-2">3.</span> Comptime</h2>
+<div id="outline-container-orge3272aa" class="outline-2">
+<h2 id="orge3272aa"><span class="section-number-2">3.</span> Comptime</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 Zig has a concept called <code>comptime</code>, it's stands for "compile-time".
@@ -1172,12 +1223,12 @@ The advantage of using comptime over macro is the type safety of Zig when writin
 </p>
 </div>
 
-<div id="outline-container-orgef1190a" class="outline-3">
-<h3 id="orgef1190a"><span class="section-number-3">3.1.</span> When to use and when NOT to use it</h3>
+<div id="outline-container-org0fcd91c" class="outline-3">
+<h3 id="org0fcd91c"><span class="section-number-3">3.1.</span> When to use and when NOT to use it</h3>
 <div class="outline-text-3" id="text-3-1">
 </div>
-<div id="outline-container-orgaaa74d9" class="outline-4">
-<h4 id="orgaaa74d9"><span class="section-number-4">3.1.1.</span> When to use it</h4>
+<div id="outline-container-orgfa85cef" class="outline-4">
+<h4 id="orgfa85cef"><span class="section-number-4">3.1.1.</span> When to use it</h4>
 <div class="outline-text-4" id="text-3-1-1">
 <p>
 Because the compiler can now do things at compilation time, leaving less work to be done at runtime. (if the compiler gives you the power to do things at compile time so easily, you should use it ^^)
@@ -1189,8 +1240,8 @@ So you should basically try to use it as much as you can.
 </div>
 </div>
 
-<div id="outline-container-org2d1dd56" class="outline-4">
-<h4 id="org2d1dd56"><span class="section-number-4">3.1.2.</span> When NOT to use it (source: ziglings)</h4>
+<div id="outline-container-orgb602f7c" class="outline-4">
+<h4 id="orgb602f7c"><span class="section-number-4">3.1.2.</span> When NOT to use it (source: ziglings)</h4>
 <div class="outline-text-4" id="text-3-1-2">
 <p>
 The following contexts are already IMPLICITLY evaluated at
@@ -1215,12 +1266,12 @@ superfluous, redundant, and smelly:
 </div>
 </div>
 
-<div id="outline-container-org0e6eb60" class="outline-3">
-<h3 id="org0e6eb60"><span class="section-number-3">3.2.</span> Compile-time evaluation</h3>
+<div id="outline-container-org2ea8d75" class="outline-3">
+<h3 id="org2ea8d75"><span class="section-number-3">3.2.</span> Compile-time evaluation</h3>
 <div class="outline-text-3" id="text-3-2">
 </div>
-<div id="outline-container-org694dc09" class="outline-4">
-<h4 id="org694dc09"><span class="section-number-4">3.2.1.</span> Compile-time variable</h4>
+<div id="outline-container-org8a45f5d" class="outline-4">
+<h4 id="org8a45f5d"><span class="section-number-4">3.2.1.</span> Compile-time variable</h4>
 <div class="outline-text-4" id="text-3-2-1">
 <p>
 In Zig, there are variables that can be evaluated at compile-time, in fact, Zig allows computing mutating variables at compile-time but all the inputs need to be known also at compile-time.
@@ -1273,7 +1324,7 @@ This allows to use for loops in comptime indeed, if a standard for loop is used,
 <tbody>
 <tr>
 <td class="org-left">constant-at-runtime</td>
-<td class="org-right">5.62</td>
+<td class="org-right">2.89</td>
 </tr>
 
 <tr>
@@ -1285,8 +1336,8 @@ This allows to use for loops in comptime indeed, if a standard for loop is used,
 </div>
 </div>
 
-<div id="outline-container-orgde0957e" class="outline-4">
-<h4 id="orgde0957e"><span class="section-number-4">3.2.2.</span> Compile-time expression</h4>
+<div id="outline-container-org8655deb" class="outline-4">
+<h4 id="org8655deb"><span class="section-number-4">3.2.2.</span> Compile-time expression</h4>
 <div class="outline-text-4" id="text-3-2-2">
 <p>
 In Zig, an expression can have a <code>comptime</code> to tell the compiler to evaluate the expression at compile-time.
@@ -1336,8 +1387,8 @@ But this will work only with code that hasn't runtime dependency code.
 </div>
 </div>
 
-<div id="outline-container-orgcb50963" class="outline-4">
-<h4 id="orgcb50963"><span class="section-number-4">3.2.3.</span> Compile-time parameter</h4>
+<div id="outline-container-org3a4e6e3" class="outline-4">
+<h4 id="org3a4e6e3"><span class="section-number-4">3.2.3.</span> Compile-time parameter</h4>
 <div class="outline-text-4" id="text-3-2-3">
 <p>
 Zig implements generic by using duck typing at compile-time.
@@ -1391,7 +1442,7 @@ But with duck typing, if the same method is used, an error will be thrown at com
 <p>
 The error will be:
 </p>
-<pre class="example" id="org783fd14">
+<pre class="example" id="orgd6c8030">
 error: operator &lt; not allowed for type 'bool'
 </pre>
 
@@ -1429,12 +1480,12 @@ The example below is based on <a href="https://zig.guide/language-basics/comptim
 </div>
 </div>
 
-<div id="outline-container-orgb9e0c1f" class="outline-3">
-<h3 id="orgb9e0c1f"><span class="section-number-3">3.3.</span> Metaprogramming</h3>
+<div id="outline-container-orgad282c4" class="outline-3">
+<h3 id="orgad282c4"><span class="section-number-3">3.3.</span> Metaprogramming</h3>
 <div class="outline-text-3" id="text-3-3">
 </div>
-<div id="outline-container-org2ced803" class="outline-4">
-<h4 id="org2ced803"><span class="section-number-4">3.3.1.</span> <code>@TypeOf</code></h4>
+<div id="outline-container-orga86bdc7" class="outline-4">
+<h4 id="orga86bdc7"><span class="section-number-4">3.3.1.</span> <code>@TypeOf</code></h4>
 <div class="outline-text-4" id="text-3-3-1">
 <p>
 The <code>@TypeOf</code> builtin function can be used to take as a parameter an expression and return a type.
@@ -1442,8 +1493,8 @@ The <code>@TypeOf</code> builtin function can be used to take as a parameter an 
 </div>
 </div>
 
-<div id="outline-container-orgf0d87d7" class="outline-4">
-<h4 id="orgf0d87d7"><span class="section-number-4">3.3.2.</span> <code>@typeInfo</code></h4>
+<div id="outline-container-org8a5763a" class="outline-4">
+<h4 id="org8a5763a"><span class="section-number-4">3.3.2.</span> <code>@typeInfo</code></h4>
 <div class="outline-text-4" id="text-3-3-2">
 <p>
 This built-in function provides type reflection, it returns information on type.
@@ -1456,16 +1507,16 @@ See the example <code>Example with a custom CSV writer based on type</code> to h
 </div>
 </div>
 
-<div id="outline-container-orgdea1c44" class="outline-3">
-<h3 id="orgdea1c44"><span class="section-number-3">3.4.</span> <span class="todo TODO">TODO</span> Optimization</h3>
+<div id="outline-container-org328234f" class="outline-3">
+<h3 id="org328234f"><span class="section-number-3">3.4.</span> <span class="todo TODO">TODO</span> Optimization</h3>
 <div class="outline-text-3" id="text-3-4">
 <p>
 inline for / while
 </p>
 </div>
 
-<div id="outline-container-org59cd52e" class="outline-4">
-<h4 id="org59cd52e"><span class="section-number-4">3.4.1.</span> How log works in Zig</h4>
+<div id="outline-container-org7fa759c" class="outline-4">
+<h4 id="org7fa759c"><span class="section-number-4">3.4.1.</span> How log works in Zig</h4>
 <div class="outline-text-4" id="text-3-4-1">
 <p>
 In the C language, a common use to use debug print is with Marco.
@@ -1528,8 +1579,8 @@ But if the release mode is set to <code>Release*</code>, the debug log will not 
 </div>
 </div>
 
-<div id="outline-container-org7898e7b" class="outline-3">
-<h3 id="org7898e7b"><span class="section-number-3">3.5.</span> Generic data structures</h3>
+<div id="outline-container-org4d5b0d3" class="outline-3">
+<h3 id="org4d5b0d3"><span class="section-number-3">3.5.</span> Generic data structures</h3>
 <div class="outline-text-3" id="text-3-5">
 <p>
 To create a generic data structure, the same pattern is used as a comptime parameter.
@@ -1700,8 +1751,8 @@ Here's an compete example of an generic linked list :
 </div>
 </div>
 
-<div id="outline-container-org1aef0a7" class="outline-3">
-<h3 id="org1aef0a7"><span class="section-number-3">3.6.</span> Example with a custom CSV writer based on type</h3>
+<div id="outline-container-orgdd61457" class="outline-3">
+<h3 id="orgdd61457"><span class="section-number-3">3.6.</span> Example with a custom CSV writer based on type</h3>
 <div class="outline-text-3" id="text-3-6">
 <p>
 This example shows that Zig has a type reflection with the keyword <code>@typeInfo</code>.
@@ -1850,8 +1901,8 @@ For this example, a basic struct named <code>Person</code> will be transformed t
 </div>
 </div>
 
-<div id="outline-container-org4871464" class="outline-3">
-<h3 id="org4871464"><span class="section-number-3">3.7.</span> Bonus</h3>
+<div id="outline-container-orgee5ee76" class="outline-3">
+<h3 id="orgee5ee76"><span class="section-number-3">3.7.</span> Bonus</h3>
 <div class="outline-text-3" id="text-3-7">
 <p>
 Here is a very nice blog written by a core member of the ZIG community if you want to dig further: <a href="https://kristoff.it/blog/what-is-zig-comptime/">https://kristoff.it/blog/what-is-zig-comptime/</a>
@@ -1863,12 +1914,12 @@ Here is a very nice blog written by a core member of the ZIG community if you wa
 </div>
 </div>
 </div>
-<div id="outline-container-org77eb809" class="outline-2">
-<h2 id="org77eb809"><span class="section-number-2">4.</span> Zig and C</h2>
+<div id="outline-container-org90ac208" class="outline-2">
+<h2 id="org90ac208"><span class="section-number-2">4.</span> Zig and C</h2>
 <div class="outline-text-2" id="text-4">
 </div>
-<div id="outline-container-org9cc8339" class="outline-3">
-<h3 id="org9cc8339"><span class="section-number-3">4.1.</span> Introduction</h3>
+<div id="outline-container-org5be1c9d" class="outline-3">
+<h3 id="org5be1c9d"><span class="section-number-3">4.1.</span> Introduction</h3>
 <div class="outline-text-3" id="text-4-1">
 <p>
 The interoperability between Zig and C is one of the most important feature of Zig. But why ?
@@ -1884,16 +1935,16 @@ It allows to have both of a <b>modern</b> language and a <b>mature</b> ecosystem
 </div>
 </div>
 
-<div id="outline-container-org39c1a19" class="outline-3">
-<h3 id="org39c1a19"><span class="section-number-3">4.2.</span> Main differences between Zig and C in the syntax</h3>
+<div id="outline-container-orgf468c8e" class="outline-3">
+<h3 id="orgf468c8e"><span class="section-number-3">4.2.</span> Main differences between Zig and C in the syntax</h3>
 <div class="outline-text-3" id="text-4-2">
 <p>
 There are a few main differences between the 2 languages that you have high chance of encountering but obviously not all of them are listed here.
 </p>
 </div>
 
-<div id="outline-container-org1df27a3" class="outline-4">
-<h4 id="org1df27a3"><span class="section-number-4">4.2.1.</span> Types</h4>
+<div id="outline-container-org6dd7e6e" class="outline-4">
+<h4 id="org6dd7e6e"><span class="section-number-4">4.2.1.</span> Types</h4>
 <div class="outline-text-4" id="text-4-2-1">
 <p>
 Here you can find all the primitive types in Zig and their C equivalent:
@@ -1913,8 +1964,8 @@ TODO would it be better if i do the array in the doc rather than having a link t
 </div>
 </div>
 
-<div id="outline-container-org79b9e25" class="outline-4">
-<h4 id="org79b9e25"><span class="section-number-4">4.2.2.</span> Loops</h4>
+<div id="outline-container-orgbc30a47" class="outline-4">
+<h4 id="orgbc30a47"><span class="section-number-4">4.2.2.</span> Loops</h4>
 <div class="outline-text-4" id="text-4-2-2">
 <p>
 In Zig, the for loop is not used as much as in C. 
@@ -1941,8 +1992,8 @@ std.debug.print(<span style="color: #e9b96e;">"Sum: {}\n"</span>, .{sum});
 </div>
 </div>
 
-<div id="outline-container-orge181b66" class="outline-4">
-<h4 id="orge181b66"><span class="section-number-4">4.2.3.</span> Pointers</h4>
+<div id="outline-container-org28b7cea" class="outline-4">
+<h4 id="org28b7cea"><span class="section-number-4">4.2.3.</span> Pointers</h4>
 <div class="outline-text-4" id="text-4-2-3">
 <p>
 Zig has 2 different pointers:
@@ -1967,8 +2018,8 @@ This one is to be avoided as much as possible. The only reasons for its existenc
 </div>
 </div>
 
-<div id="outline-container-orgae92f18" class="outline-4">
-<h4 id="orgae92f18"><span class="section-number-4">4.2.4.</span> Type conversions</h4>
+<div id="outline-container-org5363e41" class="outline-4">
+<h4 id="org5363e41"><span class="section-number-4">4.2.4.</span> Type conversions</h4>
 <div class="outline-text-4" id="text-4-2-4">
 <p>
 Since in Zig there is no implicit conversions, depending on the project you might end up having "ugly" code with a lot of explicit type conversions. The code is more verbose but it is also less error-prone.
@@ -2009,8 +2060,8 @@ C:
 </div>
 
 
-<div id="outline-container-org0212933" class="outline-3">
-<h3 id="org0212933"><span class="section-number-3">4.3.</span> How to call a C function from Zig</h3>
+<div id="outline-container-orgb89fa5a" class="outline-3">
+<h3 id="orgb89fa5a"><span class="section-number-3">4.3.</span> How to call a C function from Zig</h3>
 <div class="outline-text-3" id="text-4-3">
 <p>
 Add those lines to your build.zig file:
@@ -2055,8 +2106,8 @@ Then call this zig file in your other zig files.
 </div>
 </div>
 
-<div id="outline-container-orgc476cce" class="outline-3">
-<h3 id="orgc476cce"><span class="section-number-3">4.4.</span> How to call a Zig function from C / Continuing a C project with Zig</h3>
+<div id="outline-container-orgb24a5e1" class="outline-3">
+<h3 id="orgb24a5e1"><span class="section-number-3">4.4.</span> How to call a Zig function from C / Continuing a C project with Zig</h3>
 <div class="outline-text-3" id="text-4-4">
 <p>
 You can continue your C project without using Clang or GCC but by using Zig with all its toolchain it comes with.
@@ -2090,8 +2141,8 @@ TODO utiliser code zig dans project C <a href="https://zig.guide/working-with-c/
 </p>
 </div>
 
-<div id="outline-container-org1b8cfad" class="outline-4">
-<h4 id="org1b8cfad"><span class="section-number-4">4.4.1.</span> export and extern keywords</h4>
+<div id="outline-container-org2f718dc" class="outline-4">
+<h4 id="org2f718dc"><span class="section-number-4">4.4.1.</span> export and extern keywords</h4>
 <div class="outline-text-4" id="text-4-4-1">
 <p>
 <b>export</b> make the the function visible from outside so that the C ABI can see it.
@@ -2116,8 +2167,8 @@ TODO pros and cons of using zig toolchain instead of clang or gcc
 </div>
 </div>
 
-<div id="outline-container-orga6a57bf" class="outline-3">
-<h3 id="orga6a57bf"><span class="section-number-3">4.5.</span> How is it done under the hood</h3>
+<div id="outline-container-orgfb54f13" class="outline-3">
+<h3 id="orgfb54f13"><span class="section-number-3">4.5.</span> How is it done under the hood</h3>
 <div class="outline-text-3" id="text-4-5">
 <p>
 When you do @cImport(@cInclude("foo.h")) in your zig code it runs translate-c and exposes the function and type definitions.
@@ -2129,8 +2180,8 @@ TODO talk about C ABI
 </div>
 </div>
 
-<div id="outline-container-orgfe9420c" class="outline-3">
-<h3 id="orgfe9420c"><span class="section-number-3">4.6.</span> Util to translate C code to Zig</h3>
+<div id="outline-container-org1267bad" class="outline-3">
+<h3 id="org1267bad"><span class="section-number-3">4.6.</span> Util to translate C code to Zig</h3>
 <div class="outline-text-3" id="text-4-6">
 <p>
 zig translate-c is an util built in the zig toolchains that allows you to translate C code to Zig code.
@@ -2144,8 +2195,8 @@ Note that if you want to translate a C file that uses the libc you have to add t
 </div>
 </div>
 
-<div id="outline-container-org1760d64" class="outline-4">
-<h4 id="org1760d64"><span class="section-number-4">4.6.1.</span> Comparison with other langauges that use C code</h4>
+<div id="outline-container-org92b55a1" class="outline-4">
+<h4 id="org92b55a1"><span class="section-number-4">4.6.1.</span> Comparison with other langauges that use C code</h4>
 <div class="outline-text-4" id="text-4-6-1">
 <p>
 To test if integrating C code in Zig projects is really as seemless as some claims, I have decided to compare the C integration with Python aswell.
@@ -2261,7 +2312,7 @@ TODO do with other languages aswell
 </div>
 
 <ol class="org-ol">
-<li><a id="org908e350"></a>Conclusion<br />
+<li><a id="orgf5d031a"></a>Conclusion<br />
 <div class="outline-text-5" id="text-4-6-1-1">
 <p>
 First thing that we notice immediately is how much faster the Zig code is compared to the Python code. This is not surprising since Zig is a compiled language and Python is an interpreted language.
@@ -2284,8 +2335,8 @@ We can conclude that calling C code from Zig is really seemless, because at runt
 </div>
 </div>
 
-<div id="outline-container-org876a864" class="outline-3">
-<h3 id="org876a864"><span class="section-number-3">4.7.</span> Notes</h3>
+<div id="outline-container-org0683789" class="outline-3">
+<h3 id="org0683789"><span class="section-number-3">4.7.</span> Notes</h3>
 <div class="outline-text-3" id="text-4-7">
 <p>
 TODO For some unkown reason yet my LSP becomes very slow when working in a Zig project with C files and sometimes crashes. I have to investigate this further.
@@ -2305,12 +2356,12 @@ Sources:
 </div>
 </div>
 
-<div id="outline-container-orgd09189b" class="outline-2">
-<h2 id="orgd09189b"><span class="section-number-2">5.</span> Compilation - build system</h2>
+<div id="outline-container-org0977db4" class="outline-2">
+<h2 id="org0977db4"><span class="section-number-2">5.</span> Compilation - build system</h2>
 <div class="outline-text-2" id="text-5">
 </div>
-<div id="outline-container-orgaf08c17" class="outline-3">
-<h3 id="orgaf08c17"><span class="section-number-3">5.1.</span> Zig package manager</h3>
+<div id="outline-container-orgc7b10a8" class="outline-3">
+<h3 id="orgc7b10a8"><span class="section-number-3">5.1.</span> Zig package manager</h3>
 <div class="outline-text-3" id="text-5-1">
 <p>
 Since 0.11, Zig has now an official built-in package manager named.
@@ -2325,8 +2376,8 @@ In order to add packages to your project you are going to create and edit a file
 </p>
 </div>
 
-<div id="outline-container-org3cd0adf" class="outline-4">
-<h4 id="org3cd0adf"><span class="section-number-4">5.1.1.</span> Add a package in your project</h4>
+<div id="outline-container-orgc81652f" class="outline-4">
+<h4 id="orgc81652f"><span class="section-number-4">5.1.1.</span> Add a package in your project</h4>
 <div class="outline-text-4" id="text-5-1-1">
 <ol class="org-ol">
 <li>Add the packages you want in your build.zig.zon file</li>
@@ -2395,8 +2446,8 @@ Your packages will be downloaded and compiled when you build your project.
 </div>
 </div>
 
-<div id="outline-container-org3931586" class="outline-4">
-<h4 id="org3931586"><span class="section-number-4">5.1.2.</span> Sources</h4>
+<div id="outline-container-org01624aa" class="outline-4">
+<h4 id="org01624aa"><span class="section-number-4">5.1.2.</span> Sources</h4>
 <div class="outline-text-4" id="text-5-1-2">
 <p>
 <a href="https://zig.news/edyu/zig-package-manager-wtf-is-zon-558e">https://zig.news/edyu/zig-package-manager-wtf-is-zon-558e</a>
@@ -2411,16 +2462,16 @@ Your packages will be downloaded and compiled when you build your project.
 </div>
 </div>
 
-<div id="outline-container-org4befd80" class="outline-3">
-<h3 id="org4befd80"><span class="section-number-3">5.2.</span> <span class="todo TODO">TODO</span> Comptime</h3>
+<div id="outline-container-org3742028" class="outline-3">
+<h3 id="org3742028"><span class="section-number-3">5.2.</span> <span class="todo TODO">TODO</span> Comptime</h3>
 </div>
 
-<div id="outline-container-orgeb47c8e" class="outline-3">
-<h3 id="orgeb47c8e"><span class="section-number-3">5.3.</span> <span class="todo TODO">TODO</span> How to use the build system</h3>
+<div id="outline-container-org10bc112" class="outline-3">
+<h3 id="org10bc112"><span class="section-number-3">5.3.</span> <span class="todo TODO">TODO</span> How to use the build system</h3>
 </div>
 
-<div id="outline-container-orgf079041" class="outline-3">
-<h3 id="orgf079041"><span class="section-number-3">5.4.</span> Build modes</h3>
+<div id="outline-container-orgb865291" class="outline-3">
+<h3 id="orgb865291"><span class="section-number-3">5.4.</span> Build modes</h3>
 <div class="outline-text-3" id="text-5-4">
 <p>
 Zig build modes are way easier for beginners to graps compared to <a href="https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html">C</a>
@@ -2445,8 +2496,8 @@ There are also a few other options you can tweak like avx <a href="https://gcc.g
 </p>
 </div>
 
-<div id="outline-container-org712aa2d" class="outline-4">
-<h4 id="org712aa2d"><span class="section-number-4">5.4.1.</span> <span class="todo TODO">TODO</span> Build steps</h4>
+<div id="outline-container-orga3f1b5c" class="outline-4">
+<h4 id="orga3f1b5c"><span class="section-number-4">5.4.1.</span> <span class="todo TODO">TODO</span> Build steps</h4>
 <div class="outline-text-4" id="text-5-4-1">
 <p>
 <a href="https://zig.guide/build-system/build-steps">https://zig.guide/build-system/build-steps</a>
@@ -2454,8 +2505,8 @@ There are also a few other options you can tweak like avx <a href="https://gcc.g
 </div>
 </div>
 
-<div id="outline-container-org19356b5" class="outline-4">
-<h4 id="org19356b5"><span class="section-number-4">5.4.2.</span> <span class="todo TODO">TODO</span> Generate automatically documentation</h4>
+<div id="outline-container-orgf0e8eab" class="outline-4">
+<h4 id="orgf0e8eab"><span class="section-number-4">5.4.2.</span> <span class="todo TODO">TODO</span> Generate automatically documentation</h4>
 <div class="outline-text-4" id="text-5-4-2">
 <p>
 In Zig there is an experimental feature, it's automatically generated documentation.
@@ -2493,8 +2544,8 @@ This is used the same way as the Zig teams auto-generate the standard library do
 </div>
 </div>
 
-<div id="outline-container-org65b97d4" class="outline-4">
-<h4 id="org65b97d4"><span class="section-number-4">5.4.3.</span> Strip output binary in Zig in Linux</h4>
+<div id="outline-container-org8382d11" class="outline-4">
+<h4 id="org8382d11"><span class="section-number-4">5.4.3.</span> Strip output binary in Zig in Linux</h4>
 <div class="outline-text-4" id="text-5-4-3">
 <p>
 <a href="http://flint.cs.yale.edu/cs422/doc/ELF_Format.pdf">ELF format</a>
@@ -2574,8 +2625,8 @@ linkedlist: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically link
 </div>
 </div>
 
-<div id="outline-container-org8a61df4" class="outline-4">
-<h4 id="org8a61df4"><span class="section-number-4">5.4.4.</span> Separate debug symbols from ELF executable</h4>
+<div id="outline-container-org9c565d1" class="outline-4">
+<h4 id="org9c565d1"><span class="section-number-4">5.4.4.</span> Separate debug symbols from ELF executable</h4>
 <div class="outline-text-4" id="text-5-4-4">
 <p>
 The chapter above shows how to remove all the symbols for the executable directly in the Zig build system.
@@ -2709,12 +2760,12 @@ But when a bug is reported, it is always possible to debug it because all you ha
 </div>
 </div>
 
-<div id="outline-container-org6ceb9df" class="outline-3">
-<h3 id="org6ceb9df"><span class="section-number-3">5.5.</span> Cross-compilation</h3>
+<div id="outline-container-orgfef432c" class="outline-3">
+<h3 id="orgfef432c"><span class="section-number-3">5.5.</span> Cross-compilation</h3>
 <div class="outline-text-3" id="text-5-5">
 </div>
-<div id="outline-container-org08e5dab" class="outline-4">
-<h4 id="org08e5dab"><span class="section-number-4">5.5.1.</span> <span class="todo TODO">TODO</span> Cross-compile with an embedded linux</h4>
+<div id="outline-container-org1602267" class="outline-4">
+<h4 id="org1602267"><span class="section-number-4">5.5.1.</span> <span class="todo TODO">TODO</span> Cross-compile with an embedded linux</h4>
 <div class="outline-text-4" id="text-5-5-1">
 <p>
 TODO: Add iterate programming to cross compile automaticlly the app
@@ -2746,7 +2797,7 @@ Here's the command to cross-compile the executable (the executable is also strip
 <p>
 The executable on the embedded target runs flawlessly, below is shown the output of the target:
 </p>
-<pre class="example" id="org1b78fcf">
+<pre class="example" id="org8a176e9">
 # ./main
 All your codebase are belong to us.
 Run `zig build test` to run the tests.
@@ -2756,8 +2807,8 @@ Run `zig build test` to run the tests.
 </div>
 </div>
 
-<div id="outline-container-orgd4e6d23" class="outline-2">
-<h2 id="orgd4e6d23"><span class="section-number-2">6.</span> Allocator</h2>
+<div id="outline-container-orge0028eb" class="outline-2">
+<h2 id="orge0028eb"><span class="section-number-2">6.</span> Allocator</h2>
 <div class="outline-text-2" id="text-6">
 <p>
 The Zig language doesn't hide the memory management, the mantra of Zig is to have no hidden control flow.
@@ -2780,8 +2831,8 @@ This part is documented thanks to various resources:
 </ul>
 </div>
 
-<div id="outline-container-org55b4f94" class="outline-3">
-<h3 id="org55b4f94"><span class="section-number-3">6.1.</span> General pattern</h3>
+<div id="outline-container-orgc103b42" class="outline-3">
+<h3 id="orgc103b42"><span class="section-number-3">6.1.</span> General pattern</h3>
 <div class="outline-text-3" id="text-6-1">
 <p>
 TODO selon le prof il faudrait "prouver" ou "sourcer" cette affirmation comme quoi cest une good practice mais je ne sais pas trop quoi dire:
@@ -2817,8 +2868,8 @@ For example, the <code>ArrayList</code> of the standard library uses this patter
 </div>
 
 
-<div id="outline-container-orgc30d3bc" class="outline-3">
-<h3 id="orgc30d3bc"><span class="section-number-3">6.2.</span> Page allocator (<code>page_allocator</code>)</h3>
+<div id="outline-container-orgc566d6e" class="outline-3">
+<h3 id="orgc566d6e"><span class="section-number-3">6.2.</span> Page allocator (<code>page_allocator</code>)</h3>
 <div class="outline-text-3" id="text-6-2">
 <p>
 The page allocator is the basic allocator that will directly ask the OS for memory. 
@@ -2852,8 +2903,8 @@ myStruct.*.myInt = 42;
 </div>
 </div>
 
-<div id="outline-container-org20dc3da" class="outline-3">
-<h3 id="org20dc3da"><span class="section-number-3">6.3.</span> Fixed buffer allocator</h3>
+<div id="outline-container-orgafa98dc" class="outline-3">
+<h3 id="orgafa98dc"><span class="section-number-3">6.3.</span> Fixed buffer allocator</h3>
 <div class="outline-text-3" id="text-6-3">
 <p>
 The <code>FixedBufferAllocator</code> will allocate memory into a fixed buffer, the size of the buffer needs to be known at comptime.
@@ -2887,8 +2938,8 @@ Moreover, there is also a thread-safe fixed buffer allocator for thread-safety u
 </div>
 </div>
 
-<div id="outline-container-orgadc6104" class="outline-3">
-<h3 id="orgadc6104"><span class="section-number-3">6.4.</span> Arena allocator</h3>
+<div id="outline-container-org02dbfab" class="outline-3">
+<h3 id="org02dbfab"><span class="section-number-3">6.4.</span> Arena allocator</h3>
 <div class="outline-text-3" id="text-6-4">
 <p>
 The arena allocator takes a child allocator as input. This pattern is used to allocate multiple pieces of memory and free them at once.
@@ -2928,8 +2979,8 @@ myStruct.*.myInt = 42;
 </div>
 </div>
 
-<div id="outline-container-org8f47dbd" class="outline-4">
-<h4 id="org8f47dbd"><span class="section-number-4">6.4.1.</span> Internal working of arena allocator</h4>
+<div id="outline-container-org2b08b1a" class="outline-4">
+<h4 id="org2b08b1a"><span class="section-number-4">6.4.1.</span> Internal working of arena allocator</h4>
 <div class="outline-text-4" id="text-6-4-1">
 <p>
 <a href="https://www.huy.rocks/everyday/01-12-2022-zig-how-arenaallocator-works">Zig how arena allocator works</a>
@@ -2987,12 +3038,16 @@ The <code>deinit</code> function of the arena allocator will free all the buffer
 </div>
 </div>
 
-<div id="outline-container-orgd337121" class="outline-3">
-<h3 id="orgd337121"><span class="section-number-3">6.5.</span> General purpose allocator</h3>
+<div id="outline-container-org2287d05" class="outline-3">
+<h3 id="org2287d05"><span class="section-number-3">6.5.</span> General purpose allocator</h3>
 <div class="outline-text-3" id="text-6-5">
 <p>
 A general purpose allocator is available in Zig, this is a safe allocator that can prevent double free memory, "use after free" and detect memory leaks.
 The general purpose allocator is safety first design, but it's still faster than the page allocator (<a href="https://zig.guide/standard-library/allocators/">Zig guide allocator</a>)
+</p>
+
+<p>
+Note that it aims to be even faster in the <a href="https://github.com/ziglang/zig/issues/12484">future</a>.
 </p>
 
 <p>
@@ -3094,8 +3149,8 @@ myStruct.*.myInt = 42;
 </div>
 
 
-<div id="outline-container-orgd4ce63c" class="outline-3">
-<h3 id="orgd4ce63c"><span class="section-number-3">6.6.</span> Testing allocator</h3>
+<div id="outline-container-orgad61610" class="outline-3">
+<h3 id="orgad61610"><span class="section-number-3">6.6.</span> Testing allocator</h3>
 <div class="outline-text-3" id="text-6-6">
 <p>
 The testing allocator is available in tests and the test runner will report all the memory leaks that have occurred during testing.<a href="#citeproc_bib_item_4">[4]</a> <a href="#citeproc_bib_item_5">[5]</a>
@@ -3152,8 +3207,8 @@ If the testing allocator is used outside of the tests, a compilation error will 
 </div>
 </div>
 
-<div id="outline-container-orgdd261b3" class="outline-3">
-<h3 id="orgdd261b3"><span class="section-number-3">6.7.</span> <span class="todo TODO">TODO</span> Failing allocator</h3>
+<div id="outline-container-orgf555207" class="outline-3">
+<h3 id="orgf555207"><span class="section-number-3">6.7.</span> <span class="todo TODO">TODO</span> Failing allocator</h3>
 <div class="outline-text-3" id="text-6-7">
 <p>
 The failing allocator can be used to ensure that the <code>error.OutOfMemory</code> is well handled.
@@ -3180,18 +3235,13 @@ This pattern is pretty useful in restricted memory environments such as embedded
 </div>
 </div>
 
-<div id="outline-container-orgec6dd94" class="outline-3">
-<h3 id="orgec6dd94"><span class="section-number-3">6.8.</span> <span class="todo TODO">TODO</span> C allocator</h3>
+<div id="outline-container-org557b71c" class="outline-3">
+<h3 id="org557b71c"><span class="section-number-3">6.8.</span> <span class="todo TODO">TODO</span> C allocator</h3>
 <div class="outline-text-3" id="text-6-8">
 <p>
 The <code>C</code> standard allocator can also be used, this allocator has high performance but it has less safety feature.
 </p>
-</div>
-</div>
 
-<div id="outline-container-orgb817ccb" class="outline-3">
-<h3 id="orgb817ccb"><span class="section-number-3">6.9.</span> <span class="todo TODO">TODO</span> implementing your own allocator</h3>
-<div class="outline-text-3" id="text-6-9">
 <p>
 However, to use this allocator, the <code>libC</code> is required.
 Adding the <code>libC</code> in the project will add more dependencies.
@@ -3199,27 +3249,27 @@ Adding the <code>libC</code> in the project will add more dependencies.
 </div>
 </div>
 
-<div id="outline-container-org2ffb022" class="outline-3">
-<h3 id="org2ffb022"><span class="section-number-3">6.10.</span> <span class="todo TODO">TODO</span> How to use Zig to detect memory leaks</h3>
-<div class="outline-text-3" id="text-6-10">
+<div id="outline-container-orgcc9210f" class="outline-3">
+<h3 id="orgcc9210f"><span class="section-number-3">6.9.</span> <span class="todo TODO">TODO</span> How to use Zig to detect memory leaks</h3>
+<div class="outline-text-3" id="text-6-9">
 </div>
-<div id="outline-container-org61b484a" class="outline-4">
-<h4 id="org61b484a"><span class="section-number-4">6.10.1.</span> <span class="todo TODO">TODO</span> Comparison between gcc-utils sanitizer, Valgrind, and Zig memory leak detection</h4>
+<div id="outline-container-org97cabbf" class="outline-4">
+<h4 id="org97cabbf"><span class="section-number-4">6.9.1.</span> <span class="todo TODO">TODO</span> Comparison between gcc-utils sanitizer, Valgrind, and Zig memory leak detection</h4>
 </div>
 </div>
 
-<div id="outline-container-org2a23b62" class="outline-3">
-<h3 id="org2a23b62"><span class="section-number-3">6.11.</span> <span class="todo TODO">TODO</span> ?</h3>
-<div class="outline-text-3" id="text-6-11">
+<div id="outline-container-org3f4f36f" class="outline-3">
+<h3 id="org3f4f36f"><span class="section-number-3">6.10.</span> <span class="todo TODO">TODO</span> ?</h3>
+<div class="outline-text-3" id="text-6-10">
 <p>
 TODO talk about how malloc and calloc work in C with the on demand memory allocation (page fault each time with need more memory) is there a similar system in zig ? can we choose to have on demand memory or can we all allocate at once ?
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgf660e16" class="outline-3">
-<h3 id="orgf660e16"><span class="section-number-3">6.12.</span> Conclusion</h3>
-<div class="outline-text-3" id="text-6-12">
+<div id="outline-container-org030f41a" class="outline-3">
+<h3 id="org030f41a"><span class="section-number-3">6.11.</span> Conclusion</h3>
+<div class="outline-text-3" id="text-6-11">
 <p>
 TODO selon le prof cest bien de faire une conclusion et introduction sur la plupart des concepts abordés
 </p>
@@ -3227,8 +3277,8 @@ TODO selon le prof cest bien de faire une conclusion et introduction sur la plup
 </div>
 </div>
 
-<div id="outline-container-orga8c47f5" class="outline-2">
-<h2 id="orga8c47f5"><span class="section-number-2">7.</span> Comptime</h2>
+<div id="outline-container-org086b495" class="outline-2">
+<h2 id="org086b495"><span class="section-number-2">7.</span> Comptime</h2>
 <div class="outline-text-2" id="text-7">
 <p>
 Zig has a concept called <code>comptime</code>, it's stands for "compile-time".
@@ -3239,12 +3289,12 @@ The advantage of using comptime over macro is the type safety of Zig when writin
 </p>
 </div>
 
-<div id="outline-container-org231c379" class="outline-3">
-<h3 id="org231c379"><span class="section-number-3">7.1.</span> When to use and when NOT to use it</h3>
+<div id="outline-container-org9a39ef1" class="outline-3">
+<h3 id="org9a39ef1"><span class="section-number-3">7.1.</span> When to use and when NOT to use it</h3>
 <div class="outline-text-3" id="text-7-1">
 </div>
-<div id="outline-container-orged446ad" class="outline-4">
-<h4 id="orged446ad"><span class="section-number-4">7.1.1.</span> When to use it</h4>
+<div id="outline-container-org7c62110" class="outline-4">
+<h4 id="org7c62110"><span class="section-number-4">7.1.1.</span> When to use it</h4>
 <div class="outline-text-4" id="text-7-1-1">
 <p>
 Because the compiler can now do things at compilation time, leaving less work to be done at runtime. (if the compiler gives you the power to do things at compile time so easily, you should use it ^^)
@@ -3256,8 +3306,8 @@ So you should basically try to use it as much as you can.
 </div>
 </div>
 
-<div id="outline-container-orgadf217d" class="outline-4">
-<h4 id="orgadf217d"><span class="section-number-4">7.1.2.</span> When NOT to use it (source: ziglings)</h4>
+<div id="outline-container-org4e3a3da" class="outline-4">
+<h4 id="org4e3a3da"><span class="section-number-4">7.1.2.</span> When NOT to use it (source: ziglings)</h4>
 <div class="outline-text-4" id="text-7-1-2">
 <p>
 The following contexts are already IMPLICITLY evaluated at
@@ -3282,12 +3332,12 @@ superfluous, redundant, and smelly:
 </div>
 </div>
 
-<div id="outline-container-org9ea0827" class="outline-3">
-<h3 id="org9ea0827"><span class="section-number-3">7.2.</span> Compile-time evaluation</h3>
+<div id="outline-container-org2228847" class="outline-3">
+<h3 id="org2228847"><span class="section-number-3">7.2.</span> Compile-time evaluation</h3>
 <div class="outline-text-3" id="text-7-2">
 </div>
-<div id="outline-container-orgedcb2e7" class="outline-4">
-<h4 id="orgedcb2e7"><span class="section-number-4">7.2.1.</span> Compile-time variable</h4>
+<div id="outline-container-org66f36ef" class="outline-4">
+<h4 id="org66f36ef"><span class="section-number-4">7.2.1.</span> Compile-time variable</h4>
 <div class="outline-text-4" id="text-7-2-1">
 <p>
 In Zig, there are variables that can be evaluated at compile-time, in fact, Zig allows computing mutating variables at compile-time but all the inputs need to be known also at compile-time.
@@ -3340,7 +3390,7 @@ This allows to use for loops in comptime indeed, if a standard for loop is used,
 <tbody>
 <tr>
 <td class="org-left">constant-at-runtime</td>
-<td class="org-right">1.85</td>
+<td class="org-right">5.98</td>
 </tr>
 
 <tr>
@@ -3352,8 +3402,8 @@ This allows to use for loops in comptime indeed, if a standard for loop is used,
 </div>
 </div>
 
-<div id="outline-container-org435dc26" class="outline-4">
-<h4 id="org435dc26"><span class="section-number-4">7.2.2.</span> Compile-time expression</h4>
+<div id="outline-container-org5fe0a67" class="outline-4">
+<h4 id="org5fe0a67"><span class="section-number-4">7.2.2.</span> Compile-time expression</h4>
 <div class="outline-text-4" id="text-7-2-2">
 <p>
 In Zig, an expression can have a <code>comptime</code> to tell the compiler to evaluate the expression at compile-time.
@@ -3403,8 +3453,8 @@ But this will work only with code that hasn't runtime dependency code.
 </div>
 </div>
 
-<div id="outline-container-org423defa" class="outline-4">
-<h4 id="org423defa"><span class="section-number-4">7.2.3.</span> Compile-time parameter</h4>
+<div id="outline-container-orga784a3c" class="outline-4">
+<h4 id="orga784a3c"><span class="section-number-4">7.2.3.</span> Compile-time parameter</h4>
 <div class="outline-text-4" id="text-7-2-3">
 <p>
 Zig implements generic by using duck typing at compile-time.
@@ -3458,7 +3508,7 @@ But with duck typing, if the same method is used, an error will be thrown at com
 <p>
 The error will be:
 </p>
-<pre class="example" id="orged9908e">
+<pre class="example" id="orga3ba197">
 error: operator &lt; not allowed for type 'bool'
 </pre>
 
@@ -3496,12 +3546,12 @@ The example below is based on <a href="https://zig.guide/language-basics/comptim
 </div>
 </div>
 
-<div id="outline-container-org3fd7f54" class="outline-3">
-<h3 id="org3fd7f54"><span class="section-number-3">7.3.</span> Metaprogramming</h3>
+<div id="outline-container-orga614d9e" class="outline-3">
+<h3 id="orga614d9e"><span class="section-number-3">7.3.</span> Metaprogramming</h3>
 <div class="outline-text-3" id="text-7-3">
 </div>
-<div id="outline-container-org36de831" class="outline-4">
-<h4 id="org36de831"><span class="section-number-4">7.3.1.</span> <code>@TypeOf</code></h4>
+<div id="outline-container-org1936f93" class="outline-4">
+<h4 id="org1936f93"><span class="section-number-4">7.3.1.</span> <code>@TypeOf</code></h4>
 <div class="outline-text-4" id="text-7-3-1">
 <p>
 The <code>@TypeOf</code> builtin function can be used to take as a parameter an expression and return a type.
@@ -3509,8 +3559,8 @@ The <code>@TypeOf</code> builtin function can be used to take as a parameter an 
 </div>
 </div>
 
-<div id="outline-container-org7aae3aa" class="outline-4">
-<h4 id="org7aae3aa"><span class="section-number-4">7.3.2.</span> <code>@typeInfo</code></h4>
+<div id="outline-container-org9f5da0e" class="outline-4">
+<h4 id="org9f5da0e"><span class="section-number-4">7.3.2.</span> <code>@typeInfo</code></h4>
 <div class="outline-text-4" id="text-7-3-2">
 <p>
 This built-in function provides type reflection, it returns information on type.
@@ -3523,16 +3573,16 @@ See the example <code>Example with a custom CSV writer based on type</code> to h
 </div>
 </div>
 
-<div id="outline-container-org9609f79" class="outline-3">
-<h3 id="org9609f79"><span class="section-number-3">7.4.</span> <span class="todo TODO">TODO</span> Optimization</h3>
+<div id="outline-container-org377727f" class="outline-3">
+<h3 id="org377727f"><span class="section-number-3">7.4.</span> <span class="todo TODO">TODO</span> Optimization</h3>
 <div class="outline-text-3" id="text-7-4">
 <p>
 inline for / while
 </p>
 </div>
 
-<div id="outline-container-orge094852" class="outline-4">
-<h4 id="orge094852"><span class="section-number-4">7.4.1.</span> How log works in Zig</h4>
+<div id="outline-container-org6da2d85" class="outline-4">
+<h4 id="org6da2d85"><span class="section-number-4">7.4.1.</span> How log works in Zig</h4>
 <div class="outline-text-4" id="text-7-4-1">
 <p>
 In the C language, a common use to use debug print is with Marco.
@@ -3595,8 +3645,8 @@ But if the release mode is set to <code>Release*</code>, the debug log will not 
 </div>
 </div>
 
-<div id="outline-container-org525e3fa" class="outline-3">
-<h3 id="org525e3fa"><span class="section-number-3">7.5.</span> Generic data structures</h3>
+<div id="outline-container-org79a7b0d" class="outline-3">
+<h3 id="org79a7b0d"><span class="section-number-3">7.5.</span> Generic data structures</h3>
 <div class="outline-text-3" id="text-7-5">
 <p>
 To create a generic data structure, the same pattern is used as a comptime parameter.
@@ -3767,8 +3817,8 @@ Here's an compete example of an generic linked list :
 </div>
 </div>
 
-<div id="outline-container-orgd8fb10d" class="outline-3">
-<h3 id="orgd8fb10d"><span class="section-number-3">7.6.</span> Example with a custom CSV writer based on type</h3>
+<div id="outline-container-orgbe49f8b" class="outline-3">
+<h3 id="orgbe49f8b"><span class="section-number-3">7.6.</span> Example with a custom CSV writer based on type</h3>
 <div class="outline-text-3" id="text-7-6">
 <p>
 This example shows that Zig has a type reflection with the keyword <code>@typeInfo</code>.
@@ -3917,8 +3967,8 @@ For this example, a basic struct named <code>Person</code> will be transformed t
 </div>
 </div>
 
-<div id="outline-container-orgd648a82" class="outline-3">
-<h3 id="orgd648a82"><span class="section-number-3">7.7.</span> Bonus</h3>
+<div id="outline-container-orgffe8e8a" class="outline-3">
+<h3 id="orgffe8e8a"><span class="section-number-3">7.7.</span> Bonus</h3>
 <div class="outline-text-3" id="text-7-7">
 <p>
 Here is a very nice blog written by a core member of the ZIG community if you want to dig further: <a href="https://kristoff.it/blog/what-is-zig-comptime/">https://kristoff.it/blog/what-is-zig-comptime/</a>
@@ -3930,12 +3980,12 @@ Here is a very nice blog written by a core member of the ZIG community if you wa
 </div>
 </div>
 </div>
-<div id="outline-container-orga3127bc" class="outline-2">
-<h2 id="orga3127bc"><span class="section-number-2">8.</span> Zig and C</h2>
+<div id="outline-container-org648508c" class="outline-2">
+<h2 id="org648508c"><span class="section-number-2">8.</span> Zig and C</h2>
 <div class="outline-text-2" id="text-8">
 </div>
-<div id="outline-container-org19d981b" class="outline-3">
-<h3 id="org19d981b"><span class="section-number-3">8.1.</span> Introduction</h3>
+<div id="outline-container-org9948a55" class="outline-3">
+<h3 id="org9948a55"><span class="section-number-3">8.1.</span> Introduction</h3>
 <div class="outline-text-3" id="text-8-1">
 <p>
 The interoperability between Zig and C is one of the most important feature of Zig. But why ?
@@ -3951,16 +4001,16 @@ It allows to have both of a <b>modern</b> language and a <b>mature</b> ecosystem
 </div>
 </div>
 
-<div id="outline-container-org7064094" class="outline-3">
-<h3 id="org7064094"><span class="section-number-3">8.2.</span> Main differences between Zig and C in the syntax</h3>
+<div id="outline-container-org679686a" class="outline-3">
+<h3 id="org679686a"><span class="section-number-3">8.2.</span> Main differences between Zig and C in the syntax</h3>
 <div class="outline-text-3" id="text-8-2">
 <p>
 There are a few main differences between the 2 languages that you have high chance of encountering but obviously not all of them are listed here.
 </p>
 </div>
 
-<div id="outline-container-org3822581" class="outline-4">
-<h4 id="org3822581"><span class="section-number-4">8.2.1.</span> Types</h4>
+<div id="outline-container-orgcd005a8" class="outline-4">
+<h4 id="orgcd005a8"><span class="section-number-4">8.2.1.</span> Types</h4>
 <div class="outline-text-4" id="text-8-2-1">
 <p>
 Here you can find all the primitive types in Zig and their C equivalent:
@@ -3980,8 +4030,8 @@ TODO would it be better if i do the array in the doc rather than having a link t
 </div>
 </div>
 
-<div id="outline-container-org37334b5" class="outline-4">
-<h4 id="org37334b5"><span class="section-number-4">8.2.2.</span> Loops</h4>
+<div id="outline-container-orgc59e3a2" class="outline-4">
+<h4 id="orgc59e3a2"><span class="section-number-4">8.2.2.</span> Loops</h4>
 <div class="outline-text-4" id="text-8-2-2">
 <p>
 In Zig, the for loop is not used as much as in C. 
@@ -4008,8 +4058,8 @@ std.debug.print(<span style="color: #e9b96e;">"Sum: {}\n"</span>, .{sum});
 </div>
 </div>
 
-<div id="outline-container-org2f36c4a" class="outline-4">
-<h4 id="org2f36c4a"><span class="section-number-4">8.2.3.</span> Pointers</h4>
+<div id="outline-container-org5f22bee" class="outline-4">
+<h4 id="org5f22bee"><span class="section-number-4">8.2.3.</span> Pointers</h4>
 <div class="outline-text-4" id="text-8-2-3">
 <p>
 Zig has 2 different pointers:
@@ -4034,8 +4084,8 @@ This one is to be avoided as much as possible. The only reasons for its existenc
 </div>
 </div>
 
-<div id="outline-container-orgf48020f" class="outline-4">
-<h4 id="orgf48020f"><span class="section-number-4">8.2.4.</span> Type conversions</h4>
+<div id="outline-container-orgecb6664" class="outline-4">
+<h4 id="orgecb6664"><span class="section-number-4">8.2.4.</span> Type conversions</h4>
 <div class="outline-text-4" id="text-8-2-4">
 <p>
 Since in Zig there is no implicit conversions, depending on the project you might end up having "ugly" code with a lot of explicit type conversions. The code is more verbose but it is also less error-prone.
@@ -4076,8 +4126,8 @@ C:
 </div>
 
 
-<div id="outline-container-orgef376cf" class="outline-3">
-<h3 id="orgef376cf"><span class="section-number-3">8.3.</span> How to call a C function from Zig</h3>
+<div id="outline-container-orgc3ac9f7" class="outline-3">
+<h3 id="orgc3ac9f7"><span class="section-number-3">8.3.</span> How to call a C function from Zig</h3>
 <div class="outline-text-3" id="text-8-3">
 <p>
 Add those lines to your build.zig file:
@@ -4122,8 +4172,8 @@ Then call this zig file in your other zig files.
 </div>
 </div>
 
-<div id="outline-container-orgf496195" class="outline-3">
-<h3 id="orgf496195"><span class="section-number-3">8.4.</span> How to call a Zig function from C / Continuing a C project with Zig</h3>
+<div id="outline-container-orgb5c6884" class="outline-3">
+<h3 id="orgb5c6884"><span class="section-number-3">8.4.</span> How to call a Zig function from C / Continuing a C project with Zig</h3>
 <div class="outline-text-3" id="text-8-4">
 <p>
 You can continue your C project without using Clang or GCC but by using Zig with all its toolchain it comes with.
@@ -4157,8 +4207,8 @@ TODO utiliser code zig dans project C <a href="https://zig.guide/working-with-c/
 </p>
 </div>
 
-<div id="outline-container-org38dfb65" class="outline-4">
-<h4 id="org38dfb65"><span class="section-number-4">8.4.1.</span> export and extern keywords</h4>
+<div id="outline-container-orgaa765c3" class="outline-4">
+<h4 id="orgaa765c3"><span class="section-number-4">8.4.1.</span> export and extern keywords</h4>
 <div class="outline-text-4" id="text-8-4-1">
 <p>
 <b>export</b> make the the function visible from outside so that the C ABI can see it.
@@ -4183,8 +4233,8 @@ TODO pros and cons of using zig toolchain instead of clang or gcc
 </div>
 </div>
 
-<div id="outline-container-org0767e2b" class="outline-3">
-<h3 id="org0767e2b"><span class="section-number-3">8.5.</span> How is it done under the hood</h3>
+<div id="outline-container-org579dea3" class="outline-3">
+<h3 id="org579dea3"><span class="section-number-3">8.5.</span> How is it done under the hood</h3>
 <div class="outline-text-3" id="text-8-5">
 <p>
 When you do @cImport(@cInclude("foo.h")) in your zig code it runs translate-c and exposes the function and type definitions.
@@ -4196,8 +4246,8 @@ TODO talk about C ABI
 </div>
 </div>
 
-<div id="outline-container-org202544d" class="outline-3">
-<h3 id="org202544d"><span class="section-number-3">8.6.</span> Util to translate C code to Zig</h3>
+<div id="outline-container-orgbce567f" class="outline-3">
+<h3 id="orgbce567f"><span class="section-number-3">8.6.</span> Util to translate C code to Zig</h3>
 <div class="outline-text-3" id="text-8-6">
 <p>
 zig translate-c is an util built in the zig toolchains that allows you to translate C code to Zig code.
@@ -4211,8 +4261,8 @@ Note that if you want to translate a C file that uses the libc you have to add t
 </div>
 </div>
 
-<div id="outline-container-orgc349102" class="outline-4">
-<h4 id="orgc349102"><span class="section-number-4">8.6.1.</span> Comparison with other langauges that use C code</h4>
+<div id="outline-container-org11ffc14" class="outline-4">
+<h4 id="org11ffc14"><span class="section-number-4">8.6.1.</span> Comparison with other langauges that use C code</h4>
 <div class="outline-text-4" id="text-8-6-1">
 <p>
 To test if integrating C code in Zig projects is really as seemless as some claims, I have decided to compare the C integration with Python aswell.
@@ -4328,7 +4378,7 @@ TODO do with other languages aswell
 </div>
 
 <ol class="org-ol">
-<li><a id="org687e04e"></a>Conclusion<br />
+<li><a id="orgf745c15"></a>Conclusion<br />
 <div class="outline-text-5" id="text-8-6-1-1">
 <p>
 First thing that we notice immediately is how much faster the Zig code is compared to the Python code. This is not surprising since Zig is a compiled language and Python is an interpreted language.
@@ -4351,8 +4401,8 @@ We can conclude that calling C code from Zig is really seemless, because at runt
 </div>
 </div>
 
-<div id="outline-container-org5d77ceb" class="outline-3">
-<h3 id="org5d77ceb"><span class="section-number-3">8.7.</span> Notes</h3>
+<div id="outline-container-org984f355" class="outline-3">
+<h3 id="org984f355"><span class="section-number-3">8.7.</span> Notes</h3>
 <div class="outline-text-3" id="text-8-7">
 <p>
 TODO For some unkown reason yet my LSP becomes very slow when working in a Zig project with C files and sometimes crashes. I have to investigate this further.
@@ -4372,12 +4422,12 @@ Sources:
 </div>
 </div>
 
-<div id="outline-container-org3deac6b" class="outline-2">
-<h2 id="org3deac6b"><span class="section-number-2">9.</span> Concurrency</h2>
+<div id="outline-container-orged611de" class="outline-2">
+<h2 id="orged611de"><span class="section-number-2">9.</span> Concurrency</h2>
 <div class="outline-text-2" id="text-9">
 </div>
-<div id="outline-container-orgd186a41" class="outline-3">
-<h3 id="orgd186a41"><span class="section-number-3">9.1.</span> Introduction</h3>
+<div id="outline-container-org8d617a8" class="outline-3">
+<h3 id="org8d617a8"><span class="section-number-3">9.1.</span> Introduction</h3>
 <div class="outline-text-3" id="text-9-1">
 <p>
 The objectives of this chapter is to go in depth about the different ways to do concurrency in ZIG.
@@ -4393,16 +4443,16 @@ By the end you should be able to see the pros and cons of each solution and choo
 </div>
 </div>
 
-<div id="outline-container-org2449088" class="outline-3">
-<h3 id="org2449088"><span class="section-number-3">9.2.</span> Definitions</h3>
+<div id="outline-container-org298774f" class="outline-3">
+<h3 id="org298774f"><span class="section-number-3">9.2.</span> Definitions</h3>
 <div class="outline-text-3" id="text-9-2">
 <p>
 Before diving into the different ways to do concurrency in ZIG, let's first define some terms that are useful to understand the basics of concurrency (not related to Zig).
 </p>
 </div>
 
-<div id="outline-container-orgb1d2bbd" class="outline-4">
-<h4 id="orgb1d2bbd"><span class="section-number-4">9.2.1.</span> Coroutine</h4>
+<div id="outline-container-org03d3f7d" class="outline-4">
+<h4 id="org03d3f7d"><span class="section-number-4">9.2.1.</span> Coroutine</h4>
 <div class="outline-text-4" id="text-9-2-1">
 <p>
 Courtines enable the management of concurrent tasks like callbacks do (which make them not concurrent by nature but they are a tool to achieve concurrency). Their great power lies in their ability to write concurent task like you would write sequential code. They achieve this by yielding control between them. They are used for cooperative multitasking, since the control flow is managed by themselves and not the OS. You might see them in a lot of languages like Python, Lua, Kotlin, &#x2026; with keywords like <b><b>yield</b></b>, <b><b>resume</b></b>, <b><b>suspend</b></b>, &#x2026;
@@ -4418,7 +4468,7 @@ Coroutines can also be symmetric or asymmetric:
 </div>
 
 <ol class="org-ol">
-<li><a id="org2c8893e"></a>Symmetric coroutines<br />
+<li><a id="org1460e0d"></a>Symmetric coroutines<br />
 <div class="outline-text-5" id="text-9-2-1-1">
 <p>
 The only way to transfer the control flow is by explicitly passing control <b><b>to another coroutine</b></b>.
@@ -4426,7 +4476,7 @@ The only way to transfer the control flow is by explicitly passing control <b><b
 </div>
 </li>
 
-<li><a id="org48eadff"></a>Asymmetric coroutines (called asymmetric because the control-transfer can go both ways)<br />
+<li><a id="org83cb3ed"></a>Asymmetric coroutines (called asymmetric because the control-transfer can go both ways)<br />
 <div class="outline-text-5" id="text-9-2-1-2">
 <ul class="org-ul">
 <li>They have two control-transfer mechanisms:</li>
@@ -4438,8 +4488,8 @@ The only way to transfer the control flow is by explicitly passing control <b><b
 </ol>
 </div>
 
-<div id="outline-container-orgfa2139c" class="outline-4">
-<h4 id="orgfa2139c"><span class="section-number-4">9.2.2.</span> Green threads (userland threads)</h4>
+<div id="outline-container-org086d02e" class="outline-4">
+<h4 id="org086d02e"><span class="section-number-4">9.2.2.</span> Green threads (userland threads)</h4>
 <div class="outline-text-4" id="text-9-2-2">
 <p>
 Green threads, also known as userland threads are managed by a runtime or VM instead of the OS with standard kernel threads. They are lightweight compared to OS threads as they have a lower overhead (since it is managed in userspace instead of kernel). Even though they are not real OS threads, there are still OS threads that manage them under the hood. Paritculary useful for short-lived tasks.
@@ -4450,8 +4500,8 @@ Green threads, also known as userland threads are managed by a runtime or VM ins
 </div>
 </div>
 
-<div id="outline-container-org15c2c20" class="outline-4">
-<h4 id="org15c2c20"><span class="section-number-4">9.2.3.</span> Fibers</h4>
+<div id="outline-container-org57656d9" class="outline-4">
+<h4 id="org57656d9"><span class="section-number-4">9.2.3.</span> Fibers</h4>
 <div class="outline-text-4" id="text-9-2-3">
 <p>
 Same as green threads but cooperative multitasking instead of preemptive multitasking
@@ -4459,8 +4509,8 @@ Same as green threads but cooperative multitasking instead of preemptive multita
 </div>
 </div>
 
-<div id="outline-container-orgfa2060d" class="outline-4">
-<h4 id="orgfa2060d"><span class="section-number-4">9.2.4.</span> Preemptive multitasking</h4>
+<div id="outline-container-orgb8da06c" class="outline-4">
+<h4 id="orgb8da06c"><span class="section-number-4">9.2.4.</span> Preemptive multitasking</h4>
 <div class="outline-text-4" id="text-9-2-4">
 <p>
 In preemptive multitasking it is the underlying architecture (not us, but the OS or the runtime for exemple) that is in charge of choosing which threads to execute and when. This implies that our threads can be stopped (preempted) at any time, even if in the middle of a task. This method gives the advantage of not having to worr about a thread being starved, since the underlying architecture is going to make sure that everyone gets enough CPU time.
@@ -4468,8 +4518,8 @@ In preemptive multitasking it is the underlying architecture (not us, but the OS
 </div>
 </div>
 
-<div id="outline-container-org877bdce" class="outline-4">
-<h4 id="org877bdce"><span class="section-number-4">9.2.5.</span> Cooperative multitasking</h4>
+<div id="outline-container-org5eb6f05" class="outline-4">
+<h4 id="org5eb6f05"><span class="section-number-4">9.2.5.</span> Cooperative multitasking</h4>
 <div class="outline-text-4" id="text-9-2-5">
 <p>
 Contrary to preemptive multitasking, it is the progammer job to choose which and when the differents threads are executed. Threads are going to run until they are explicitly yielding control back. This method gives the advantage to have the progammer to have a fine grained control over his ressources, but also implies that the programmer has to think about not starving threads.
@@ -4477,8 +4527,8 @@ Contrary to preemptive multitasking, it is the progammer job to choose which and
 </div>
 </div>
 
-<div id="outline-container-org405fd1d" class="outline-4">
-<h4 id="org405fd1d"><span class="section-number-4">9.2.6.</span> Thread (ChatGPT)</h4>
+<div id="outline-container-orgc90b37b" class="outline-4">
+<h4 id="orgc90b37b"><span class="section-number-4">9.2.6.</span> Thread (ChatGPT)</h4>
 <div class="outline-text-4" id="text-9-2-6">
 <p>
 Multithreading, a cornerstone of concurrency, operates by dividing tasks into multiple threads, each executing independently. Unlike asynchronous event-driven programming, threads typically block until their assigned task completes. This approach has long been the primary method for handling concurrency in software development.
@@ -4495,8 +4545,8 @@ To avoid this overhead, thread pools are often used, which manage a set of threa
 </div>
 </div>
 
-<div id="outline-container-org1d434ca" class="outline-4">
-<h4 id="org1d434ca"><span class="section-number-4">9.2.7.</span> Event-driven programming (ChatGPT)</h4>
+<div id="outline-container-org2f98507" class="outline-4">
+<h4 id="org2f98507"><span class="section-number-4">9.2.7.</span> Event-driven programming (ChatGPT)</h4>
 <div class="outline-text-4" id="text-9-2-7">
 <p>
 Event-driven programming, exemplified by platforms like NodeJS, operates through an event loop that continuously monitors for triggered "events". This architecture boasts scalability, adeptly managing numerous concurrent connections while keeping memory and CPU usage minimal. The engine powering NodeJS lies in the codebase hosted on GitHub at <a href="https://github.com/libuv/libuv">https://github.com/libuv/libuv</a>. Under the hood libuv is basically a single threaded <a href="https://docs.libuv.org/en/v1.x/design.html#the-i-o-loop">event-loop</a> which is going to perform all IOs on non-blocking sockets that are polled by pollers like epoll, kqueue, &#x2026;
@@ -4504,20 +4554,20 @@ Event-driven programming, exemplified by platforms like NodeJS, operates through
 </div>
 </div>
 </div>
-<div id="outline-container-org5b23eea" class="outline-3">
-<h3 id="org5b23eea"><span class="section-number-3">9.3.</span> Zig solutions</h3>
+<div id="outline-container-orgdb57e9c" class="outline-3">
+<h3 id="orgdb57e9c"><span class="section-number-3">9.3.</span> Zig solutions</h3>
 <div class="outline-text-3" id="text-9-3">
 <p>
 There are multiple ways you currently can do concurent code in ZIG, we are going to explore a few here:
 </p>
 </div>
 
-<div id="outline-container-org5e85aaa" class="outline-4">
-<h4 id="org5e85aaa"><span class="section-number-4">9.3.1.</span> OS threads (std)</h4>
+<div id="outline-container-org906b6b4" class="outline-4">
+<h4 id="org906b6b4"><span class="section-number-4">9.3.1.</span> OS threads (std)</h4>
 <div class="outline-text-4" id="text-9-3-1">
 </div>
 <ol class="org-ol">
-<li><a id="orgd4e020c"></a>Basics<br />
+<li><a id="orgdad91c5"></a>Basics<br />
 <div class="outline-text-5" id="text-9-3-1-1">
 <p>
 Spawning OS thread in Zig is quite simple, since it is built-in in the standard library. Here is an example of how to spawn 2 threads that are going to print numbers from 0 to x in parallel:
@@ -4550,7 +4600,7 @@ Note that the std.Thread also offer few other useful functions like `std.Thread.
 </div>
 </li>
 
-<li><a id="org0c5b9cb"></a>Thread pool<br />
+<li><a id="orgcc410b8"></a>Thread pool<br />
 <div class="outline-text-5" id="text-9-3-1-2">
 <p>
 You could also use a thread pool in order to have a few threads to multiple jobs and not 1 thread = 1 job
@@ -4582,7 +4632,7 @@ You could also use a thread pool in order to have a few threads to multiple jobs
 </div>
 </li>
 
-<li><a id="org2de92d4"></a>Under the hood<br />
+<li><a id="orge6820a0"></a>Under the hood<br />
 <div class="outline-text-5" id="text-9-3-1-3">
 <p>
 Under the hood the threads are either pthread (<a href="https://ziglang.org/documentation/master/std/#std.Thread.use_pthreads">if we are under linux AND linking libc</a>) or it is simpy going to use native OS threads.
@@ -4714,10 +4764,10 @@ Or you could write your own wrapper kind of like the way Zig does (this is not g
 </div>
 </li>
 
-<li><a id="orgda5683b"></a>Thread synchronization<br /></li>
+<li><a id="org16564c4"></a>Thread synchronization<br /></li>
 
 
-<li><a id="orga12bc03"></a>Leaky abstraction<br />
+<li><a id="org5368a2f"></a>Leaky abstraction<br />
 <div class="outline-text-5" id="text-9-3-1-5">
 <p>
 TODO: est ce que je peux fine tuned threads en Zig ? (priority, stack size, &#x2026;)
@@ -4725,7 +4775,7 @@ TODO: est ce que je peux fine tuned threads en Zig ? (priority, stack size, &#x2
 </div>
 </li>
 
-<li><a id="orgc1f1249"></a>Conclusion<br />
+<li><a id="orgb41445e"></a>Conclusion<br />
 <div class="outline-text-5" id="text-9-3-1-6">
 <p>
 Zig threads are really useful since they have a very user-friendly abstraction with not a lot of functionalites that are almost never used anyway. This abstraction is also very useful for what we saw earlier, you don't have to worry about the target system, Zig is going to choose the right implementation for you.
@@ -4743,8 +4793,8 @@ If you need specific thread functionalities, like the ones we talked about, you 
 </ol>
 </div>
 
-<div id="outline-container-org00ae371" class="outline-4">
-<h4 id="org00ae371"><span class="section-number-4">9.3.2.</span> async/await</h4>
+<div id="outline-container-orgbee4f96" class="outline-4">
+<h4 id="orgbee4f96"><span class="section-number-4">9.3.2.</span> async/await</h4>
 <div class="outline-text-4" id="text-9-3-2">
 <p>
 This method uses suspensible stackless coroutines, this solution does not necessarly mean that you are going to have multiple threads or parallelism.
@@ -4773,7 +4823,7 @@ You can see <a href="https://ziglang.org/download/0.12.0/release-notes.html#Asyn
 </div>
 
 <ol class="org-ol">
-<li><a id="orgebe2ac7"></a>Function coloring<br />
+<li><a id="org5c8461c"></a>Function coloring<br />
 <div class="outline-text-5" id="text-9-3-2-1">
 <p>
 Green threads make function colors disapear ???? (dependences entre threads)
@@ -4783,8 +4833,8 @@ Green threads make function colors disapear ???? (dependences entre threads)
 </ol>
 </div>
 
-<div id="outline-container-orgdbc74ec" class="outline-4">
-<h4 id="orgdbc74ec"><span class="section-number-4">9.3.3.</span> libxev</h4>
+<div id="outline-container-org52bb047" class="outline-4">
+<h4 id="org52bb047"><span class="section-number-4">9.3.3.</span> libxev</h4>
 <div class="outline-text-4" id="text-9-3-3">
 <p>
 Using an event loop (by wrapping libuv or using libxev which is the equivalent buz in ZIG)
@@ -4793,8 +4843,8 @@ TODO exemple
 </div>
 </div>
 
-<div id="outline-container-org87ff0fb" class="outline-4">
-<h4 id="org87ff0fb"><span class="section-number-4">9.3.4.</span> Fibers</h4>
+<div id="outline-container-org194ce31" class="outline-4">
+<h4 id="org194ce31"><span class="section-number-4">9.3.4.</span> Fibers</h4>
 <div class="outline-text-4" id="text-9-3-4">
 <p>
 Using fibers (<a href="https://github.com/kprotty/zefi">https://github.com/kprotty/zefi</a>, <a href="https://github.com/kassane/fiber">https://github.com/kassane/fiber</a>)
@@ -4803,8 +4853,8 @@ TODO exemple
 </div>
 </div>
 
-<div id="outline-container-org1874f14" class="outline-4">
-<h4 id="org1874f14"><span class="section-number-4">9.3.5.</span> zigcoro</h4>
+<div id="outline-container-org150870f" class="outline-4">
+<h4 id="org150870f"><span class="section-number-4">9.3.5.</span> zigcoro</h4>
 <div class="outline-text-4" id="text-9-3-5">
 <p>
 This solution uses stackful asymmetric coroutines.
@@ -4816,8 +4866,8 @@ TODO exemple
 </div>
 </div>
 
-<div id="outline-container-orgf95f0b5" class="outline-4">
-<h4 id="orgf95f0b5"><span class="section-number-4">9.3.6.</span> Using C libraries</h4>
+<div id="outline-container-orgb0c80be" class="outline-4">
+<h4 id="orgb0c80be"><span class="section-number-4">9.3.6.</span> Using C libraries</h4>
 <div class="outline-text-4" id="text-9-3-6">
 <p>
 &#x2026; obviously you can still use C libraries that do async stuff :)
@@ -4827,8 +4877,8 @@ TODO exemple
 </div>
 </div>
 
-<div id="outline-container-org79ef113" class="outline-3">
-<h3 id="org79ef113"><span class="section-number-3">9.4.</span> Conclusion</h3>
+<div id="outline-container-org3c21584" class="outline-3">
+<h3 id="org3c21584"><span class="section-number-3">9.4.</span> Conclusion</h3>
 <div class="outline-text-3" id="text-9-4">
 <p>
 TODO: qu est ce que je pourrais bien dire de + que dans le contenu, parler du potentiel ?
@@ -4848,8 +4898,8 @@ TODO MES NOTES ---&#x2013;&#x2014; pas besoin de lire ca, cest juste pour moi po
 </div>
 </div>
 
-<div id="outline-container-org9edddf2" class="outline-3">
-<h3 id="org9edddf2"><span class="section-number-3">9.5.</span> Sources:</h3>
+<div id="outline-container-org690002c" class="outline-3">
+<h3 id="org690002c"><span class="section-number-3">9.5.</span> Sources:</h3>
 <div class="outline-text-3" id="text-9-5">
 <ul class="org-ul">
 <li><a href="https://dl.acm.org/doi/pdf/10.1145/1462166.1462167">https://dl.acm.org/doi/pdf/10.1145/1462166.1462167</a></li>
@@ -4882,16 +4932,16 @@ TODO MES NOTES ---&#x2013;&#x2014; pas besoin de lire ca, cest juste pour moi po
 </div>
 </div>
 
-<div id="outline-container-org8288288" class="outline-2">
-<h2 id="org8288288"><span class="section-number-2">10.</span> Web frameworks</h2>
+<div id="outline-container-org0f451f9" class="outline-2">
+<h2 id="org0f451f9"><span class="section-number-2">10.</span> Web frameworks</h2>
 <div class="outline-text-2" id="text-10">
 <p>
 In this section we are going to explore the different ways of doing WEB servers in Zig.
 </p>
 </div>
 
-<div id="outline-container-orgafc8260" class="outline-3">
-<h3 id="orgafc8260"><span class="section-number-3">10.1.</span> Introduction</h3>
+<div id="outline-container-org8b83418" class="outline-3">
+<h3 id="org8b83418"><span class="section-number-3">10.1.</span> Introduction</h3>
 <div class="outline-text-3" id="text-10-1">
 <p>
 TODO talk about WEB in general 
@@ -4899,16 +4949,16 @@ TODO talk about WEB in general
 </div>
 </div>
 
-<div id="outline-container-org2075a5d" class="outline-3">
-<h3 id="org2075a5d"><span class="section-number-3">10.2.</span> Zig solutions</h3>
+<div id="outline-container-orgabcadec" class="outline-3">
+<h3 id="orgabcadec"><span class="section-number-3">10.2.</span> Zig solutions</h3>
 </div>
 
-<div id="outline-container-org7f8d6c8" class="outline-3">
-<h3 id="org7f8d6c8"><span class="section-number-3">10.3.</span> Zap</h3>
+<div id="outline-container-org8a38329" class="outline-3">
+<h3 id="org8a38329"><span class="section-number-3">10.3.</span> Zap</h3>
 <div class="outline-text-3" id="text-10-3">
 </div>
-<div id="outline-container-org2c361c4" class="outline-4">
-<h4 id="org2c361c4"><span class="section-number-4">10.3.1.</span> Description</h4>
+<div id="outline-container-orgfd6a6f8" class="outline-4">
+<h4 id="orgfd6a6f8"><span class="section-number-4">10.3.1.</span> Description</h4>
 <div class="outline-text-4" id="text-10-3-1">
 <p>
 Zap is a micro web framework that is mainly uses to write REST APIs.
@@ -4924,8 +4974,8 @@ Zap isn't really a fully Zig project, it just wraps and leverages the power of <
 </div>
 </div>
 
-<div id="outline-container-org45a5c85" class="outline-4">
-<h4 id="org45a5c85"><span class="section-number-4">10.3.2.</span> Exemples</h4>
+<div id="outline-container-org0a7cb27" class="outline-4">
+<h4 id="org0a7cb27"><span class="section-number-4">10.3.2.</span> Exemples</h4>
 <div class="outline-text-4" id="text-10-3-2">
 <p>
 The <a href="https://github.com/zigzap/zap">repo</a> gives you a lot of <a href="https://github.com/zigzap/zap/tree/master/examples">exemples</a> in order to get started.
@@ -4934,8 +4984,8 @@ TODO jaimerais bien faire les exemples ici mais comment faire pour utiliser une 
 </div>
 </div>
 
-<div id="outline-container-org7fa72d2" class="outline-4">
-<h4 id="org7fa72d2"><span class="section-number-4">10.3.3.</span> Alternatives and performance comparaison</h4>
+<div id="outline-container-org094d85d" class="outline-4">
+<h4 id="org094d85d"><span class="section-number-4">10.3.3.</span> Alternatives and performance comparaison</h4>
 <div class="outline-text-4" id="text-10-3-3">
 <p>
 TODO mettre le resultat de wrk bizzare
@@ -4943,8 +4993,8 @@ TODO mettre le resultat de wrk bizzare
 </div>
 </div>
 
-<div id="outline-container-org5b4df12" class="outline-4">
-<h4 id="org5b4df12"><span class="section-number-4">10.3.4.</span> Conclusion</h4>
+<div id="outline-container-org5a92359" class="outline-4">
+<h4 id="org5a92359"><span class="section-number-4">10.3.4.</span> Conclusion</h4>
 <div class="outline-text-4" id="text-10-3-4">
 <p>
 Zap is a very intersting project that is uses in production by some people (TODO).
@@ -4968,8 +5018,8 @@ To conclude if you don't need <b><b>high</b></b> performances (C like), I wouldn
 </div>
 </div>
 
-<div id="outline-container-org9b01a45" class="outline-4">
-<h4 id="org9b01a45"><span class="section-number-4">10.3.5.</span> Mes notes</h4>
+<div id="outline-container-orgb7b9ec9" class="outline-4">
+<h4 id="orgb7b9ec9"><span class="section-number-4">10.3.5.</span> Mes notes</h4>
 <div class="outline-text-4" id="text-10-3-5">
 <p>
 Callback based, we define certain callbacks, we configure from there
@@ -4980,12 +5030,12 @@ je devrai aussi analyer facilio qui est ce qui est derriere la scene
 </div>
 </div>
 
-<div id="outline-container-org9ab3d03" class="outline-3">
-<h3 id="org9ab3d03"><span class="section-number-3">10.4.</span> HTTP from the std</h3>
+<div id="outline-container-orgbf3f9f2" class="outline-3">
+<h3 id="orgbf3f9f2"><span class="section-number-3">10.4.</span> HTTP from the std</h3>
 <div class="outline-text-3" id="text-10-4">
 </div>
-<div id="outline-container-orgd8207d3" class="outline-4">
-<h4 id="orgd8207d3"><span class="section-number-4">10.4.1.</span> Description</h4>
+<div id="outline-container-org51b997e" class="outline-4">
+<h4 id="org51b997e"><span class="section-number-4">10.4.1.</span> Description</h4>
 <div class="outline-text-4" id="text-10-4-1">
 <p>
 Http.zig: Dispatcher based, you create the dispatch chai (As far as I understand it)
@@ -5004,8 +5054,8 @@ std.http is very useful for what it was designed for. The Client was added to fe
 </p>
 </div>
 </div>
-<div id="outline-container-org7cc084b" class="outline-4">
-<h4 id="org7cc084b"><span class="section-number-4">10.4.2.</span> Exemples</h4>
+<div id="outline-container-org907e326" class="outline-4">
+<h4 id="org907e326"><span class="section-number-4">10.4.2.</span> Exemples</h4>
 <div class="outline-text-4" id="text-10-4-2">
 <p>
 TODO
@@ -5013,8 +5063,8 @@ TODO
 </div>
 </div>
 
-<div id="outline-container-orgcd92717" class="outline-4">
-<h4 id="orgcd92717"><span class="section-number-4">10.4.3.</span> Tokamak</h4>
+<div id="outline-container-org3c1204d" class="outline-4">
+<h4 id="org3c1204d"><span class="section-number-4">10.4.3.</span> Tokamak</h4>
 <div class="outline-text-4" id="text-10-4-3">
 <p>
 Middleware (scoped) and DI Based
@@ -5022,8 +5072,8 @@ Middleware (scoped) and DI Based
 </div>
 </div>
 
-<div id="outline-container-orgcd19c41" class="outline-4">
-<h4 id="orgcd19c41"><span class="section-number-4">10.4.4.</span> Jetzig</h4>
+<div id="outline-container-orgb7ff0f0" class="outline-4">
+<h4 id="orgb7ff0f0"><span class="section-number-4">10.4.4.</span> Jetzig</h4>
 <div class="outline-text-4" id="text-10-4-4">
 <p>
 Middleware (as part of a request chain) and Convention based
@@ -5038,8 +5088,8 @@ points forts/points faibles de chacun
 </div>
 </div>
 
-<div id="outline-container-orge6ad9cc" class="outline-3">
-<h3 id="orge6ad9cc"><span class="section-number-3">10.5.</span> Conclusion</h3>
+<div id="outline-container-org7476fae" class="outline-3">
+<h3 id="org7476fae"><span class="section-number-3">10.5.</span> Conclusion</h3>
 <div class="outline-text-3" id="text-10-5">
 <p>
 Sources:
@@ -5050,12 +5100,12 @@ Sources:
 </div>
 </div>
 
-<div id="outline-container-orga0c13ce" class="outline-2">
-<h2 id="orga0c13ce"><span class="section-number-2">11.</span> Case studies</h2>
+<div id="outline-container-org9836fde" class="outline-2">
+<h2 id="org9836fde"><span class="section-number-2">11.</span> Case studies</h2>
 <div class="outline-text-2" id="text-11">
 </div>
-<div id="outline-container-org2ceca91" class="outline-3">
-<h3 id="org2ceca91"><span class="section-number-3">11.1.</span> Interacting with processuses</h3>
+<div id="outline-container-org982e24f" class="outline-3">
+<h3 id="org982e24f"><span class="section-number-3">11.1.</span> Interacting with processuses</h3>
 <div class="outline-text-3" id="text-11-1">
 <p>
 TODO
@@ -5069,8 +5119,8 @@ What libraries did i use ?
 </div>
 </div>
 
-<div id="outline-container-org047dfa0" class="outline-2">
-<h2 id="org047dfa0"><span class="section-number-2">12.</span> Bibliography</h2>
+<div id="outline-container-org0206a02" class="outline-2">
+<h2 id="org0206a02"><span class="section-number-2">12.</span> Bibliography</h2>
 <div class="outline-text-2" id="text-12">
 <style>.csl-left-margin{float: left; padding-right: 0em;}
  .csl-right-inline{margin: 0 0 0 1em;}</style><div class="csl-bib-body">
@@ -5095,7 +5145,7 @@ What libraries did i use ?
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: tetratrux</p>
-<p class="date">Created: 2024-05-20 lun 19:08</p>
+<p class="date">Created: 2024-05-20 lun 20:41</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

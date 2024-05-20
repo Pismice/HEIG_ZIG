@@ -186,6 +186,8 @@ The ~deinit~ function of the arena allocator will free all the buffers by iterat
 A general purpose allocator is available in Zig, this is a safe allocator that can prevent double free memory, "use after free" and detect memory leaks.
 The general purpose allocator is safety first design, but it's still faster than the page allocator ([[https://zig.guide/standard-library/allocators/][Zig guide allocator]])
 
+Note that it aims to be even faster in the [[https://github.com/ziglang/zig/issues/12484][future]].
+
 The general purpose allocator is a function that takes as argument a comptime configuration struct and return a type.
 (this code snippet comes from the standard library [[https://github.com/ziglang/zig/blob/0.11.x/lib/std/heap/general_purpose_allocator.zig][general_purpose_allocator.zig]])
 #+begin_src zig
@@ -347,8 +349,6 @@ This pattern is pretty useful in restricted memory environments such as embedded
 
 ** TODO C allocator
 The ~C~ standard allocator can also be used, this allocator has high performance but it has less safety feature.
-
-** TODO implementing your own allocator
 
 However, to use this allocator, the ~libC~ is required.
 Adding the ~libC~ in the project will add more dependencies.

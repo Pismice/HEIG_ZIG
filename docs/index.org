@@ -22,6 +22,8 @@
 
 #+INCLUDE: "./tracking.org" :minlevel 2
 
+#+INCLUDE: "./compiler-messages.org" :minlevel 2
+
 ** TCP stream
 *** TODO How Zig manages stream
 Does Zig manage tcp stream with the OS stream or has it created its own implementation ?

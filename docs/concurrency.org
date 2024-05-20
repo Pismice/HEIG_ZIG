@@ -32,13 +32,13 @@ Green threads, also known as userland threads are managed by a runtime or VM ins
 Same as green threads but cooperative multitasking instead of preemptive multitasking
 
 *** Preemptive multitasking
-In preemptive multitasking it is the underlying architecture (not us, but the OS or the runtime for exemple) that is in charge of choosing which threads to execute and when. This implies that our threads can be stopped (preempted) at any time, even if in the middle of a task. This method gives the advantage of not having to worr about a thread being starved, since the underlying architecture is going to make sure that everyone gets enough CPU time.
+In preemptive multitasking it is the underlying architecture (not us, but the OS or the runtime for exemple) that is in charge of choosing which threads to execute and when. This implies that our threads can be stopped (preempted) at any time, even if it is in the middle of a task. This method gives the advantage of not having to worry about a thread being starved, since the underlying architecture is going to make sure that everyone gets enough CPU time.
 
 *** Cooperative multitasking
 Contrary to preemptive multitasking, it is the progammer job to choose which and when the differents threads are executed. Threads are going to run until they are explicitly yielding control back. This method gives the advantage to have the progammer to have a fine grained control over his ressources, but also implies that the programmer has to think about not starving threads.
 
 *** Thread (ChatGPT)
-Multithreading, a cornerstone of concurrency, operates by dividing tasks into multiple threads, each executing independently. Unlike asynchronous event-driven programming, threads typically block until their assigned task completes. This approach has long been the primary method for handling concurrency in software development.
+Multithreading, it is the most basic and history way to do concurrency, it works by running the work on multiple threads that are going to be exectued in parallel (if the CPU can), each thread runs independently of the others. Unlike asynchronous event-driven programming, threads typically block until their assigned task completes.
 
 Parallelism becomes achievable through multithreading (even though its not 100% guaranteed), particularly on multi-core CPUs, facilitating genuine simultaneous execution and maximizing hardware utilization. Threads also offer robust isolation, with each thread possessing its own execution context, stack, and local variables, ensuring task independence and preventing interference.
 
