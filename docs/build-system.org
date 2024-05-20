@@ -472,7 +472,8 @@ On our arm target we cannot execute ~hyperfine~, we measure 8 times the each pro
 | =./leibniz_zig_simd_aarch= |    14.43 |   14.44 |   14.43 |
 
 
-*** Differents code examples benchmark
+*** TODO Differents code examples benchmark
+TODO: update the benchmarks with the compiler commands
 
 Mes benchmarks sur mon ordi :
 | Command              | Mean [ms]  | Min [ms] | Max [ms] | Relative    |
@@ -746,6 +747,6 @@ while (idx != 0 && memcmp(results[idx], buf, len) != 0) {
 
 
 For the second implementation of the Zig code, we note that it has been implemented with a =btree=, used for data merge.
-This merge is carried out because there are several threads processing the data.
+This merge is performed because there are several threads processing the data.
 However, it also uses the same hashmap as the one used in the first version.
 
