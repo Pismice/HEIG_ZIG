@@ -1,0 +1,23 @@
+#+title: Zig documentation
+#+DRAFT: true
+#+weight: 2
+#+hugo_cascade_type: docs
+#+math: true
+
+
+The purpose of this repository is to document the features of the Zig language, as well as examples of its use.
+
+You can use this documentation with 2 different ways:
+
+- Using emacs org mode so that you can execute codes on the fly(litterate programming)
+- Opening the index.html file in your browser or navigating to our hosted guide (this link always host the last commmit of the master branch)
+
+
+#+bibliography: bibliography.bib
+#+cite_export: csl ieee.csl
+
+* Bibliography
+#+print_bibliography: :section 2 :heading subbibliography
+
+{{< bibliography >}}
+

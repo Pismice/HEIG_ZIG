@@ -1,3 +1,6 @@
+#+title: Allocators
+#+weight: 2
+
 #+bibliography: bibliography.bib
 
 * Allocator
@@ -280,7 +283,7 @@ The example below shows a basic usage of the Zig's GPA:
 
 
 ** Testing allocator
-The testing allocator is available in tests and the test runner will report all the memory leaks that have occurred during testing.[cite:@LearningZigHeap] [cite:@ZiglangZig2024]
+The testing allocator is available in tests and the test runner will report all the memory leaks that have occurred during testing.{{< cite "LearningZigHeap" >}} {{< cite "ZiglangZig2024" >}}
 
 The example below shows how to use the testing allocator.
 #+begin_src zig :imports '(std) :testsuite 'yes
@@ -361,3 +364,5 @@ TODO talk about how malloc and calloc work in C with the on demand memory alloca
 
 ** Conclusion
 TODO selon le prof cest bien de faire une conclusion et introduction sur la plupart des concepts abordés
+
+{{< references >}}

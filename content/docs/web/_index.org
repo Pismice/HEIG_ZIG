@@ -1,0 +1,5 @@
+#+title: Web
+#+DRAFT: true
+#+weight: 6
+#+hugo_cascade_type: docs
+#+math: true

@@ -1,3 +1,5 @@
+#+title: Build system
+#+weight: 5
 
 #+bibliography: bibliography.bib
 #+cite_export: csl ieee.csl
@@ -180,7 +182,7 @@ But when a bug is reported, it is always possible to debug it because all you ha
 TODO: Add iterate programming to cross compile automaticlly the app
 
 The ~-target~ flag of ~zig build-exe~ can select the target architecture for the cross-compilation.
-There are multiple target selections, see [cite:@CrossCompilationZig2024] to have the entire list of targets.
+There are multiple target selections, see {{< cite "CrossCompilationZig2024" >}} to have the entire list of targets.
 
 Here's an example of a test that was performed, the aim being to run an executable produced by Zig (from a ~x86_64~) for a -nanopi neo plus 2- which has an arm64 architecture and runs a Linux kernel.
 The information of the embedded target :
@@ -200,7 +202,6 @@ The executable on the embedded target runs flawlessly, below is shown the output
 All your codebase are belong to us.
 Run `zig build test` to run the tests.
 #+end_example
-
 
 ** Performance comparaison & SMID
 
@@ -789,3 +790,5 @@ This merge is performed because there are several threads processing the data.
 However, it also uses the same hashmap as the one used in the first version.
 
 #+INCLUDE: "./zig-package-manager.org" :minlevel 2
+
+{{< references >}}

@@ -1,3 +1,6 @@
+#+title: External files
+#+weight: 13
+
 ** Reading external files
 There are multiple ways to do it in ZIG:
 *** @embedFile
