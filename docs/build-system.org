@@ -196,10 +196,10 @@ Run `zig build test` to run the tests.
 The following chapters will explain different benchmark and code.
 
 *** Vectors
-A Zig vector is an array of child type: booleans, integers, floats or pointers.
+A Zig vector is an array of child type: booleans, integers, floats or pointers. 
 It provides SIMD instructions for parallelizing operations where possible.
 
-As described in the standard documentation, the vectors small than the target machine's SIMD instruction will be compile to a single SIMD instruction.
+As described in the standard documentation, the vectors smaller than the target machine's SIMD instruction will be compiled to a single SIMD instruction.
 In other hands, the vectors longer than the the target machine's SIMD will be compile to multiple SIMD instructions. [cite:@DocumentationZigProgramming]
 
 The Zig vector does not work in the same way as the C++ vector. [cite:@WelcomeZigGuide2024]
@@ -258,15 +258,16 @@ Zig support a vector size of:
 But currently on the last Zig version, a long size (2^20) can crash at compile-time.
 
 There are utility functions to simplify the use of vectors:
-1. ~@splat~, this function will create a vector of a given size with the same value:
+1. ~@splat~, this function will create a vector of a given size with the same value. [[https://ziglang.org/documentation/0.12.0/#splat][~@splat~]]
 2. ~@Reduce~, this function will reduce the vector into a scalar. We can specify the operation.
    For intergers, every operation is available, for booleans plus there's ~.And~, ~.Or~, ~.Xor~.
-   And finally, for floating points they have also ~.Min~, ~.Max~, ~.Add~, ~.Mul~. [cite:@DocumentationZigProgramming]
-3. ~@shuffle~, this function will construct a new vector by selecting the elements of two vectors (a and b) with a mask.
-   If the number of the mask is 0 or upper, it will select the index of the first vector (a).
-   If the number of the mask is -1 or less, it will select the index starting at -1 and decrementing. (read example to be more clear)
+   And finally, for floating points they have also ~.Min~, ~.Max~, ~.Add~, ~.Mul~. [cite:@DocumentationZigProgramming] [[https://ziglang.org/documentation/0.12.0/#reduce][~@reduce~]]
+3. ~@shuffle~, this function will construct a new vector by selecting the elements of two vectors (a and b) with a mask array.
+   The function will iterate on each element, and select the value of the mask. With the mask value, it will select the element of the array a or b.
+   If the number of the mask value is 0 or higher, it will select the index of the first vector (a).
+   If the number of the mask value is -1 or less, it will select the index starting at -1 and decrementing. (read the example to be more clear) [[https://ziglang.org/documentation/0.12.0/#shuffle][~@shuffle~]]
 4. ~@select~, this function will select from two vectors (a and b) based on a ~pred~ vector.
-   If ~pred[i]~ is positif, the element will be ~a[i]~ otherwise ~b[i]~
+   If ~pred[i]~ is positif, the element will be ~a[i]~ otherwise ~b[i]~ [[https://ziglang.org/documentation/0.12.0/#select][~@select~]]
    
 #+begin_src zig :imports '(std) :main no
   const stdout = std.io.getStdOut();
@@ -321,7 +322,13 @@ This algorithm has puspose to compute the PI number with the following formula:
 \frac{\pi}{4} = 1 - \frac{1}{3} + \frac{1}{5} - \frac{1}{7} + \frac{1}{9} - \ldots = \sum_{k = 0}^{\infty} \frac{(-1)^k}{2k + 1}
 \end{equation}
 
+Below, we can find example from the  [[https://github.com/niklas-heer/speed-comparison/tree/master][speed-comparaison]] github repository.
+They have been modified so that they can be run in org mode.
+
 The C code shows the standard way to compute the Leibniz algorithm, at each iteration, PI will improve.
+The C compiler will optimize the C code to use SIMD instructions under the hood.
+The line: ~x = -1.0 + 2.0 * (i & 0x1);~ is written in this way to enable the compiler to be optimised.
+The compiler can then use the ~fmadd~ instruction, which performs a multiplication and an addition in a single operation. [cite:@IntelIntrinsicsGuide] [cite:@ArmA64Instruction]
 #+begin_src C :includes <stdio.h> :tangle leibniz.c
   unsigned rounds = 1000000000;
   double pi = 1.0;
@@ -340,6 +347,7 @@ The C code shows the standard way to compute the Leibniz algorithm, at each iter
 
 #+RESULTS:
 : 3.1415926545880506
+
 
 The code below shows the adaptation of the C code but for the Zig language.
 #+begin_src zig :imports '(std) :tangle leibniz.zig
@@ -361,10 +369,10 @@ The code below shows the adaptation of the C code but for the Zig language.
 #+RESULTS:
 : 3.1415926545880506
 
-This Zig optmized code will produce a simalar output that the two other codes but it use SIMD instruction to try to manually optimize the code.
-Now the number of iteration is dived by 4, because the calculations are parallelized by 4.
+The Zig optimize code below will produce a similar output to the two other codes but it uses SIMD instruction to try to manually optimize the code.
+Now the number of iterations is divided by 4 because the calculations are parallelized by 4.
 Note: you can see that the length of a ~vector~ is 4. 
-And the end of the code, we find a code that is not vectorized, it will only use for the last iterations.
+At the end of the example, the code doesn't use vectors, it will only use for the last iterations.
 Indeed, the vectorization will only work for a number of rounds divisible by 4 (%4).
 #+begin_src zig :imports '(std) :tangle leibniz_simd.zig
     var rounds: u64 = 1000000000;
@@ -471,6 +479,12 @@ On our arm target we cannot execute ~hyperfine~, we measure 8 times the each pro
 | =./leibniz_zig_aarch=      |    19.95 |   19.96 |   19.95 |
 | =./leibniz_zig_simd_aarch= |    14.43 |   14.44 |   14.43 |
 
+We can find a difference in performance between the ARM and the x86 benchmarks.
+We can note that the set of instructions used between the two benchmarks is different, the optimisations may then differ.
+Moreover, the version of the compilator used is not the same for the C example:
+- For x86: =gcc (GCC) 13.2.1 20240316 (Red Hat 13.2.1-7)=
+- For ARM: =aarch64-buildroot-linux-gnu-gcc.br_real (Buildroot 2022.08.3-dirty) 11.3.0=
+
 
 *** TODO Differents code examples benchmark
 TODO: update the benchmarks with the compiler commands
@@ -512,11 +526,10 @@ We then reproduced the benchmarks between the C and the Zig to see if there were
 Here's our results:
 CPU INFO:[x86\_64][8 cores] Intel(R) Core(TM) i7-8565U CPU @ 1.80GHz (Model 142)
 
-Here's what you need to know about file naming:
+Here's what you need to know about file naming [cite:@Hanabi1224ProgrammingLanguageBenchmarksAnother]:
 #+begin_quote
 - *-m in a file name stands for multi-threading or multi-processing
-- *-i in a file name stands for direct intrinsics usage. (Usage of simd intrinsics via libraries is not counted)
-- *-ffi in a file name stands for non-stdlib FFI usage
+- *-i in a file name stands for direct intrinsics usage. (Usage of SIMD intrinsics via libraries is not counted). It means that the SIMD instruction is directly use in the code. The instructions can be found in the [[https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#ig_expand=2102][Intel Intrinsics Guide]].
 - *(You may find time < time(user) + time(sys) for some non-parallelized programs, the overhead is from GC or JIT compiler, which are allowed to take advantage of multi-cores as that's more close to real-world scenarios.) 
 #+end_quote
 
@@ -618,19 +631,19 @@ Input: 2000
 
 
 *** Results
-We can see that execution times vary greatly depending on the programming language, the implementation, and finally, the compiler used.
-In addition, we found that the best-performing Zig codes use vectors that are optimised by the compiler.
+We can see that execution times vary greatly depending on the programming language, the implementation, the target, and finally, the compiler used.
+In addition, we found that the best-performing Zig codes use vectors.
 On the other hand, Zig codes that are not optimised tend to perform less well than C codes.
 
 On the other hand, we can see that Zig codes consume less memory than C codes. 
-But for the comparison to be fair, the allocator used in Zig is the libC allocator.
+For the comparison, to be fair, the allocator used in Zig is the libC allocator.
 And finally, we can see that the best-performing code depend also on the input.
 
 We can't say that one language is faster than the other, as this will depend enormously on the context, the optimisations used, and the complexity of the code.
-On the other hand, we can make a hypothesis based on the measurements taken: if dynamic memory allocation is carried out correctly, we can expect Zig code to generally consume less memory than C code.
+On the other hand, we can make a hypothesis based on the measurements taken: if dynamic memory allocation is performed correctly, we can expect Zig code to generally consume less memory than C code.
 
 As a reminder, the results obtained are specific to the machine and operating system used.
-In addition, we can compare the differences in performance between the benchmarks obtained on my machine and the machine used by the [[https://github.com/hanabi1224/Programming-Language-Benchmarks][Programming Language Benchmark]] site.
+In addition, we can compare the differences in performance between the benchmarks obtained on a local machine and the machine used by the [[https://github.com/hanabi1224/Programming-Language-Benchmarks][Programming Language Benchmark]] site.
 For their part, the  [[https://github.com/hanabi1224/Programming-Language-Benchmarks][Programming Language Benchmark]] site uses a machine with the following information:
 - CPU INFO:[x86_64][4 cores] AMD EPYC 7763 64-Core Processor (Model 1)
 - We should also note that compiler versions have changed, which can also add variability to the results
@@ -639,13 +652,15 @@ For their part, the  [[https://github.com/hanabi1224/Programming-Language-Benchm
   3. zig 0.12.0-dev.2341+92211135f 
   4. zigcc 0.12.0-dev.2341+92211135f
 
-For the knucleotide example, we obtain a comparable ranking in the two results, however, we notice that my x86 target is 85 ms slower for the version of Zig with an input of 2500000, but it consumes less memory (around 500KB).
+For the knucleotide example, we obtain a comparable ranking in the two results.
+However, we notice that my x86 target is 85 ms slower for the version of Zig with an input of 2500000, but it consumes less memory (around 500KB).
 
 For the nbody example, we can note that on average, the performance obtained is better on my x86 target, but the memory used remains in the same order of magnitude.
 We also see that the ~8-i.c~ implementation is faster under AMD Epics for the ~zigcc~ compiler and for ~gcc~.
 And that the ~5.c~ implementation with the ~Clang~ compiler is among the first in the x86 test, but is among the last for AMD.
 We note that the difference between version 14 and version 17 of clang can also affect the results.
-This is the only example where the zigcc compiler is used for benchmarking, and we can see that the performance results obtained are similar to those we can get with gcc or clang.
+This is the only example where the zigcc compiler is used for benchmarking.
+We can see that the performance results obtained are similar to those we can get with gcc or clang.
 We can also observe that the same code compiled with zigcc uses less memory than the other compilers.
 Further tests would be needed to confirm this, as the nbody example does not allocate memory dynamically.
 
@@ -677,41 +692,46 @@ After each implementation build, we benchmark with hyperfine to have the results
 And we have the results:
 | Command                                                              | Mean [s]       | Min [s] | Max [s] | Relative    |
 |----------------------------------------------------------------------+----------------+---------+---------+-------------|
-| =./1brc/bin/analyze ~/Documents/1brc/measurements.txt=               | 11.774 ± 2.051 |   7.582 |  13.034 | 1.00        |
-| =./1brc-zig/zig-out/bin/1brc-zig ~/Documents/1brc/measurements.txt=  | 21.283 ± 0.051 |  21.228 |  21.390 | 1.81 ± 0.31 |
-| =./1brc-zig2/zig-out/bin/1brc-zig ~/Documents/1brc/measurements.txt= | 24.788 ± 0.187 |  24.332 |  24.931 | 2.11 ± 0.37 |
+| =C implementation=                                                   | 11.774 ± 2.051 |   7.582 |  13.034 | 1.00        |
+| =1th Zig implementation= | 21.283 ± 0.051 |  21.228 |  21.390 | 1.81 ± 0.31 |
+| =2th Zig implementation= | 24.788 ± 0.187 |  24.332 |  24.931 | 2.11 ± 0.37 |
 
-We can see the differences in performances between C and Zig, but we note that the differences between the best C result and the worst C result have a difference of 6 seconds.
+We can see the differences in performances between C and Zig.
+We note that the differences between the best C result and the worst C result have a difference of 6 seconds.
 
 To see if we get different performances, we benchmark each implementation on its own:
 
 The first Zig implementation [[https://github.com/candrewlee14/1brc-zig][1brc-zig]]
-| Command                                        | Mean [s]       | Min [s] | Max [s] | Relative |
-|------------------------------------------------+----------------+---------+---------+----------|
-| =./1brc-zig ~/Documents/1brc/measurements.txt= | 15.647 ± 2.206 |  13.301 |  21.649 |     1.00 |
+| Command                  | Mean [s]       | Min [s] | Max [s] | Relative |
+|--------------------------+----------------+---------+---------+----------|
+| =1th Zig implementation= | 15.647 ± 2.206 |  13.301 |  21.649 |     1.00 |
 
 Sometimes when we redo the benchmark we don't get this huge difference.
-| Command                                        | Mean [s]       | Min [s] | Max [s] | Relative |
-|------------------------------------------------+----------------+---------+---------+----------|
-| =./1brc-zig ~/Documents/1brc/measurements.txt= | 12.749 ± 0.345 |  12.202 |  13.545 |     1.00 |
+We use the Linux kernel to map the memory of the measurements file.
+Depending on the computer load, some differences can be found.
+| Command                  | Mean [s]       | Min [s] | Max [s] | Relative |
+|--------------------------+----------------+---------+---------+----------|
+| =1th Zig implementation= | 12.749 ± 0.345 |  12.202 |  13.545 |     1.00 |
 
 
 The second Zig implementation [[https://github.com/almmiko/1brc-zig][1brc-zig - second implementation]]
-| Command                                        | Mean [s]       | Min [s] | Max [s] | Relative |
-|------------------------------------------------+----------------+---------+---------+----------|
-| =./1brc-zig ~/Documents/1brc/measurements.txt= | 18.730 ± 2.837 |  15.192 |  24.906 |     1.00 |
+| Command                  | Mean [s]       | Min [s] | Max [s] | Relative |
+|--------------------------+----------------+---------+---------+----------|
+| =2th Zig implementation= | 18.730 ± 2.837 |  15.192 |  24.906 |     1.00 |
 
 And the C implementation
-| Command                                       | Mean [s]      | Min [s] | Max [s] | Relative |
-|-----------------------------------------------+---------------+---------+---------+----------|
-| =./analyze ~/Documents/1brc/measurements.txt= | 8.898 ± 0.591 |   7.507 |   9.510 |     1.00 |
+| Command            | Mean [s]      | Min [s] | Max [s] | Relative |
+|--------------------+---------------+---------+---------+----------|
+| =C implementation= | 8.898 ± 0.591 |   7.507 |   9.510 |     1.00 |
 
 
 In the C implementation, we note that his writer uses a custom hashmap to hash the city names.
 He uses a fast multiplication hash combined with a linear search probing.
 The load factor of his hashmap is 0.5. [cite:@BillionRowChallenge]
 
-We find out that in the first Zig implementation, use also a hashmap but the Zig standard library hashmap for string hash with the wyhash [cite:@wangyiWangyifudanWyhash2024] algorithm.
+The first Zig implementation use also a hashmap.
+But the hashmap comes from the Zig standard library.
+His purpose is generic and uses the Wyhash algorithm to compute the hashes.[cite:@wangyiWangyifudanWyhash2024]
 
 The ~Hotspot~ program has been used to create flamegraph of the implementations:
 
@@ -724,7 +744,14 @@ Calculating the base index is mapped into an array, and then, if there are any c
 #+CAPTION: Flamegrph of the C's 1brc implementation
 [[../images/flamegrah_1brc_c.png]]
 
-In the example below, this is how the hash is calculated for each city: [cite:@OneBillionRows2024a]
+In the example below, Danny van Kooten, the writer of the C One Billion Rows Challenge, explains how the hashes are calculated for each city. [cite:@OneBillionRows2024a]
+He uses a simple fast multiplication hash combined with linear probing.
+
+In the first bloc, he multiples each letter of the city by 31.
+After that, he sums up all the results.
+
+In the second bloc, he checks if the hash can be inserted into the hashmap.
+If there is a collision, he iterates over the hashmap until he finds a free spot or a matching key.
 #+begin_example c
 // hash everything up to ';'
 // assumption: key (city name) is at least 1 char
