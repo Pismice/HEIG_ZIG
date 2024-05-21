@@ -39,8 +39,6 @@ Does Zig manage tcp stream with the OS stream or has it created its own implemen
 
 #+INCLUDE: "./comptime.org" :minlevel 1
 
-#+INCLUDE: "./zig-and-c.org" :minlevel 1
-
 #+INCLUDE: "./concurrency.org" :minlevel 1
 
 #+INCLUDE: "./web.org" :minlevel 1

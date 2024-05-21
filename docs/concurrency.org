@@ -37,16 +37,25 @@ In preemptive multitasking it is the underlying architecture (not us, but the OS
 *** Cooperative multitasking
 Contrary to preemptive multitasking, it is the progammer job to choose which and when the differents threads are executed. Threads are going to run until they are explicitly yielding control back. This method gives the advantage to have the progammer to have a fine grained control over his ressources, but also implies that the programmer has to think about not starving threads.
 
-*** Thread (ChatGPT)
+*** Thread
 Multithreading, it is the most basic and history way to do concurrency, it works by running the work on multiple threads that are going to be exectued in parallel (if the CPU can), each thread runs independently of the others. Unlike asynchronous event-driven programming, threads typically block until their assigned task completes.
 
-Parallelism becomes achievable through multithreading (even though its not 100% guaranteed), particularly on multi-core CPUs, facilitating genuine simultaneous execution and maximizing hardware utilization. Threads also offer robust isolation, with each thread possessing its own execution context, stack, and local variables, ensuring task independence and preventing interference.
+Parallelism becomes achievable through multithreading (even though its not 100% guaranteed). Threads also offer robust isolation, with each thread possessing its own execution context, stack, and local variables, ensuring task independence and preventing interference.
 
 However, scalability can become a concern when managing numerous threads. The overhead of resource allocation by the operating system kernel for each thread may lead to scalability issues, particularly in high-demand environments. To mitigate this, thread pools are often employed to minimize the overhead of thread creation and destruction, thus optimizing performance and resource utilization.
 To avoid this overhead, thread pools are often used, which manage a set of threads that can be reused for multiple tasks. This approach reduces the overhead of creating and destroying threads for each task, making it more efficient and scalable.
 
-*** Event-driven programming (ChatGPT)
-Event-driven programming, exemplified by platforms like NodeJS, operates through an event loop that continuously monitors for triggered "events". This architecture boasts scalability, adeptly managing numerous concurrent connections while keeping memory and CPU usage minimal. The engine powering NodeJS lies in the codebase hosted on GitHub at https://github.com/libuv/libuv. Under the hood libuv is basically a single threaded [[https://docs.libuv.org/en/v1.x/design.html#the-i-o-loop][event-loop]] which is going to perform all IOs on non-blocking sockets that are polled by pollers like epoll, kqueue, ...
+*** Event-driven programming
+Event-driven programming, is basically an event loop that listen for "events". This architecture. Under the hood this works by having an event loop that is going to poll for events and check regulary if an event has been emitted. Those events can be for exemple interupts or signals.
+
+*** Asynchronous programming (non-blocking IO)
+TODO
+https://en.wikipedia.org/wiki/Asynchronous_I/O
+Useful if there a lot of IO operations, so that we can start processing other thingswhile waiting for this IO operation.
+TODO WHEN NOT TO USE
+Can be achieved either by using polling systems (epoll, kqueue, ...) or events (interupts, signals, ...)
+Under the hood libuv is basically a single threaded [[https://docs.libuv.org/en/v1.x/design.html#the-i-o-loop][event-loop]] which is going to perform all IOs on non-blocking sockets that are polled by pollers like epoll, kqueue, ...
+
 ** Zig solutions
 There are multiple ways you currently can do concurent code in ZIG, we are going to explore a few here:
 
@@ -101,8 +110,8 @@ fn goTo(thread_id: u8, max: usize) void {
 }
 #+end_src
 
-**** Under the hood
-Under the hood the threads are either pthread ([[https://ziglang.org/documentation/master/std/#std.Thread.use_pthreads][if we are under linux AND linking libc]]) or it is simpy going to use native OS threads.
+**** Implementation in the std
+Under the hood the threads are either pthread ([[https://ziglang.org/documentation/master/std/#std.Thread.use_pthreads][if we are under linux AND linking libc]]) or it is simpy going to use native OS threads wrapped by a Zig implementation. TODO est ce que cest vrm wrappe ?
 
 The advantage of doing multi-threading in Zig is that you don't have to worry about what is the target system going to be, since **std.Thread** implementation automatically chooses the native OS threads for the system your are compiling for (except if you want to enforce the use of pthreads). 
 
@@ -217,10 +226,125 @@ int main() {
 }
 #+end_src
 
+***** pthreads vs LinuxThreadImpl
+When compiling on Linux, by default your threads are going to use the [[https://github.com/ziglang/zig/blob/28476a5ee94d311319941b54e9da66210690ce70/lib/std/Thread.zig#L1042][LinuxThreadImpl]]. TODO parler under the hood.
+You might have notice that when you are linking libc, Zig is going to use pthreads instead of the native OS threads. This is because pthreads are more performant at the moment and since you are already linking libc it is better to use pthreads.
+
+The way we measure are going to measure which implementation is better is by comparing the time it takes to *spawn* and *destory* N threads. It is useless to do work in the threads because no matter the implementation they are going to execute in the same way. It might even be counter-productive because you are going to start comparing the code inside the threads instead of the threads themselves.
+
+TODO tangling psq main
+#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+const std = @import("std");
+
+const NB_THREADS = 10000;
+
+pub fn main() !void {
+    var threads: [NB_THREADS]std.Thread = undefined;
+
+    for (0..NB_THREADS) |i| {
+        threads[i] = try std.Thread.spawn(.{}, goTo, .{});
+    }
+
+    for (0..NB_THREADS) |i| {
+        threads[i].join();
+    }
+}
+
+fn goTo() void {}
+#+end_src
+
+If we run this code with hyperfine (100 runs) once while linking libc (using pthreads) and once in vanilla mode (using LinuxThreadImpl), we can sometimes see that there is indeed a slight performance difference between the two:
+- pthreads = ~274.4 ms += 4.7 ms
+- LinuxThreadImpl = 280.s ms += 5.9 ms
+
+The difference is so small that even when only spawning and destroying threads we barely see it. In a real world application where this would very unlikely be the bottleneck, which thread implementation you are going to use is very likely to not change anything the way your program perform.
+
 **** Thread synchronization
+Threads can be synchronized with utilities that are the same as most other languages (notably C). So when jumping in the [[https://ziglang.org/documentation/master/std/#std.Thread][std doc]] you should not be suprised and understand most of the features like Mutex and Semaphore.
+
+TODO tangling
+
+Here is the Zig code:
+#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+const std = @import("std");
+
+var common: u64 = 0;
+var m = std.Thread.Mutex{};
+
+pub fn main() !void {
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
+    const allocator = gpa.allocator();
+
+    var pool: std.Thread.Pool = undefined;
+    try pool.init(.{ .allocator = allocator });
+
+    for (0..1000) |_| {
+        try pool.spawn(goTo, .{});
+    }
+
+    pool.deinit();
+
+    std.debug.print("{d}", .{common});
+}
+
+fn goTo() void {
+    m.lock();
+    common += 1;
+    m.unlock();
+}
+#+end_src
+
+And the equivalent C code:
+#+begin_src c
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define NB_THREADS 10000
+
+pthread_mutex_t mutex;
+unsigned long long common = 0;
+
+void* goTo(void* arg) {
+    pthread_mutex_lock(&mutex);
+    common += 1;
+    pthread_mutex_unlock(&mutex);
+    return NULL;
+}
+
+int main() {
+    pthread_t threads[NB_THREADS];
+    int i;
+
+    if (pthread_mutex_init(&mutex, NULL) != 0) {
+        printf("Mutex initialization failed\n");
+        return 1;
+    }
+
+    for (i = 0; i < NB_THREADS; i++) {
+        if (pthread_create(&threads[i], NULL, goTo, NULL) != 0) {
+            printf("Thread creation failed\n");
+            return 1;
+        }
+    }
+
+    for (i = 0; i < NB_THREADS; i++) {
+        pthread_join(threads[i], NULL);
+    }
+
+    pthread_mutex_destroy(&mutex);
+
+    printf("%llu\n", common);
+
+    return 0;
+}
+#+end_src
+
 
 
 **** Leaky abstraction
+There are 2 things you can tweak when using *std.Thread*: the stack size and the allocator that is going to allocate the memory for the thread.
 TODO: est ce que je peux fine tuned threads en Zig ? (priority, stack size, ...)
 
 **** Conclusion
