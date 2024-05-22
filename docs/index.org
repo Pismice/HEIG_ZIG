@@ -6,7 +6,28 @@
 
 #+INCLUDE: "./introduction.org" :minlevel 1
 
-#+INCLUDE: "./allocators.org" :minlevel 1
+* Basics of the language
+
+#+INCLUDE: "./external-files.org" :minlevel 2
+
+#+INCLUDE: "./errors.org" :minlevel 2
+
+#+INCLUDE: "./code-styles.org" :minlevel 2
+
+#+INCLUDE: "./zig-version-manager.org" :minlevel 2
+
+#+INCLUDE: "./defer.org" :minlevel 2
+
+#+INCLUDE: "./tests.org" :minlevel 2
+
+#+INCLUDE: "./tracking.org" :minlevel 2
+
+#+INCLUDE: "./compiler-messages.org" :minlevel 2
+
+** TCP stream
+*** TODO How Zig manages stream
+Does Zig manage tcp stream with the OS stream or has it created its own implementation ?
+
 
 #+INCLUDE: "./comptime.org" :minlevel 1
 
@@ -14,28 +35,15 @@
 
 #+INCLUDE: "./build-system.org" :minlevel 1
 
+#+INCLUDE: "./allocators.org" :minlevel 1
+
+#+INCLUDE: "./comptime.org" :minlevel 1
+
 #+INCLUDE: "./concurrency.org" :minlevel 1
 
 #+INCLUDE: "./web.org" :minlevel 1
 
-* Utils
-
-#+INCLUDE: "./zig-package-manager.org" :minlevel 2
-
-#+INCLUDE: "./zig-version-manager.org" :minlevel 2
-
-* Standard library
-** TCP stream
-*** TODO How Zig manages stream
-Does Zig manage tcp stream with the OS stream or has it created its own implementation ?
-
-** Threading
-*** Compare Zig threading library with ~p_thread~
-
-* Others
-#+INCLUDE: "./external-files.org" :minlevel 2
-
-#+INCLUDE: "./errors.org" :minlevel 2
+#+INCLUDE: "./case-studies.org" :minlevel 1
 
 * Bibliography
 #+print_bibliography: :section 2 :heading subbibliography

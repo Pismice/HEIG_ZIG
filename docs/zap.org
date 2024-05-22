@@ -1,4 +1,29 @@
-** Zap
-*** Description
-TODO
+*** Zap
+**** Description
+Zap is a micro web framework that is mainly uses to write REST APIs.
+
+Zap isn't really a fully Zig project, it just wraps and leverages the power of [[https://facil.io][facil.io]]. By that I want to emphasize 2 things:
+- All the heavy lifting is done in C, so we can't give much of the performances merits to Zig on this
+- From the programmer point of view it seems to you like your project is 100% Zig, so you have no C overhead (except linking libc)
+
+**** Exemples
+The [[https://github.com/zigzap/zap][repo]] gives you a lot of [[https://github.com/zigzap/zap/tree/master/examples][exemples]] in order to get started.
+
+**** Alternatives and performance comparaison
+TODO mettre le resultat de wrk bizzare
+
+**** Conclusion
+Zap is a very intersting project that is uses in production by some people (TODO).
+
+Even though it should be working for almost all your use cases, it still is a microframework which means that there are not a lot of batteries included and if you need advanced features, you might have to those yourself (TODO exemple)
+
+Since Zig is a low level language you are going to have a lot of boilerplate and small things like memory to manage manually. Those are things than can easily be avoided by using other languages (Java, Go, Node, ...)
+
+It is also important to note that this is a young project with not a lot of contributors and a very small community. So if you are going to use Zap you might have to figure out things on your own or write on the [[https://discord.gg/gcZm8f8K][project discord]]. You might aswell find codes or documentations that are oudated.
+
+To conclude if you don't need **high** performances (C like), I wouldn't recommend this framework to build your REST APIs.
+
+**** Mes notes
 Callback based, we define certain callbacks, we configure from there
+often not updated, hard to find yourself
+je devrai aussi analyer facilio qui est ce qui est derriere la scene

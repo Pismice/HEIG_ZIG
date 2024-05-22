@@ -1,16 +1,12 @@
-
-https://ziglang.org/documentation/master/#cImport-vs-translate-c
-
-TODO enlever le import std car est juste un exemple de code
- :imports '(std)
-
-cImport doit etre fait une seule fois sinon on peut avoir des générations à double (2 import qui devraient etre les memes vont creer 2 types différents)
-
-on utilise casi tout le temps les boucles while sauf si on itere sur une liste
-
-beaucoup de conversion explicites (aucune conversion implicite en zig sauf si on elargit le type -> zig ne nous cache rien)
-
+<<<<<<< HEAD
 ** Zig and C
+*** Introduction
+The interoperability between Zig and C is one of the most important feature of Zig. But why ?
+
+It is one of the main goal of Zig to [[https://ziglang.org/][incrementally improve your C/C++/Zig codebase]], so you could use C code almost as much as easy as you could use Zig code.
+
+It allows to have both of a *modern* language and a *mature* ecosystem.
+
 *** Main differences between Zig and C in the syntax
 There are a few main differences between the 2 languages that you have high chance of encountering but obviously not all of them are listed here.
 
@@ -135,6 +131,17 @@ If you want to have more C files than just main.c you can add them like so:
 exe.addCSourceFile(.{ .file = .{ .path = "c-src/image.c" }, .flags = &.{"-std=c99"} });
 #+end_src
 
+TODO utiliser code zig dans project C https://zig.guide/working-with-c/calling-conventions
+
+**** export and extern keywords
+*export* make the the function visible from outside so that the C ABI can see it.
+
+*extern* is used to link against an exported variable from an other object.
+
+[[https://ziglang.org/documentation/master/#Variables][Zig documentation for those 2 keywords.]]
+
+TODO jai oublie d ajouter du code zig, ne pas oublier export/extern
+
 TODO pros and cons of using zig toolchain instead of clang or gcc
 
 *** How is it done under the hood
@@ -248,3 +255,4 @@ Sources:
 - https://ziglang.org/documentation/master/#C-Type-Primitives
 - https://zig.news/sobeston/using-zig-and-translate-c-to-understand-weird-c-code-4f8
 - https://mtlynch.io/notes/zig-call-c-simple/
+- https://ziglang.org/documentation/master/#cImport-vs-translate-c
