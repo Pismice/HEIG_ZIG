@@ -255,7 +255,7 @@ Zig support a vector size of:
 \begin{equation}
 2^{32} - 1
 \end{equation}
-But currently on the last Zig version, a long size (2^20) can crash at compile-time.
+But currently on the last Zig version, a long size (2^20) can crash at compile-time. [[https://ziglang.org/documentation/0.12.0/#toc-Vectors][see documentation]] [cite:@DocumentationZigProgramminga]
 
 There are utility functions to simplify the use of vectors:
 1. ~@splat~, this function will create a vector of a given size with the same value. [[https://ziglang.org/documentation/0.12.0/#splat][~@splat~]]
@@ -335,11 +335,11 @@ The compiler can then use the ~fmadd~ instruction, which performs a multiplicati
 
   rounds += 2u; // do this outside the loop
 
-  for (unsigned i=2u; i < rounds; ++i) // use ++i instead of i++
-    {
+  for (unsigned i=2u; i < rounds; ++i)
+  {
       double x = -1.0 + 2.0 * (i & 0x1); // allows vectorization
       pi += (x / (2u * i - 1u)); // double / unsigned = double
-    }
+  }
 
   pi *= 4;
   printf("%.16f\n", pi); // print 16 decimal digits of pi
@@ -371,7 +371,7 @@ The code below shows the adaptation of the C code but for the Zig language.
 
 The Zig optimize code below will produce a similar output to the two other codes but it uses SIMD instruction to try to manually optimize the code.
 Now the number of iterations is divided by 4 because the calculations are parallelized by 4.
-Note: you can see that the length of a ~vector~ is 4. 
+Note: you can see that the length of the ~vector~ is 4. 
 At the end of the example, the code doesn't use vectors, it will only use for the last iterations.
 Indeed, the vectorization will only work for a number of rounds divisible by 4 (%4).
 #+begin_src zig :imports '(std) :tangle leibniz_simd.zig
