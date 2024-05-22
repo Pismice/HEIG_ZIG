@@ -25,9 +25,9 @@ The only way to transfer the control flow is by explicitly passing control **to 
 2. suspending itself and giving control back to the caller
 
 *** Green threads (userland threads)
-Green threads, also known as userland threads are managed by a runtime or VM instead of the OS with standard kernel threads. They are lightweight compared to OS threads as they have a lower overhead (since it is managed in userspace instead of kernel). Even though they are not real OS threads, there are still OS threads that manage them under the hood. Paritculary useful for short-lived tasks. Green threads are most likely to be cooperative and yield control between them, even though it could be possible that they are managed by a runtime that has its own scheduler and can preempt them.
-Green threads might be better for multiple short lived tasks  (eg: web server) because of their low overhead when context switching and memory usage.
-When using green threads
+Green threads, also known as userland threads are managed by a runtime or VM (userspace either way) instead of the OS scheduler (kernel space) that manages standard kernel threads. They are lightweight compared to OS threads as they have a lower overhead (since it is managed in userspace instead of kernel). Even though they are not real OS threads, there are still OS threads that manage them under the hood. Paritculary useful for short-lived tasks. Green threads are most likely to be cooperative and yield control between them, even though it could be possible that they are managed by a runtime that has its own scheduler and can preempt them.
+Green threads might be better for multiple short lived tasks (eg: web server) because of their low overhead when context switching and memory usage.
+Be careful when using green threads not to use blocking functions, because blocking 1 green thread might mean blocking all the green threads because they most likely all run on the same kernel thread.
 
 *** Fibers
 TODO
@@ -42,21 +42,26 @@ Contrary to preemptive multitasking, it is the progammer job to choose which and
 *** Kernel threads
 Multithreading, it is the most basic and history way to do concurrency, it works by running the work on multiple threads that are going to be exectued in parallel (if the CPU can), each thread runs independently of the others. Unlike asynchronous event-driven programming, threads typically block until their assigned task completes.
 
+Threads are managed by the OS scheduler which is going to decide when to execute which thread ...  (TODO image des states des threads etc)
+
 Parallelism becomes achievable through multithreading (even though its not 100% guaranteed). Threads also offer robust isolation, with each thread possessing its own execution context, stack, and local variables, ensuring task independence and preventing interference.
 
 However, scalability can become a concern when managing numerous threads. The overhead of resource allocation by the operating system kernel for each thread may lead to scalability issues, particularly in high-demand environments. To mitigate this, thread pools are often employed to minimize the overhead of thread creation and destruction, thus optimizing performance and resource utilization.
+
 To avoid this overhead, thread pools are often used, which manage a set of threads that can be reused for multiple tasks. This approach reduces the overhead of creating and destroying threads for each task, making it more efficient and scalable.
 
 *** Event-driven programming
 Event-driven programming, is basically an event loop that listen for "events". This architecture. Under the hood this works by having an event loop that is going to poll for events and check regulary if an event has been emitted. Those events can be for exemple interupts or signals.
 
 *** Asynchronous programming (non-blocking IO)
+When in this mode the execution flow of the program is unkown because we don't know when a non-blocking function might be ready for use and therefore take back the control flow of the application.
 TODO
 https://en.wikipedia.org/wiki/Asynchronous_I/O
 Useful if there a lot of IO operations, so that we can start processing other thingswhile waiting for this IO operation.
 TODO WHEN NOT TO USE
 Can be achieved either by using polling systems (epoll, kqueue, ...) or events (interupts, signals, ...)
 Under the hood libuv is basically a single threaded [[https://docs.libuv.org/en/v1.x/design.html#the-i-o-loop][event-loop]] which is going to perform all IOs on non-blocking sockets that are polled by pollers like epoll, kqueue, ...
+TODO when interupts are better than pollings (polling mieux si beaucoup)
 
 ** Zig solutions
 There are multiple ways you currently can do concurent code in ZIG, we are going to explore a few here:
@@ -229,10 +234,12 @@ int main() {
 #+end_src
 
 ***** pthreads vs LinuxThreadImpl
-When compiling on Linux, by default your threads are going to use the [[https://github.com/ziglang/zig/blob/28476a5ee94d311319941b54e9da66210690ce70/lib/std/Thread.zig#L1042][LinuxThreadImpl]]. TODO parler under the hood.
-You might have notice that when you are linking libc, Zig is going to use pthreads instead of the native OS threads. This is because pthreads are more performant at the moment and since you are already linking libc it is better to use pthreads.
+When compiling on Linux, by default your threads are going to use the [[https://github.com/ziglang/zig/blob/28476a5ee94d311319941b54e9da66210690ce70/lib/std/Thread.zig#L1042][LinuxThreadImpl]]. Which under the hood simply is a wrapper around some syscalls in order to manage threads (the code does closely the same thing as the pthread code).
+You might have notice that when you are linking libc, Zig is going to use pthreads instead of the **LinuxThreadImpl**. This is because pthreads are more performant at the moment and since you are already linking libc it is better to take advantage of that and ue pt hreads.
 
-The way we measure are going to measure which implementation is better is by comparing the time it takes to *spawn* and *destory* N threads. It is useless to do work in the threads because no matter the implementation they are going to execute in the same way. It might even be counter-productive because you are going to start comparing the code inside the threads instead of the threads themselves.
+The way we are going to measure which implementation is better is by comparing the time it takes to *spawn* and *destory* N threads. It is useless to do work in the threads because no matter the implementation they are going to execute in the same way. It might even be counter-productive because you are going to start comparing the code inside the threads instead of the threads themselves.
+
+Note that it is hard to benchmark thread implementations and you can easily end up not directly benchmarking them, if you for exemple try to compare the number of context switches between 2 implementations. Context switch happen *randomly* whenever the OS scheduler wants it. So trying to analyze that might lead you into false conclusions.
 
 TODO tangling psq main
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
