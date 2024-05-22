@@ -25,10 +25,12 @@ The only way to transfer the control flow is by explicitly passing control **to 
 2. suspending itself and giving control back to the caller
 
 *** Green threads (userland threads)
-Green threads, also known as userland threads are managed by a runtime or VM instead of the OS with standard kernel threads. They are lightweight compared to OS threads as they have a lower overhead (since it is managed in userspace instead of kernel). Even though they are not real OS threads, there are still OS threads that manage them under the hood. Paritculary useful for short-lived tasks.
-- preemptive multitasking ou cooperative (TODO JE NE SAIS TOUJOURS PAS psq le runtime peut toujours les preempter)
+Green threads, also known as userland threads are managed by a runtime or VM instead of the OS with standard kernel threads. They are lightweight compared to OS threads as they have a lower overhead (since it is managed in userspace instead of kernel). Even though they are not real OS threads, there are still OS threads that manage them under the hood. Paritculary useful for short-lived tasks. Green threads are most likely to be cooperative and yield control between them, even though it could be possible that they are managed by a runtime that has its own scheduler and can preempt them.
+Green threads might be better for multiple short lived tasks  (eg: web server) because of their low overhead when context switching and memory usage.
+When using green threads
 
 *** Fibers
+TODO
 Same as green threads but cooperative multitasking instead of preemptive multitasking
 
 *** Preemptive multitasking
@@ -37,7 +39,7 @@ In preemptive multitasking it is the underlying architecture (not us, but the OS
 *** Cooperative multitasking
 Contrary to preemptive multitasking, it is the progammer job to choose which and when the differents threads are executed. Threads are going to run until they are explicitly yielding control back. This method gives the advantage to have the progammer to have a fine grained control over his ressources, but also implies that the programmer has to think about not starving threads.
 
-*** Thread
+*** Kernel threads
 Multithreading, it is the most basic and history way to do concurrency, it works by running the work on multiple threads that are going to be exectued in parallel (if the CPU can), each thread runs independently of the others. Unlike asynchronous event-driven programming, threads typically block until their assigned task completes.
 
 Parallelism becomes achievable through multithreading (even though its not 100% guaranteed). Threads also offer robust isolation, with each thread possessing its own execution context, stack, and local variables, ensuring task independence and preventing interference.
