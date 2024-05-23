@@ -1,5 +1,11 @@
-** HTTP from the std
-*** Description
+*** HTTP from the std
+**** Description
 Http.zig: Dispatcher based, you create the dispatch chai (As far as I understand it)
-*** Exemples
+
+just a server
+
+from discord creator of zap: To put it simply: std.http has no concept of multiple concurrent connections. So you have to write your own "framework" handling that, e.g. using a thread-pool for handling requests and implementing some sort of polling to know when there's activity on the connections, and combine the two (poll & pool).
+
+std.http is very useful for what it was designed for. The Client was added to fetch packages, the Server to test the client. It's not designed to be a 100% out-of-the-box integratable implementation of everything HTTP/web, nor is it meant to be used in production in a massively multithreaded setup. 
+**** Exemples
 TODO

@@ -1,6 +1,6 @@
 * Introduction
 
-Nowadays, multiple languages have emerged to compete with the well-established C language.
+Nowadays, [[https://www.reddit.com/r/C_Programming/comments/nqkn93/what_do_people_think_of_the_c_replacements_are/][multiple languages]] have emerged to compete with the well-established C language.
 In fact, C is widely used in many places, learned by a lot of engineers, and used for many purposes.
 C is a powerful tool, /but with great power comes great responsibility/, in fact, memory leaks can easily occur by mistake.
 
@@ -16,7 +16,22 @@ In the sections below, certain aspects of this programming language will be expl
 
 Note that this documentation is generated from emacs with org-mode and that you can find the Github repository [[https://pismice.github.io/HEIG_ZIG/][here]].
 
-** What this documentation is not
+** What this documentation IS
+This documentation is being worked on by 2 students from the HEIG-VD, in the context of a course for one and a Bachelor Thesis for the other.
+The goal of this documentation is to explore the Zig language in-depth, by first learning a few basics of the language we judge interesting/useful, and then by exploring more advanced topics.
+
+This work is mainly aimed at engineers who already have experiences in C but might consider using Zig as a replacement/alternative. If you are a complete beginner, you might still learn a lot by reading this, but we highly encourage you to look at other ressources aimed at beginners aswell.
+
+The big + this project offers compare to other guides/documentations is that here we are going to learn the language with [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] (learning via interactive code exemples) because *one snippet of code is worth 1000 words*.
+
+The advanced topics covered are mostly structured like so:
+1. Explain the concept and see what is done in other languages (mostly C)
+2. Show how to do it in Zig
+3. Conclusion about the current state of Zig on this topic
+
+Note that we wrote this documentation with the help of AI assistants like ChatGPT and GH Copilot.
+
+** What this documentation IS NOT
 This is *not* a guide to learn Zig as first-language, this documentation wants to go in-depth in certain parts of the language.
 
 To understand what is described in this documentation, you should first read up on the basics of the Zig language, in particular, its guide, which contains a wealth of information.
@@ -39,6 +54,8 @@ But Zig is in constant evolution we *may* have to use other versions at some poi
 
 ** Build Emacs configuration
 
+TODO RAJOUTER les etapes EN PARTANT DE 0, IL FAUT IMAGINER QUE L UTILISATEUR N AIT PAS EMACS, RIEN DU TOUT
+
 *** Install Zig emacs org babel plugin
 Use ~C-c C-c~ (~ctrl-c ctrl-c~) to evaluate the code below.
 It will add a shell interpreter inside org-babel configuration, it will be used when shell commands are evaluated.
@@ -58,7 +75,9 @@ You can change the directory where the plugin will be installed (change the argu
 #+end_src
 
 *** Create an emacs configuration file
-To use the plugin installed before, you need to modify the first path to give the path where the plugin is installed (see section upper),
+TODO le prof n a pas compris cette phrase entre guillemets et moi non plus apres relecture :-)
+
+"To use the plugin installed before, you need to modify the first path to give the path where the plugin is installed (see section upper),"
 and a path to the Zig executable need also to be referenced.
 
 After that, the following command ~C-c C-v t~ (~ctrl-c ctrl-v t~) will produce a ~zigIterativeProgramming.el~ file.
