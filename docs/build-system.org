@@ -5,8 +5,6 @@
 #+HTML_MATHJAX: align: left indent: 5em tagside: left
 
 * Compilation - build system
-** TODO Comptime
-
 ** TODO How to use the build system
 
 ** Build modes
@@ -646,14 +644,14 @@ Input: 2000
 *** Results
 We can see that execution times vary greatly depending on the programming language, the implementation, the target, and finally, the compiler used.
 In addition, we found that Zig codes that use vectors perform better than those that do not.
-On the other hand, Zig codes that are not optimised tend to perform less well than C codes.
+Zig codes that are not optimised tend to perform less well than C codes.
 
 On the other hand, we can see that Zig codes consume less memory than C codes. 
 For the comparison, to be fair, the allocator used in Zig is the libC allocator.
 And finally, we can see that the performances depend also on the input.
 
 We can't say that one language is faster than the other, as this will depend enormously on the context, the optimisations used, and the complexity of the code.
-On the other hand, we can make a hypothesis based on the measurements taken: if dynamic memory allocation is performed correctly, we can expect Zig code to generally consume less memory than C code.
+We can make a hypothesis based on the measurements taken: if dynamic memory allocation is performed correctly, we can expect Zig code to generally consume less memory than C code.
 
 As a reminder, the results obtained are specific to the machine and operating system used.
 In addition, we can compare the differences in performance between the benchmarks obtained on a local machine and the machine used by the [[https://github.com/hanabi1224/Programming-Language-Benchmarks][Programming Language Benchmark]] site.
