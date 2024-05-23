@@ -7,7 +7,9 @@ We are going to explore the different ways to do concurrency in general (not Zig
 By the end you should be able to see the pros and cons of each solution and choose the one that fits you in Zig.
 
 ** Definitions
-Before diving into the different ways to do concurrency in ZIG, let's first define some terms that are useful to understand the basics of concurrency (not related to Zig).
+Before diving into the different ways to do concurrency in ZIG, let's first define some terms that are useful to understand the basics of concurrency (not related to Zig). Some terms we are going to explain here might not even be needed in the next sections, but might help you clarify your concurency concepts.
+
+It is important to note that the borders between some definitions are really blur and it is possible that you read a slightly different definition in another source.
 
 *** Coroutine
 Courtines enable the management of concurrent tasks like callbacks do (which make them not concurrent by nature but they are a tool to achieve concurrency). Their great power lies in their ability to write concurent task like you would write sequential code. They achieve this by yielding control between them. They are used for cooperative multitasking, since the control flow is managed by themselves and not the OS. You might see them in a lot of languages like Python, Lua, Kotlin, ... with keywords like **yield**, **resume**, **suspend**, ...
@@ -29,10 +31,6 @@ Green threads, also known as userland threads are managed by a runtime or VM (us
 Green threads might be better for multiple short lived tasks (eg: web server) because of their low overhead when context switching and memory usage.
 Be careful when using green threads not to use blocking functions, because blocking 1 green thread might mean blocking all the green threads because they most likely all run on the same kernel thread.
 
-*** Fibers
-TODO
-Same as green threads but cooperative multitasking instead of preemptive multitasking
-
 *** Preemptive multitasking
 In preemptive multitasking it is the underlying architecture (not us, but the OS or the runtime for exemple) that is in charge of choosing which threads to execute and when. This implies that our threads can be stopped (preempted) at any time, even if it is in the middle of a task. This method gives the advantage of not having to worry about a thread being starved, since the underlying architecture is going to make sure that everyone gets enough CPU time.
 
@@ -42,7 +40,7 @@ Contrary to preemptive multitasking, it is the progammer job to choose which and
 *** Kernel threads
 Multithreading, it is the most basic and history way to do concurrency, it works by running the work on multiple threads that are going to be exectued in parallel (if the CPU can), each thread runs independently of the others. Unlike asynchronous event-driven programming, threads typically block until their assigned task completes.
 
-Threads are managed by the OS scheduler which is going to decide when to execute which thread ...  (TODO image des states des threads etc)
+Threads are managed by the OS scheduler which is going to decide when to execute which thread.
 
 Parallelism becomes achievable through multithreading (even though its not 100% guaranteed). Threads also offer robust isolation, with each thread possessing its own execution context, stack, and local variables, ensuring task independence and preventing interference.
 
@@ -55,13 +53,18 @@ Event-driven programming, is basically an event loop that listen for "events". T
 
 *** Asynchronous programming (non-blocking IO)
 When in this mode the execution flow of the program is unkown because we don't know when a non-blocking function might be ready for use and therefore take back the control flow of the application.
-TODO
-https://en.wikipedia.org/wiki/Asynchronous_I/O
-Useful if there a lot of IO operations, so that we can start processing other thingswhile waiting for this IO operation.
-TODO WHEN NOT TO USE
-Can be achieved either by using polling systems (epoll, kqueue, ...) or events (interupts, signals, ...)
+
+This method is useful if there a lot of IO operations, so that we can start processing other things while waiting for this IO operation.
+
+You might think that threads can do that aswell and spawn a thread each time there is a blocking call, the thread is going to be put in non-ready mode until the blocking call is done and then re-ready, the thread wakes up and yield the result for exemple. It is true threads can handle the job aswell, but the overhead of creating and managin a thread is much higher than the overhead of creating a non-blocking call. So when you have high workload, we generally prefer non-blockion IO calls.
+
+Asynchronous IO can be achieved by using 2 methods:
+- polling systems (epoll, kqueue, ...) that are going to poll frequently to see if a non-blocking call got its response back. Polling systems are better if there are a lot of IO operations, but less effective when less because they are going to poll for nothing most of the time.
+- events (interupts, signals, ...) that are going to signal the caller that the response is is back and ready. Event-driven programming is less performant when the workload is high because interrupts have a big overhead. 
+
+A popular library that is used for asynchronous programming is libuv, the giant behind nodejs.
+
 Under the hood libuv is basically a single threaded [[https://docs.libuv.org/en/v1.x/design.html#the-i-o-loop][event-loop]] which is going to perform all IOs on non-blocking sockets that are polled by pollers like epoll, kqueue, ...
-TODO when interupts are better than pollings (polling mieux si beaucoup)
 
 ** Zig solutions
 There are multiple ways you currently can do concurent code in ZIG, we are going to explore a few here:
@@ -118,7 +121,7 @@ fn goTo(thread_id: u8, max: usize) void {
 #+end_src
 
 **** Implementation in the std
-Under the hood the threads are either pthread ([[https://ziglang.org/documentation/master/std/#std.Thread.use_pthreads][if we are under linux AND linking libc]]) or it is simpy going to use native OS threads wrapped by a Zig implementation. TODO est ce que cest vrm wrappe ?
+Under the hood the threads are either pthread ([[https://ziglang.org/documentation/master/std/#std.Thread.use_pthreads][if we are under linux AND linking libc]]) or it is simpy going to use native OS threads (syscalls) wrapped by a Zig implementation. 
 
 The advantage of doing multi-threading in Zig is that you don't have to worry about what is the target system going to be, since **std.Thread** implementation automatically chooses the native OS threads for the system your are compiling for (except if you want to enforce the use of pthreads). 
 
@@ -241,7 +244,7 @@ The way we are going to measure which implementation is better is by comparing t
 
 Note that it is hard to benchmark thread implementations and you can easily end up not directly benchmarking them, if you for exemple try to compare the number of context switches between 2 implementations. Context switch happen *randomly* whenever the OS scheduler wants it. So trying to analyze that might lead you into false conclusions.
 
-TODO tangling psq main
+TODO J aimerais tangler ce bout de code car il ne s'agit pas que d'un main
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
 const std = @import("std");
 
@@ -271,8 +274,8 @@ The difference is so small that even when only spawning and destroying threads w
 **** Thread synchronization
 Threads can be synchronized with utilities that are the same as most other languages (notably C). So when jumping in the [[https://ziglang.org/documentation/master/std/#std.Thread][std doc]] you should not be suprised and understand most of the features like Mutex and Semaphore.
 
-TODO tangling
 
+TODO tangling
 Here is the Zig code:
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
 const std = @import("std");
