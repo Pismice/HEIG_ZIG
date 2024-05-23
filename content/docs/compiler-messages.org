@@ -1,3 +1,6 @@
+#+title: Compiler messages
+#+weight: 10
+
 ** Compiler messages
 In a language that aims to report most of its issues at compilation time, it is important to have clear and concise error messages. However at the time we are writing this it is sadly not the case. Here are a few compiler messages that you might encounter that are very hard to understand:
 

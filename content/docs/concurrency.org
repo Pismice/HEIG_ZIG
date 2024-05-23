@@ -1,5 +1,5 @@
 #+title: Concurrency
-#+weight: 5
+#+weight: 14
 
 * Concurrency
 ** Introduction

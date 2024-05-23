@@ -1,5 +1,5 @@
 #+title: External files
-#+weight: 13
+#+weight: 2
 
 ** Reading external files
 There are multiple ways to do it in ZIG:

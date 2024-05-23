@@ -1,3 +1,6 @@
+#+title: Case studies
+#+weight: 16
+
 * Case studies
 ** Interacting with processuses
 TODO

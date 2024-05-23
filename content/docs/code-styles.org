@@ -1,3 +1,5 @@
+#+title: Code styles
+#+weight: 4
 #+bibliography: bibliography.bib
 
 ** Code styles
