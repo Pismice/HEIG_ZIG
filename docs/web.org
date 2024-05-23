@@ -1,18 +1,26 @@
 * Web frameworks
 In this section we are going to explore the different ways of doing WEB servers in Zig.
 
+** Introduction
+TODO talk about WEB in general 
+
+** Zig solutions
+
 #+INCLUDE: "./zap.org" :minlevel 2
 
 #+INCLUDE: "./http.org" :minlevel 2
 
-** Tokamak 
+*** Tokamak 
 Middleware (scoped) and DI Based
 
-** Jetzig
+*** Jetzig
 Middleware (as part of a request chain) and Convention based
+built on top of std.http for the moment
 
 TODO: faire un benchmark avec plein de techo (rust, go, node, bun, ...) ET toutes les methodes vues au dessus
 points forts/points faibles de chacun
+
+** Conclusion
 
 Sources:
 https://www.reddit.com/r/reactjs/comments/16blsh3/how_do_i_use_react_with_an_express_application/

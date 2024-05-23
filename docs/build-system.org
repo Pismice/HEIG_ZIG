@@ -7,7 +7,18 @@
 * Compilation - build system
 ** TODO How to use the build system
 
-** TODO Build modes
+** Build modes
+Zig build modes are way easier for beginners to graps compared to [[https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html][C]]
+
+There are only 4 different build modes:
+- Debug (default)
+- ReleaseFast
+- ReleaseSafe
+- ReleaseSmall
+
+You can check them in more details [[https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html][here]]
+
+There are also a few other options you can tweak like avx [[https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html][here]]
 
 *** TODO Build steps
 https://zig.guide/build-system/build-steps
@@ -777,3 +788,4 @@ For the second implementation of the Zig code, we note that it has been implemen
 This merge is performed because there are several threads processing the data.
 However, it also uses the same hashmap as the one used in the first version.
 
+#+INCLUDE: "./zig-package-manager.org" :minlevel 2

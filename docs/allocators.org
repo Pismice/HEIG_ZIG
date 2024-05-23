@@ -14,7 +14,9 @@ This part is documented thanks to various resources:
 - The Zig's standard library code
 
 ** General pattern
-In Zig for library development, a good practice is to pass an allocator as a parameter, so the programmer can choose the best allocator for his use case.
+TODO selon le prof il faudrait "prouver" ou "sourcer" cette affirmation comme quoi cest une good practice mais je ne sais pas trop quoi dire:
+
+"In Zig for library development, a good practice is to pass an allocator as a parameter, so the programmer can choose the best allocator for his use case."
 
 In the Zig standard library, this pattern is used a lot.
 
@@ -102,7 +104,7 @@ Moreover, there is also a thread-safe fixed buffer allocator for thread-safety u
 
 ** Arena allocator
 The arena allocator takes a child allocator as input. This pattern is used to allocate multiple pieces of memory and free them at once.
-There is no need in the arena allocator to free memory manually, it's the function ~deinit~ that is responsible for freeing all to allocated memory.
+There is no need in the arena allocator to free memory manually, it's the function ~deinit~ that is responsible for freeing *all* the allocated memory by this allocator.
 
 The Zig documentation recommends this pattern when an application runs from start to end without a cyclic pattern.
 For example: command line application.
@@ -183,6 +185,8 @@ The ~deinit~ function of the arena allocator will free all the buffers by iterat
 ** General purpose allocator
 A general purpose allocator is available in Zig, this is a safe allocator that can prevent double free memory, "use after free" and detect memory leaks.
 The general purpose allocator is safety first design, but it's still faster than the page allocator ([[https://zig.guide/standard-library/allocators/][Zig guide allocator]])
+
+Note that it aims to be even faster in the [[https://github.com/ziglang/zig/issues/12484][future]].
 
 The general purpose allocator is a function that takes as argument a comptime configuration struct and return a type.
 (this code snippet comes from the standard library [[https://github.com/ziglang/zig/blob/0.11.x/lib/std/heap/general_purpose_allocator.zig][general_purpose_allocator.zig]])
@@ -349,6 +353,11 @@ The ~C~ standard allocator can also be used, this allocator has high performance
 However, to use this allocator, the ~libC~ is required.
 Adding the ~libC~ in the project will add more dependencies.
 
-
 ** TODO How to use Zig to detect memory leaks
 *** TODO Comparison between gcc-utils sanitizer, Valgrind, and Zig memory leak detection
+
+** TODO ?
+TODO talk about how malloc and calloc work in C with the on demand memory allocation (page fault each time with need more memory) is there a similar system in zig ? can we choose to have on demand memory or can we all allocate at once ?
+
+** Conclusion
+TODO selon le prof cest bien de faire une conclusion et introduction sur la plupart des concepts abordés
