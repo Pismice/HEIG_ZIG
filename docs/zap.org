@@ -6,16 +6,54 @@ Zap isn't really a fully Zig project, it just wraps and leverages the power of [
 - All the heavy lifting is done in C, so we can't give much of the performances merits to Zig on this
 - From the programmer point of view it seems to you like your project is 100% Zig, so you have no C overhead (except linking libc)
 
+The framework works by defining callbacks that are going to be called when a certain event happens. For example, you can define a callback that is going to be called when a request is received.
+
+Here you define the callback
++#BEGIN_SRC zig
+var listener = zap.Endpoint.Listener.init(
+    allocator,
+    .{
+        .port = 3000,
+        .on_request = on_request, // HERE
+        .log = true,
+        .public_folder = "examples/endpoint/html",
+        .max_clients = 100000,
+        .max_body_size = 100 * 1024 * 1024,
+    },
+);
+#+END_SRC
+
+And then it is going to call the following function
++#BEGIN_SRC zig
+fn on_request(r: zap.Request) void {
+    if (r.path) |the_path| {
+        std.debug.print("REQUESTED PATH: {s}\n", .{the_path});
+    }
+
+    r.sendBody("<html><body><h1>Hello from ZAP!!!</h1></body></html>") catch return;
+}
+#+END_SRC
+
 **** Exemples
 The [[https://github.com/zigzap/zap][repo]] gives you a lot of [[https://github.com/zigzap/zap/tree/master/examples][exemples]] in order to get started.
 
 **** Alternatives and performance comparaison
-TODO mettre le resultat de wrk bizzare
+The zap library provides a few other REST API frameworks to compare with Zap, I used it to generate my own results with 2 different metrics:
+
+#+CAPTION: Requests per second for different frameworks
+#+NAME:   fig:SED-HR4049
+[[./images/req_per_sec_graph.png]]
+
+#+CAPTION: Transfers per second for different frameworks
+#+NAME:   fig:SED-HR4049
+[[./images/xfer_per_sec_graph.png
+
+TODO I plan to add more frameworks in order to have more comparaison in the future
 
 **** Conclusion
-Zap is a very intersting project that is uses in production by some people (TODO).
+Zap is a very intersting project that is not used in production as far I know by anyone except by the author of the framework itself. So I couldn't find any repository of a project uszing zap anywhere, I tried asking on the official Discord but I didn't get any answer.
 
-Even though it should be working for almost all your use cases, it still is a microframework which means that there are not a lot of batteries included and if you need advanced features, you might have to those yourself (TODO exemple)
+Even though it should be working for almost all your use cases, it still is a microframework which means that there are not a lot of batteries included and if you need advanced features, you might have to those yourself.
 
 Since Zig is a low level language you are going to have a lot of boilerplate and small things like memory to manage manually. Those are things than can easily be avoided by using other languages (Java, Go, Node, ...)
 
