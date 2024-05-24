@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ** Zig and C
 *** Introduction
 The interoperability between Zig and C is one of the most important feature of Zig. But why ?
@@ -17,7 +16,7 @@ https://ziglang.org/documentation/master/#Primitive-Types
 
 https://ziglang.org/documentation/master/#C-Type-Primitives
 
-TODO would it be better if i do the array in the doc rather than having a link to it ?
+TODO I thought that maybe it could be better to have a table rather than a link to it
 
 **** Loops
 In Zig, the for loop is not used as much as in C. 
@@ -131,8 +130,6 @@ If you want to have more C files than just main.c you can add them like so:
 exe.addCSourceFile(.{ .file = .{ .path = "c-src/image.c" }, .flags = &.{"-std=c99"} });
 #+end_src
 
-TODO utiliser code zig dans project C https://zig.guide/working-with-c/calling-conventions
-
 **** export and extern keywords
 *export* make the the function visible from outside so that the C ABI can see it.
 
@@ -140,14 +137,8 @@ TODO utiliser code zig dans project C https://zig.guide/working-with-c/calling-c
 
 [[https://ziglang.org/documentation/master/#Variables][Zig documentation for those 2 keywords.]]
 
-TODO jai oublie d ajouter du code zig, ne pas oublier export/extern
-
-TODO pros and cons of using zig toolchain instead of clang or gcc
-
 *** How is it done under the hood
 When you do @cImport(@cInclude("foo.h")) in your zig code it runs translate-c and exposes the function and type definitions.
-
-TODO talk about C ABI
 
 *** Util to translate C code to Zig
 zig translate-c is an util built in the zig toolchains that allows you to translate C code to Zig code.
@@ -234,21 +225,16 @@ print("Result of last addition:", result)
 #+end_src
 Result: ~50sec
 
-TODO faire un joli graphique quand jaurai d autres languages
-TODO idk if it would be possible to compile my c library and then use it in my python code, and all of that all in emacs, that would be cool :)
-TODO do with other languages aswell
+TODO Add other languages that can use C code and make a graph with matplotlib
 
 ***** Conclusion
 First thing that we notice immediately is how much faster the Zig code is compared to the Python code. This is not surprising since Zig is a compiled language and Python is an interpreted language.
-
-TODO why is python so slow ?
 
 The second interesting thing is that the 2 Zig codes dont vary that much (if they even do) compared to the 2 python codes which have a 5x ratio. This is interesting because it shows that the overhead of calling a C function from Zig is not that big (in fact it is even not existent since all the compiler does is translating the C code to Zig code at compilation time).
 
 We can conclude that calling C code from Zig is really seemless, because at runtime ... everything is Zig code.
 
-*** Notes
-TODO For some unkown reason yet my LSP becomes very slow when working in a Zig project with C files and sometimes crashes. I have to investigate this further.
+Note that for some unkown reason yet my LSP becomes very slow when working in a Zig project with C files and sometimes crashes. I have to investigate this further.
 
 Sources:
 - https://ziglang.org/documentation/master/#C-Pointers

@@ -52,15 +52,14 @@ To avoid this overhead, thread pools are often used, which manage a set of threa
 Event-driven programming, is basically an event loop that listen for "events". This architecture. Under the hood this works by having an event loop that is going to poll for events and check regulary if an event has been emitted. Those events can be for exemple interupts or signals.
 
 *** Asynchronous programming (non-blocking IO)
+Asynchronous IO can be achieved by opening non-blocking sockest and the by using one of those 2 methods:
+- polling systems (epoll, kqueue, ...) that are going to poll frequently to see if a non-blocking call got its response back. Polling systems are better if there are a lot of IO operations, but less effective when less because they are going to poll for nothing most of the time.
+- events (interupts, signals, ...) that are going to signal the caller that the response is is back and ready. Event-driven programming is less performant when the workload is high because interrupts have a big overhead. 
 When in this mode the execution flow of the program is unkown because we don't know when a non-blocking function might be ready for use and therefore take back the control flow of the application.
 
 This method is useful if there a lot of IO operations, so that we can start processing other things while waiting for this IO operation.
 
 You might think that threads can do that aswell and spawn a thread each time there is a blocking call, the thread is going to be put in non-ready mode until the blocking call is done and then re-ready, the thread wakes up and yield the result for exemple. It is true threads can handle the job aswell, but the overhead of creating and managin a thread is much higher than the overhead of creating a non-blocking call. So when you have high workload, we generally prefer non-blockion IO calls.
-
-Asynchronous IO can be achieved by using 2 methods:
-- polling systems (epoll, kqueue, ...) that are going to poll frequently to see if a non-blocking call got its response back. Polling systems are better if there are a lot of IO operations, but less effective when less because they are going to poll for nothing most of the time.
-- events (interupts, signals, ...) that are going to signal the caller that the response is is back and ready. Event-driven programming is less performant when the workload is high because interrupts have a big overhead. 
 
 A popular library that is used for asynchronous programming is libuv, the giant behind nodejs.
 
@@ -274,7 +273,6 @@ The difference is so small that even when only spawning and destroying threads w
 **** Thread synchronization
 Threads can be synchronized with utilities that are the same as most other languages (notably C). So when jumping in the [[https://ziglang.org/documentation/master/std/#std.Thread][std doc]] you should not be suprised and understand most of the features like Mutex and Semaphore.
 
-
 TODO tangling
 Here is the Zig code:
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
@@ -353,11 +351,51 @@ int main() {
 }
 #+end_src
 
-
-
 **** Leaky abstraction
-There are 2 things you can tweak when using *std.Thread*: the stack size and the allocator that is going to allocate the memory for the thread.
-TODO: est ce que je peux fine tuned threads en Zig ? (priority, stack size, ...)
+There are 2 things you can tweak when using *std.Thread*: the stack size and the allocator.
+
+The allocator you pass is only going to be needed only if you use the [[https://ziglang.org/documentation/master/std/#std.Thread.WasiThreadImpl][WasiThreadImpl]] (which is the default implementation for WebAssembly).
+#+begin_src zig
+fn spawn(config: std.Thread.SpawnConfig, comptime f: anytype, args: anytype) SpawnError!WasiThreadImpl {
+  if (config.allocator == null) {
+      @panic("an allocator is required to spawn a WASI thread");
+  }
+  ...
+}
+#+end_src
+
+You wont't have to free it anyway since it is only used to be copied like we can see in the source code of the std.Thread:
+#+begin_src zig
+// Create a copy of the allocator so we do not free the reference to the
+// original allocator while freeing the memory.
+var allocator = self.thread.allocator;
+allocator.free(self.thread.memory);
+
+However, configuring the stack size is going to be used for every implementation of the threads. This is the default stack size:
+#+begin_src zig
+/// Size in bytes of the Thread's stack
+stack_size: usize = 16 * 1024 * 1024
+#+end_src
+So if you need to modify it in order to store more local variables, pass more arguments, ... in order to avoid a stack overflow.
+Don't put that value too hight either, because you might not have enough space to create a lot of threads after that. 
+
+If you want to fine grained your thread further (eg. thread priority) you might need to use the C pthread library, which allow for a ton of possiblites of tuning. Note that when using **std.Thread** you are going to have almost everything set to the default of your implementation. For exemple the only thing that is tuned when using the **PosixThreadImpl** is the guard size.
+
+#+begin_src zig
+assert(c.pthread_attr_setguardsize(&attr, std.mem.page_size) == .SUCCESS);
+#+end_src
+Which corresponds to
+#+begin_src zig
+pub const page_size = switch (builtin.cpu.arch) {
+    .wasm32, .wasm64 => 64 * 1024,
+    .aarch64 => switch (builtin.os.tag) {
+        .macos, .ios, .watchos, .tvos, .visionos => 16 * 1024,
+        else => 4 * 1024,
+    },
+    .sparc64 => 8 * 1024,
+    else => 4 * 1024,
+}
+#+end_src
 
 **** Conclusion
 Zig threads are really useful since they have a very user-friendly abstraction with not a lot of functionalites that are almost never used anyway. This abstraction is also very useful for what we saw earlier, you don't have to worry about the target system, Zig is going to choose the right implementation for you.
@@ -381,15 +419,11 @@ You can find a [[https://github.com/ziglang/zig/issues/6025][Github discussion]]
 You can see [[https://ziglang.org/download/0.12.0/release-notes.html#AsyncAwait-Feature-Status][here]] the main reasons why this solution is not implemented yet.
 
 **** Function coloring
-Green threads make function colors disapear ???? (dependences entre threads)
+TODO Green threads make function colors disapear ???? (dependences entre threads)
 
-*** libxev
-Using an event loop (by wrapping libuv or using libxev which is the equivalent buz in ZIG)
-TODO exemple
-
-*** Fibers
-Using fibers (https://github.com/kprotty/zefi, https://github.com/kassane/fiber)
-TODO exemple
+*** libxev/libuv
+Libxev is a Zig library that provides an event loop for non-blocking IO. The project state is "alpha-ish" to cite them from their README. The mains reasons behind the creation of this library 2 years ago were: using =io_uring= under the hood, and writing an event loop like libuv but in Zig. The first reason is not really relevant anymore, because since then libuv has implemented =io_uring= aswell so that really is not a plus anymore. For the second reason while being commendable and nice to use, is not really a massive argument for someone who just want to have an event loop, because libuv is already a very good library that is used by a lot of people and is very stable. The only problem of libuv is that it is written in C, so you might have to do a bit of gymnastics in order to use it.
+TODO libuv exemple
 
 *** zigcoro
 This solution uses stackful asymmetric coroutines.
@@ -398,20 +432,11 @@ This library is made to provide similar functionalities to async/await "old" mod
 async/await built on top of libxev (https://github.com/rsepassi/zigcoro)
 TODO exemple
 
-*** Using C libraries
-... obviously you can still use C libraries that do async stuff :)
-TODO exemple
+*** Using other C libraries
+Obviously you can still use any C library of your choice to do you the job.
 
 ** Conclusion
-TODO: qu est ce que je pourrais bien dire de + que dans le contenu, parler du potentiel ?
-
-TODO MES NOTES -------- pas besoin de lire ca, cest juste pour moi pour approfondir certains sujets plus tard
-
-- "libuv and OSes will usually run background/worker threads and/or polling to perform tasks in a non-blocking manner." est ce que cest comment ca under the hood les non blocking async ?
-
-- "The event loop follows the rather usual single threaded asynchronous I/O approach: all (network) I/O is performed on non-blocking sockets which are polled using the best mechanism available on the given platform: epoll on Linux, kqueue on OSX and other BSDs, event ports on SunOS and IOCP on"
-
-- tokio equivalent in zig ? 
+TODO: Talk about what to use when in which situation
 
 ** Sources:
 - https://dl.acm.org/doi/pdf/10.1145/1462166.1462167

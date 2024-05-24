@@ -200,9 +200,6 @@ This built-in function provides type reflection, it returns information on type.
 
 See the example ~Example with a custom CSV writer based on type~ to have a view of the usability.
 
-** TODO Optimization
-inline for / while
-
 *** How log works in Zig
 In the C language, a common use to use debug print is with Marco.
 Like in this example, if the ~DEBUG~ is defined to ~1~ the code will print the debug info.

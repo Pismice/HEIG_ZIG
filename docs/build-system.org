@@ -4,11 +4,7 @@
 
 #+HTML_MATHJAX: align: left indent: 5em tagside: left
 
-* Compilation - build system
-** TODO Comptime
-
-** TODO How to use the build system
-
+* Build system
 ** Build modes
 Zig build modes are way easier for beginners to graps compared to [[https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html][C]]
 
@@ -22,10 +18,7 @@ You can check them in more details [[https://gcc.gnu.org/onlinedocs/gcc/Optimize
 
 There are also a few other options you can tweak like avx [[https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html][here]]
 
-*** TODO Build steps
-https://zig.guide/build-system/build-steps
-
-*** TODO Generate automatically documentation
+*** Generate automatically documentation
 In Zig there is an experimental feature, it's automatically generated documentation.
 It will scan all the public structures and functions and will create documentation.
 Moreover, the comments like ~///~ are used to give more information to types.
@@ -179,8 +172,6 @@ But when a bug is reported, it is always possible to debug it because all you ha
 ** Cross-compilation
 
 *** Cross-compile with an embedded linux
-TODO: Add iterate programming to cross compile automaticlly the app
-
 The ~-target~ flag of ~zig build-exe~ can select the target architecture for the cross-compilation.
 There are multiple target selections, see [cite:@CrossCompilationZig2024] to have the entire list of targets.
 
@@ -499,8 +490,7 @@ Moreover, the version of the compilator used is not the same for the C example:
 - For ARM: =aarch64-buildroot-linux-gnu-gcc.br_real (Buildroot 2022.08.3-dirty) 11.3.0=
 
 
-*** TODO Differents code examples benchmark
-TODO: update the benchmarks with the compiler commands
+*** Different code examples benchmark
 
 Mes benchmarks sur mon ordi :
 | Command              | Mean [ms]  | Min [ms] | Max [ms] | Relative    |
@@ -784,7 +774,6 @@ while (idx != 0 && memcmp(results[idx], buf, len) != 0) {
 // idx is now either 0 (new entry)
 // or contains the index of our key in the results a
 #+end_example
-
 
 For the second implementation of the Zig code, we note that it has been implemented with a =btree=, used for data merge.
 This merge is performed because there are several threads processing the data.

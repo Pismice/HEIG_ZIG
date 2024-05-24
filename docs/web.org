@@ -10,17 +10,12 @@ TODO talk about WEB in general
 
 #+INCLUDE: "./http.org" :minlevel 2
 
-*** Tokamak 
-Middleware (scoped) and DI Based
+#+INCLUDE: "./tokamak.org" :minlevel 2
 
-*** Jetzig
-Middleware (as part of a request chain) and Convention based
-built on top of std.http for the moment
-
-TODO: faire un benchmark avec plein de techo (rust, go, node, bun, ...) ET toutes les methodes vues au dessus
-points forts/points faibles de chacun
+#+INCLUDE: "./jetzig.org" :minlevel 2
 
 ** Conclusion
+TODO: Take the benchmarks used for zap and add tokamak and jetzig
 
 Sources:
 https://www.reddit.com/r/reactjs/comments/16blsh3/how_do_i_use_react_with_an_express_application/

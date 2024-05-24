@@ -6,6 +6,8 @@ This method is simply going to embed the file in the binary at compile time.
 Beware that by using this method the path to the file is going to be relative to the file you are calling it from and that the file must be in the same package.
 
 By using the other methods below you can use a file from anywhere but relative to your root folder and not main.zig.
+
+TODO Tangle so that i can read the file
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
 const input = @embedFile("input.txt");
 std.debug.print("{s}", .{input});
@@ -13,7 +15,7 @@ std.debug.print("{s}", .{input});
 
 *** Use an allocator to dynamically store the content of the file 
 By using the method: readToEndAlloc 
-#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+#+begin_src zig ':tangle yes'
 // Alocator
 var gp = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
 defer gp.deinit();
@@ -32,8 +34,11 @@ const file_content = try file.readToEndAlloc(allocator, std.math.maxInt(usize));
 defer allocator.free(file_content);
 #+end_src
 
+#+RESULTS:
+
 *** Read the file and put it in a buffer
 By using the method readAll 
+TODO Tangle so that i can read the file
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
 // Path
 var path_buffer: [std.fs.MAX_PATH_BYTES]u8 = undefined;
@@ -50,7 +55,6 @@ const size = try file.readAll(&content_buffer);
 std.debug.print("{s}", .{content_buffer[0..size]});
 #+end_src
 
-TODO reading files with org babel doesnt work yet idk why
 
 Sources: 
 - https://ziglang.org/documentation/master/std/#std.fs.File.readToEndAlloc

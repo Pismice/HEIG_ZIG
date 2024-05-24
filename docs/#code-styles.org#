@@ -18,21 +18,20 @@ This util is going to enforce basic things for you like:
 3. =snake\_case\_variable_name=: for variables and everything else
 
 *** undefined and null values
+TODO for some reason the 2 org block code are not working, maybe i should "testsuite"
+TODO how can i make the second one print the error ?
+
 In Zig you can leave variables uninitialized, but you have to do that explicitly contrary to C where you can leave variables uninitialized and never truly notice it. Note that leaving the value undefined is going to leave the memory of this variable to some complete nonsense value (except in Debug mode where it will be [[https://github.com/ziglang/zig/issues/15603
 ][set to 0xaa]])
-
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
-const stdout = std.io.getStdOut();
 const my_var: u8 = undefined;
-try stdout.writer().print("my_var: {}\n", .{my_var});
+std.debug.print("my_var: {}\n", .{my_var});
 #+end_src
 
 #+RESULTS:
-: my_var: 0
 
 This is to be avoided as much as possible, if you have some in your code it might makes sense to use an Optional type instead so that compiler can scream at you :)
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
-const stdout = std.io.getStdOut();
 const my_var: ?u8 = null;
 
 // .? is syntaxic sugar for "orelse unreachable" which is going
@@ -44,11 +43,10 @@ const my_var: ?u8 = null;
 const value: u8 = my_var orelse 42;
 
 // print 42 because value was null before
-try stdout.writer().print("my_var: {}\n", .{value});
+std.debug.print("my_var = {}\n", .{value});
 #+end_src
 
 #+RESULTS:
-
 
 *** Zen
 Zig encourages you to use the [[https://ziglang.org/documentation/0.12.0/#Zen][Zen philosophy]], they reflect well the spirit behind Zig, here they are:

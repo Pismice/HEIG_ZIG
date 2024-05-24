@@ -14,9 +14,7 @@ This part is documented thanks to various resources:
 - The Zig's standard library code
 
 ** General pattern
-TODO selon le prof il faudrait "prouver" ou "sourcer" cette affirmation comme quoi cest une good practice mais je ne sais pas trop quoi dire:
-
-"In Zig for library development, a good practice is to pass an allocator as a parameter, so the programmer can choose the best allocator for his use case."
+In Zig you will often see the pattern where you call a function and have to pass an allocator as a parameter, this is because of one of the main Zig mantras: "no hidden control flow". When you pass the allocator you know that the function is probably going to use it and make dynamic allocations.
 
 In the Zig standard library, this pattern is used a lot.
 
@@ -326,7 +324,7 @@ If the testing allocator is used outside of the tests, a compilation error will 
   };
 #+end_src
 
-** TODO Failing allocator
+** Failing allocator
 The failing allocator can be used to ensure that the ~error.OutOfMemory~ is well handled.
 
 The failling allocator need to have a child allocator to run.
@@ -347,17 +345,11 @@ This pattern is pretty useful in restricted memory environments such as embedded
 
 #+RESULTS:
 
-** TODO C allocator
+** C allocator
 The ~C~ standard allocator can also be used, this allocator has high performance but it has less safety feature.
 
 However, to use this allocator, the ~libC~ is required.
 Adding the ~libC~ in the project will add more dependencies.
 
-** TODO How to use Zig to detect memory leaks
-*** TODO Comparison between gcc-utils sanitizer, Valgrind, and Zig memory leak detection
-
-** TODO ?
-TODO talk about how malloc and calloc work in C with the on demand memory allocation (page fault each time with need more memory) is there a similar system in zig ? can we choose to have on demand memory or can we all allocate at once ?
-
 ** Conclusion
-TODO selon le prof cest bien de faire une conclusion et introduction sur la plupart des concepts abordés
+Allocators are a great feature of Zig, they allow the programmer to have full control over the memory management while still having some nice tools to work with: like detecting memory leaks for exemple. The Zig allocators are not as restrictive as Rust's borrow checker, but they still come with great tools. On the other hand they are nice abstraction over C like heap allocations systems.
