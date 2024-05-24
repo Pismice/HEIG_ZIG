@@ -2,9 +2,11 @@
 ** Introduction
 The objectives of this chapter is to go in depth about the different ways to do concurrency in ZIG.
 
-We are going to explore the different ways to do concurrency in general (not Zig related) and then we could use a few of those solutions in ZIG.
+We are first going to explore a few definitions and concepts that are going to be useful to understand the rest of the chapter.
 
-By the end you should be able to see the pros and cons of each solution and choose the one that fits you in Zig.
+Then we are going to explore the different ways we could achieve concurrency in Zig.
+
+By the end you should be able to see the pros and cons of each solution and choose the one that fits your needs to develop your next Zig projects.
 
 ** Definitions
 Before diving into the different ways to do concurrency in ZIG, let's first define some terms that are useful to understand the basics of concurrency (not related to Zig). Some terms we are going to explain here might not even be needed in the next sections, but might help you clarify your concurency concepts.
@@ -27,15 +29,34 @@ The only way to transfer the control flow is by explicitly passing control **to 
 2. suspending itself and giving control back to the caller
 
 *** Green threads (userland threads)
-Green threads, also known as userland threads are managed by a runtime or VM (userspace either way) instead of the OS scheduler (kernel space) that manages standard kernel threads. They are lightweight compared to OS threads as they have a lower overhead (since it is managed in userspace instead of kernel). Even though they are not real OS threads, there are still OS threads that manage them under the hood. Paritculary useful for short-lived tasks. Green threads are most likely to be cooperative and yield control between them, even though it could be possible that they are managed by a runtime that has its own scheduler and can preempt them.
+Green threads, also known as userland threads are managed by a runtime or VM (userspace either way) instead of the OS scheduler (kernel space) that manages standard kernel threads. 
+
+They are lightweight compared to OS threads as they have a lower overhead (since it is managed in userspace instead of kernel). 
+Even though they are not real OS threads, there are still OS threads that manage them under the hood. Paritculary useful for short-lived tasks. Green threads are most likely to be cooperative and yield control between them, even though it could be possible that they are managed by a runtime that has its own scheduler and can preempt them.
+
 Green threads might be better for multiple short lived tasks (eg: web server) because of their low overhead when context switching and memory usage.
+
 Be careful when using green threads not to use blocking functions, because blocking 1 green thread might mean blocking all the green threads because they most likely all run on the same kernel thread.
 
 *** Preemptive multitasking
-In preemptive multitasking it is the underlying architecture (not us, but the OS or the runtime for exemple) that is in charge of choosing which threads to execute and when. This implies that our threads can be stopped (preempted) at any time, even if it is in the middle of a task. This method gives the advantage of not having to worry about a thread being starved, since the underlying architecture is going to make sure that everyone gets enough CPU time.
+In preemptive multitasking it is the underlying architecture (not us, but the OS or the runtime for exemple) that is in charge of choosing which threads to execute and when. This implies that our threads can be stopped (preempted) at any time, even if it is in the middle of a task. 
+
+This method gives the advantage of not having to worry about a thread being starved, since the underlying architecture is going to make sure that everyone gets enough CPU time. As we can see in the 2 graphs for preemptive and cooperative multitasking, the preemptive multitasking might context switch our tasks too much, which can lead to a lot of overhead.
+
+There is an interesting thing that is happening in this graph, at the end we see that task 1 is only doing a very small job, which cost a context switch for almost no job, but the scheduler does not know that a task remains only a small job until done and can context switch it.
+#+CAPTION: Preemptive multitasking
+#+NAME:   fig:SED-HR4049
+[[./images/premp.svg]]
 
 *** Cooperative multitasking
-Contrary to preemptive multitasking, it is the progammer job to choose which and when the differents threads are executed. Threads are going to run until they are explicitly yielding control back. This method gives the advantage to have the progammer to have a fine grained control over his ressources, but also implies that the programmer has to think about not starving threads.
+Contrary to preemptive multitasking, it is the progammer job to choose which and when the differents threads are executed. Threads are going to run until they are explicitly yielding control back. 
+
+This method gives the advantage to have the progammer to have a fine grained control over his ressources, but also implies that the programmer has to think about not starving threads.
+
+In cooperative multitasking, we can yield the control back whenever we want, which leads to much less overhead compared to preemptive multitasking.
+#+CAPTION: Cooperative multitasking
+#+NAME:   fig:SED-HR4049
+[[./images/coop.svg]]
 
 *** Kernel threads
 Multithreading, it is the most basic and history way to do concurrency, it works by running the work on multiple threads that are going to be exectued in parallel (if the CPU can), each thread runs independently of the others. Unlike asynchronous event-driven programming, threads typically block until their assigned task completes.
@@ -235,15 +256,17 @@ int main() {
 }
 #+end_src
 
-***** pthreads vs LinuxThreadImpl
+***** Zig pthreads vs LinuxThreadImpl vs C pthreads
 When compiling on Linux, by default your threads are going to use the [[https://github.com/ziglang/zig/blob/28476a5ee94d311319941b54e9da66210690ce70/lib/std/Thread.zig#L1042][LinuxThreadImpl]]. Which under the hood simply is a wrapper around some syscalls in order to manage threads (the code does closely the same thing as the pthread code).
-You might have notice that when you are linking libc, Zig is going to use pthreads instead of the **LinuxThreadImpl**. This is because pthreads are more performant at the moment and since you are already linking libc it is better to take advantage of that and ue pt hreads.
+
+You might have notice that when you are linking libc, Zig is going to use pthreads instead of the LinuxThreadImpl. This is because pthreads are more performant at the moment and since you are already linking libc it is better to take advantage of that and ue pt hreads.
+
+In order to verify that we are going to benchmarks 3 different implementations: one in Zig using LinuxThreadImpl, one in Zig using pthreads and one in C using pthreads.
 
 The way we are going to measure which implementation is better is by comparing the time it takes to *spawn* and *destory* N threads. It is useless to do work in the threads because no matter the implementation they are going to execute in the same way. It might even be counter-productive because you are going to start comparing the code inside the threads instead of the threads themselves.
 
 Note that it is hard to benchmark thread implementations and you can easily end up not directly benchmarking them, if you for exemple try to compare the number of context switches between 2 implementations. Context switch happen *randomly* whenever the OS scheduler wants it. So trying to analyze that might lead you into false conclusions.
 
-TODO J aimerais tangler ce bout de code car il ne s'agit pas que d'un main
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
 const std = @import("std");
 
@@ -264,16 +287,20 @@ pub fn main() !void {
 fn goTo() void {}
 #+end_src
 
-If we run this code with hyperfine (100 runs) once while linking libc (using pthreads) and once in vanilla mode (using LinuxThreadImpl), we can sometimes see that there is indeed a slight performance difference between the two:
-- pthreads = ~274.4 ms += 4.7 ms
-- LinuxThreadImpl = 280.s ms += 5.9 ms
+If we run this code with hyperfine (100 runs) once while linking libc (using pthreads),once in vanilla mode (using LinuxThreadImpl) and a list time using pthreads with C, we can sometimes see that there is indeed a slight performance difference between the them:
+- Zig pthreads = 274.4 ms += 4.7 ms
+- LinuxThreadImpl = 276.7s ms += 33.9 ms
+- C pthreads =  272.7 ms += 34.0 ms
+
+Those test have been run multiple times on different days and the results can vary a bit, but all the implementations can beat each others from time to time, since it is heavily dependent on the OS scheduler and not themselves.
 
 The difference is so small that even when only spawning and destroying threads we barely see it. In a real world application where this would very unlikely be the bottleneck, which thread implementation you are going to use is very likely to not change anything the way your program perform.
+
+We can then conclude that there is an almost zero cost abstraction when using threads in Zig. Which is very good for high performances applications.
 
 **** Thread synchronization
 Threads can be synchronized with utilities that are the same as most other languages (notably C). So when jumping in the [[https://ziglang.org/documentation/master/std/#std.Thread][std doc]] you should not be suprised and understand most of the features like Mutex and Semaphore.
 
-TODO tangling
 Here is the Zig code:
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
 const std = @import("std");
@@ -419,24 +446,131 @@ You can find a [[https://github.com/ziglang/zig/issues/6025][Github discussion]]
 You can see [[https://ziglang.org/download/0.12.0/release-notes.html#AsyncAwait-Feature-Status][here]] the main reasons why this solution is not implemented yet.
 
 **** Function coloring
-TODO Green threads make function colors disapear ???? (dependences entre threads)
+TODO talk about function coloring and what makes function color diaspear in zig (and talk about their relation with green threads)
 
 *** libxev/libuv
-Libxev is a Zig library that provides an event loop for non-blocking IO. The project state is "alpha-ish" to cite them from their README. The mains reasons behind the creation of this library 2 years ago were: using =io_uring= under the hood, and writing an event loop like libuv but in Zig. The first reason is not really relevant anymore, because since then libuv has implemented =io_uring= aswell so that really is not a plus anymore. For the second reason while being commendable and nice to use, is not really a massive argument for someone who just want to have an event loop, because libuv is already a very good library that is used by a lot of people and is very stable. The only problem of libuv is that it is written in C, so you might have to do a bit of gymnastics in order to use it.
-TODO libuv exemple
+[[https://github.com/mitchellh/libxev][Libxev]] is a Zig library that provides an event loop for non-blocking IO. The project state is "alpha-ish" to cite them from their README. 
+
+The mains reasons behind the creation of this library 2 years ago were: using =io_uring= under the hood, and writing an event loop like libuv but in Zig. 
+
+The first reason is not really relevant anymore, because since then libuv has implemented =io_uring= aswell so that really is not a plus anymore. 
+
+For the second reason while being commendable and nice to use since it is native Zig, is not really a massive argument for someone who just want to have an event loop, because libuv is already a very good library that is used by a lot of people and is very stable. The only problem of libuv is that it is written in C, so you might have to do a bit of gymnastics in order to use it.
+
+In order to use [[https://libuv.org/][libuv]], which a C library in your project we are going to have to link the libc and add the =-uv= compilation option in the =build.zig= file like so:
+#+begin_src zig
+exe.linkLibC();
+exe.linkSystemLibrary("uv");
+#+end_src
+
+After that we are going to reproduce the basic exemple in C provided by the [[https://docs.libuv.org/en/v1.x/guide/basics.html][libuv documentation]] in Zig, so here is the C code:
+#+begin_src c
+#include <stdio.h>
+#include <uv.h>
+
+int main() {
+    uv_loop_t *loop = uv_default_loop();
+
+    printf("Default loop.\n");
+    uv_run(loop, UV_RUN_DEFAULT);
+
+    uv_loop_close(loop);
+    return 0;
+}#+end_src
+
+And the equivalent Zig code:
+#+begin_src zig
+const std = @import("std");
+const c = @cImport({
+    @cInclude("stdio.h");
+    @cInclude("uv.h");
+});
+
+pub fn main() !void {
+    const loop: [*c]c.uv_loop_t = c.uv_default_loop();
+
+    std.debug.print("Default loop.\n", .{});
+    _ = c.uv_run(loop, c.UV_RUN_DEFAULT);
+
+    _ = c.uv_loop_close(loop);
+}
+#+end_src
+
+As we can see with those exemples, it is so easy to work with a C library, so using libxev truly is not a good solution, since we can use libuv seemlessely. Moreover, libuv is a very stable library that is used by a lot of people and is very well maintained. 
+
+On the contrary libxev does not have frequent updates, which makes it hard to use in a constantly moving Zig environment. By the time of the writing of this, there is no 0.12.0 version of libxev available yet. The PR has been made days ago but it is still not merged. Even though 0.12.0 has been out for more than a month now.
 
 *** zigcoro
-This solution uses stackful asymmetric coroutines.
-stackful asymmetric coroutines
-This library is made to provide similar functionalities to async/await "old" model, so that if/when the official async/await solution is coming back, it will be easy to switch your project from using zigcoro to the official async/await.
-async/await built on top of libxev (https://github.com/rsepassi/zigcoro)
-TODO exemple
+[[https://github.com/rsepassi/zigcoro][This solution]] uses stackful asymmetric coroutines.
+This library is made to provide similar functionalities to async/await "old" model, so that if/when the official async/await solution is coming back, it will be easy to switch your project from using zigcoro to the official async/await. Under the hood this library uses the [[https://github.com/mitchellh/libxev][libxev]] library that we talked about earlier in order to have an event loop.
+
+But that is not the only features that zigcoro provide, it also provides chanels.
+Chanels are notably well known in Go, they are used to communicate between coroutines, they are a way pass data between them, it therefore is a good way to synchronize them.
+
+We are going to do the same thing in Zig in order to communicate between threads without basics thread synchronization primivites like mutexes or semaphores.
+
+First we are going to run all of them in a single-threaded environment, so that we can familiarize with the syntax.
+#+begin_src zig
+const std = @import("std");
+const libcoro = @import("libcoro");
+
+const BurgerOrder = struct {
+    burger: u8,
+    fries: u8,
+};
+
+pub fn main() !void {
+    const allocator = std.heap.page_allocator;
+    var exec = libcoro.Executor.init();
+    libcoro.initEnv(.{ .stack_allocator = allocator, .executor = &exec });
+
+    // Creation of a Type that represents a channel that can passe floats
+    const BurgeOrderChanel = libcoro.Channel(BurgerOrder, .{});
+
+    // Creation of a channel that can pass Burger Orders
+    var road_between_restaurant_and_house = BurgeOrderChanel.init(null);
+
+    const delivery_man = try libcoro.xasync(sender, .{ &road_between_restaurant_and_house, BurgerOrder{ .burger = 2, .fries = 3 } }, null);
+    defer delivery_man.deinit();
+
+    const hungry_client = try libcoro.xasync(recvr, .{&road_between_restaurant_and_house}, null);
+    defer hungry_client.deinit();
+
+    while (exec.tick()) {
+        // While there are deliveries to do, they will be made
+        // After that point, the delivery man does not take any more orders
+    }
+
+    libcoro.xawait(delivery_man); // Delivery man finished his job
+    const order = libcoro.xawait(hungry_client); // Hungry client received his order
+    std.debug.print("Burger = {} | Fries = {}", .{ order.burger, order.fries });
+}
+
+fn sender(chan: anytype, order: BurgerOrder) void {
+    defer chan.close();
+    chan.send(order) catch unreachable;
+}
+
+fn recvr(chan: anytype) BurgerOrder {
+    return chan.recv() orelse BurgerOrder{ .burger = 0, .fries = 0 }; // The delivery might fail to arrive
+}
+#+end_src
+
+I tried to make inter-thread communication with chanels by modifying this exemple but I could not do it. I opened [[https://github.com/rsepassi/zigcoro/issues/22][an issue]] on the zigcoro repository to ask for help. I am waiting for a response before making any conclusion.
+
+Zigcoro is only maintained by 2 people, even though they still update frequently for the new zig versions, the library has not evolved for a while and there are some PR that are just hanging there for a while. If chanels can work to make inter-thread synchronization possible, it might be a good library.
 
 *** Using other C libraries
 Obviously you can still use any C library of your choice to do you the job.
 
 ** Conclusion
-TODO: Talk about what to use when in which situation
+Almost each of the presented solutions have their own specific applications and are not really interchangeable. The solution that is going to be the best for most of the projects is simply spawning threads, even though they have a quite big overhead, if the application doesn't have hundred of threads running at the same time, it should largely do the job.
+
+async/await is a great feature, but since it is not supported anymore it is cleary not a viable option at the moment.
+
+libuv might be the solution if the needed application is single-threaded and leverages non-blocking sockets, particulary useful for servers that have to handle massive loads of IO operations.
+
+TODO for the case of zigoro it is going to depend on what the maintainer is going to say about the issues I opened.
 
 ** Sources:
 - https://dl.acm.org/doi/pdf/10.1145/1462166.1462167

@@ -9,10 +9,10 @@
 Zig build modes are way easier for beginners to graps compared to [[https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html][C]]
 
 There are only 4 different build modes:
-- Debug (default)
-- ReleaseFast
-- ReleaseSafe
-- ReleaseSmall
+- =Debug= (default)
+- =ReleaseFast=
+- =ReleaseSafe=
+- =ReleaseSmall=
 
 You can check them in more details [[https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html][here]]
 
@@ -434,7 +434,6 @@ Note: If emacs is unable to find the path to Zig during execution, the environme
 You will find the three executables in your directory.
 
 Now to benchmark your code you need a tool to run the analysis, it's called [[https://github.com/sharkdp/hyperfine][hyperfine]] [cite:@peterHyperfine2023].
-Il faut installer hyperfine pour faire le benchmark : https://github.com/sharkdp/hyperfine
 
 To code bellow will run a benchmark with the ~hyperfine~ tool.
 To use this tool, you need to install it and have in your path.

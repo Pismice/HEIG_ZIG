@@ -15,7 +15,7 @@ This util is going to enforce basic things for you like:
 **** Naming conventions
 1. =TitleCaseTypeName=: for types and structs that are callable (for "classes" in other languages basically)
 2. =camelCaseFunctionName=: for functions
-3. =snake\_case\_variable_name=: for variables and everything else
+3. =snake_case_variable_name=: for variables and everything else
 
 *** undefined and null values
 In Zig you can leave variables uninitialized, but you have to do that explicitly contrary to C where you can leave variables uninitialized and never truly notice it. Note that leaving the value undefined is going to leave the memory of this variable to some complete nonsense value (except in Debug mode where it will be [[https://github.com/ziglang/zig/issues/15603
@@ -67,6 +67,7 @@ Zig encourages you to use the [[https://ziglang.org/documentation/0.12.0/#Zen][Z
 - Together we serve the users.
 
 Sources:
+
 https://ziglang.org/documentation/master/#Type-Coercion-undefined
 https://nathancraddock.com/blog/zig-naming-conventions/o
 https://ziglang.org/documentation/master/#undefined

@@ -5,7 +5,7 @@ One solution would be to install both (or more) versions of ZIG and switch the P
 
 But the best solution is to use the ZIG version manager, which is a tool that allows you to install and switch between different versions of ZIG.
 
-We recommend using ZVM (Zig Version Manager ^^) which is a simple and easy to use tool. (https://github.com/tristanisham/zvm)
+We recommend using [[https://github.com/tristanisham/zvm][ZVM]] (stands for Zig Version Manager) which is a simple and easy to use tool.
 
 *** Basic usage
 Installing the tool:
@@ -37,4 +37,9 @@ Use one of those versions:
 zvm use master
 #+end_src
 
-There are other commands available, you can check them by running: 'zvm help' or checking the repository: https://github.com/tristanisham/zvm
+There are other commands available, you can check them by running: 
+#+begin_src bash
+zvm help
+#+end_src
+Or checking the [[https://github.com/tristanisham/zvm][ZVM repository]].
+

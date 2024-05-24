@@ -1,14 +1,15 @@
 ** Tracking
 *** Race conditions
-TODO Voir comment tracker les race conditions
+TODO Check the differnt tools to track race conditions between threads.
+I already looked into the std.Thread and found nothing, so I will have to dig deeper.
 
 *** Memory leak
 **** C allocations
-For high performances and very few safety checks, you might want to use the [[https://ziglang.org/documentation/master/std/#std.heap.c_allocator][std.heap.c_allocator]].
+For high performances and very few safety checks, you might want to use the [[https://ziglang.org/documentation/master/std/#std.heap.c_allocator][std.heap.c allocator]].
 
 Those allocations are not tracked by the Zig runtime, so you will have to use a tool like Valgrind to track memory leaks which can be done via the [[https://ziglang.org/documentation/master/std/#std.valgrind][std]].
 
-TODO exemple, j attends d avoir eu le cours de HPC sur valgrind et gcc-utils sanitizers
+TODO Show exemple where I run valgrind to detect c_allocator memory leaks.
 
 **** Zig allocations
 The General Purpose Allocator (GPA) is a general-purpose memory allocator that is used by the Zig standard library. Its advantages over the other implementations in the std it that it is designed for safety over performance.
@@ -20,7 +21,7 @@ It can in fact detect memory problems like:
 - use-after-free
 - double-free
 
-But it cannot yet detect things like data races (which you could think it could with the =.thread_safe= option).
+But it cannot yet detect things like data races (which you could think it could with the =.thread_safe= option but it does not).
 
 What =.thread_safe= does is that it makes the allocator thread-safe, meaning that it can be used in a multi-threaded environment without any problem. If you don't and use the same allocator for multiples threads, the allocator might not behave correctly.
 

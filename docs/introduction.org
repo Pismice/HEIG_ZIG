@@ -22,12 +22,13 @@ The goal of this documentation is to explore the Zig language in-depth, by first
 
 This work is mainly aimed at engineers who already have experiences in C but might consider using Zig as a replacement/alternative. If you are a complete beginner, you might still learn a lot by reading this, but we highly encourage you to look at other ressources aimed at beginners aswell.
 
-The big + this project offers compare to other guides/documentations is that here we are going to learn the language with [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] (learning via interactive code exemples) because *one snippet of code is worth 1000 words*.
+The big + this project offers compare to other guides/documentations is that here we are going to learn the language with [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] because *one snippet of code is worth 1000 words*.
 
 The advanced topics covered are mostly structured like so:
-1. Explain the concept and see what is done in other languages (mostly C)
-2. Show how to do it in Zig
-3. Conclusion about the current state of Zig on this topic
+1. Explaining the concept and see what is done in other languages (mostly C)
+2. Look at the different ways to do it in Zig
+3. Analyze and benchmark them
+4. Giving an opinion and conclusion about what was analyzed in part 3
 
 Note that we wrote this documentation with the help of AI assistants like ChatGPT and GH Copilot.
 
@@ -42,7 +43,7 @@ To understand what is described in this documentation, you should first read up 
 
 This documentation is built to guide to user through different examples.
 Those examples have been created to use literate programming, in fact, the documentation is built on Emacs with the org mode.
-You can follow the examples and execute them directly in Emacs.
+You can follow the examples and execute them directly in [[https://www.gnu.org/software/emacs/][Emacs]].
 
 For that, you need to:
 1. Install the configuration created for that (see the section below)

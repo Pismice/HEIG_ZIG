@@ -9,24 +9,26 @@ The advantage of using comptime over macro is the type safety of Zig when writin
 
 ** When to use and when NOT to use it
 *** When to use it
-Because the compiler can now do things at compilation time, leaving less work to be done at runtime. (if the compiler gives you the power to do things at compile time so easily, you should use it ^^)
+Because the compiler can now do things at compilation time, leaving less work to be done at runtime. Globally if the compiler gives the power to do things at compile time so easily, it should be used.
 
 So you should basically try to use it as much as you can.
 
-*** When NOT to use it (source: ziglings)
+*** When NOT to use it
+All the informations from the chapter below are taken from a [[https://codeberg.org/ziglings/exercises/src/branch/main/exercises/074_comptime9.zig][ziglings exercise]].
+
 The following contexts are already IMPLICITLY evaluated at
-compile time, and adding the 'comptime' keyword would be
+compile time, and adding the =comptime= keyword would be
 superfluous, redundant, and smelly:
 
-   - The container-level scope (outside of any function in a source file)
-   - Type declarations of:
-       - Variables
-       - Functions (types of parameters and return values)
-       - Structs
-       - Unions
-       - Enums
-   - The test expressions in inline for and while loops
-   - An expression passed to the @cImport() builtin
+- The container-level scope (outside of any function in a source file)
+- Type declarations of:
+    - Variables
+    - Functions (types of parameters and return values)
+    - Structs
+    - Unions
+    - Enums
+- The test expressions in inline for and while loops
+- An expression passed to the @cImport() builtin
 
 ** Compile-time evaluation
 *** Compile-time variable
@@ -518,4 +520,4 @@ For this example, a basic struct named ~Person~ will be transformed to CSV.
 | F    | Sophia | 1989 |
 
 ** Bonus
-Here is a very nice blog written by a core member of the ZIG community if you want to dig further: https://kristoff.it/blog/what-is-zig-comptime/
+Here is a [[https://kristoff.it/blog/what-is-zig-comptime/][very nice blog]] written by a core member of the ZIG community if you want to dig further: 
