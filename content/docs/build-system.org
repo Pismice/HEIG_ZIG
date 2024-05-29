@@ -1,3 +1,5 @@
+#+title: Build system
+#+weight: 5
 
 #+bibliography: bibliography.bib
 #+cite_export: csl ieee.csl
@@ -180,7 +182,7 @@ But when a bug is reported, it is always possible to debug it because all you ha
 TODO: Add iterate programming to cross compile automaticlly the app
 
 The ~-target~ flag of ~zig build-exe~ can select the target architecture for the cross-compilation.
-There are multiple target selections, see [cite:@CrossCompilationZig2024] to have the entire list of targets.
+There are multiple target selections, see {{< cite "CrossCompilationZig2024" >}} to have the entire list of targets.
 
 Here's an example of a test that was performed, the aim being to run an executable produced by Zig (from a ~x86_64~) for a -nanopi neo plus 2- which has an arm64 architecture and runs a Linux kernel.
 The information of the embedded target :
@@ -201,7 +203,6 @@ All your codebase are belong to us.
 Run `zig build test` to run the tests.
 #+end_example
 
-
 ** Performance comparaison & SMID
 
 The following chapters will explain different benchmark and code.
@@ -211,9 +212,9 @@ A Zig vector is an array of child type: booleans, integers, floats or pointers.
 It provides SIMD instructions for parallelizing operations where possible.
 
 As described in the standard documentation, the vectors smaller than the target machine's SIMD instruction will be compiled to a single SIMD instruction.
-In other hands, the vectors longer than the the target machine's SIMD will be compile to multiple SIMD instructions. [cite:@DocumentationZigProgramming]
+In other hands, the vectors longer than the the target machine's SIMD will be compile to multiple SIMD instructions. {{< cite "DocumentationZigProgramming" >}}
 
-The Zig vector does not work in the same way as the C++ vector. [cite:@WelcomeZigGuide2024]
+The Zig vector does not work in the same way as the C++ vector. {{< cite "WelcomeZigGuide2024" >}}
 
 We can use multiple opteration on Zig vectors: 
 - Arithmetics
@@ -266,13 +267,13 @@ Zig support a vector size of:
 \begin{equation}
 2^{32} - 1
 \end{equation}
-But currently on the last Zig version, a long size (2^20) can crash at compile-time. [[https://ziglang.org/documentation/0.12.0/#toc-Vectors][see documentation]] [cite:@DocumentationZigProgramminga]
+But currently on the last Zig version, a long size (2^20) can crash at compile-time. [[https://ziglang.org/documentation/0.12.0/#toc-Vectors][see documentation]] {{< cite "DocumentationZigProgramminga" >}}
 
 There are utility functions to simplify the use of vectors:
 1. ~@splat~, this function will create a vector of a given size with the same value. [[https://ziglang.org/documentation/0.12.0/#splat][~@splat~]]
 2. ~@Reduce~, this function will reduce the vector into a scalar. We can specify the operation.
    For intergers, every operation is available, for booleans plus there's ~.And~, ~.Or~, ~.Xor~.
-   And finally, for floating points they have also ~.Min~, ~.Max~, ~.Add~, ~.Mul~. [cite:@DocumentationZigProgramming] [[https://ziglang.org/documentation/0.12.0/#reduce][~@reduce~]]
+   And finally, for floating points they have also ~.Min~, ~.Max~, ~.Add~, ~.Mul~. {{< cite "DocumentationZigProgramming" >}} [[https://ziglang.org/documentation/0.12.0/#reduce][~@reduce~]]
 3. ~@shuffle~, this function will construct a new vector by selecting the elements of two vectors (a and b) with a mask array.
    The function will iterate on each element, and select the value of the mask. With the mask value, it will select the element of the array a or b.
    If the number of the mask value is 0 or higher, it will select the index of the first vector (a).
@@ -326,7 +327,7 @@ There are utility functions to simplify the use of vectors:
 *** Leibniz algorithm
 This chapter shows the performance of Zig compared to other language, in particular with C.
 
-The [[https://github.com/niklas-heer/speed-comparison/tree/master][speed-comparaison]] github repository [cite:@NiklasheerSpeedcomparisonRepo] has differents examples code that shows the [[https://en.wikipedia.org/wiki/Leibniz_formula_for_%CF%80][Leibniz algorithm]] [cite:@LeibnizFormula2024] in action.
+The [[https://github.com/niklas-heer/speed-comparison/tree/master][speed-comparaison]] github repository {{< cite "NiklasheerSpeedcomparisonRepo" >}} has differents examples code that shows the [[https://en.wikipedia.org/wiki/Leibniz_formula_for_%CF%80][Leibniz algorithm]] {{< cite "LeibnizFormula2024" >}} in action.
 This algorithm has puspose to compute the PI number with the following formula:
 
 \begin{equation}
@@ -339,7 +340,7 @@ They have been modified so that they can be run in org mode.
 The C code shows the standard way to compute the Leibniz algorithm, at each iteration, PI will improve.
 The C compiler will optimize the C code to use SIMD instructions under the hood.
 The line: ~x = -1.0 + 2.0 * (i & 0x1);~ is written in this way to enable the compiler to be optimised.
-The compiler can then use the ~fmadd~ instruction, which performs a multiplication and an addition in a single operation. [cite:@IntelIntrinsicsGuide] [cite:@ArmA64Instruction]
+The compiler can then use the ~fmadd~ instruction, which performs a multiplication and an addition in a single operation. {{< cite "IntelIntrinsicsGuide" >}} {{< cite "ArmA64Instruction" >}}
 #+begin_src C :includes <stdio.h> :tangle leibniz.c
   unsigned rounds = 1000000000;
   double pi = 1.0;
@@ -440,7 +441,7 @@ Note: If emacs is unable to find the path to Zig during execution, the environme
 
 You will find the three executables in your directory.
 
-Now to benchmark your code you need a tool to run the analysis, it's called [[https://github.com/sharkdp/hyperfine][hyperfine]] [cite:@peterHyperfine2023].
+Now to benchmark your code you need a tool to run the analysis, it's called [[https://github.com/sharkdp/hyperfine][hyperfine]] {{< cite "peterHyperfine2023" >}}.
 Il faut installer hyperfine pour faire le benchmark : https://github.com/sharkdp/hyperfine
 
 To code bellow will run a benchmark with the ~hyperfine~ tool.
@@ -530,14 +531,14 @@ Mes benchmarks sur mon ordi :
 ** Programming language Benchmarks
 
 Another way of seeing the difference in performance between C and Zig is to use slightly more complex code.
-The [[https://github.com/hanabi1224/Programming-Language-Benchmarks][Programming Language Benchmark]] [cite:@Hanabi1224ProgrammingLanguageBenchmarksAnother] git repository shows differents codes writing in different languages.
-Their website shows benchmarks made with their hardware [[https://programming-language-benchmarks.vercel.app/zig-vs-c][zig-vs-c]]. [cite:@ZigVSBenchmarks]
+The [[https://github.com/hanabi1224/Programming-Language-Benchmarks][Programming Language Benchmark]] {{< cite "Hanabi1224ProgrammingLanguageBenchmarksAnother" >}} git repository shows differents codes writing in different languages.
+Their website shows benchmarks made with their hardware [[https://programming-language-benchmarks.vercel.app/zig-vs-c][zig-vs-c]]. {{< cite "ZigVSBenchmarks" >}}
 We then reproduced the benchmarks between the C and the Zig to see if there were any differences with our hardware.
 
 Here's our results:
 CPU INFO:[x86\_64][8 cores] Intel(R) Core(TM) i7-8565U CPU @ 1.80GHz (Model 142)
 
-Here's what you need to know about file naming [cite:@Hanabi1224ProgrammingLanguageBenchmarksAnother]:
+Here's what you need to know about file naming {{< cite "Hanabi1224ProgrammingLanguageBenchmarksAnother" >}}:
 #+begin_quote
 - *-m in a file name stands for multi-threading or multi-processing
 - *-i in a file name stands for direct intrinsics usage. (Usage of SIMD intrinsics via libraries is not counted). It means that the SIMD instruction is directly use in the code. The instructions can be found in the [[https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#ig_expand=2102][Intel Intrinsics Guide]].
@@ -682,14 +683,14 @@ It runs 2x slower than the second-worst code
 
 ** 1BRC
 
-The /one billion row challenge/ is a challenge that involves calculating the min, max, and average of 1 billion rows of measurements (a 12 Gio file). [cite:@BillionRowChallenge]
+The /one billion row challenge/ is a challenge that involves calculating the min, max, and average of 1 billion rows of measurements (a 12 Gio file). {{< cite "BillionRowChallenge" >}}
 Everyone can submit a code to try to have a better implementation.
 Originally the challenge was for Java, but now we can find multiple solutions in many languages.
 
 In this documentation, we tried to see the differences between three implementations: one in C and two in Zig:
-- [[https://github.com/almmiko/1brc-zig][1brc C]] [cite:@kootenDannyvankooten1brc2024] [cite:@OneBillionRows2024]
-- [[https://github.com/candrewlee14/1brc-zig][1brc-zig]] [cite:@leeCandrewlee141brczig2024]
-- [[https://github.com/almmiko/1brc-zig][1brc-zig - second implementation]] [cite:@mykolaichukAlmmiko1brczig2024]
+- [[https://github.com/almmiko/1brc-zig][1brc C]] {{< cite "kootenDannyvankooten1brc2024" >}} {{< cite "OneBillionRows2024" >}}
+- [[https://github.com/candrewlee14/1brc-zig][1brc-zig]] {{< cite "leeCandrewlee141brczig2024" >}}
+- [[https://github.com/almmiko/1brc-zig][1brc-zig - second implementation]] {{< cite "mykolaichukAlmmiko1brczig2024" >}}
 
 In each repository, we can find how to compile their binary, we followed their instructions.
 
@@ -738,11 +739,11 @@ And the C implementation
 
 In the C implementation, we note that his writer uses a custom hashmap to hash the city names.
 He uses a fast multiplication hash combined with a linear search probing.
-The load factor of his hashmap is 0.5. [cite:@BillionRowChallenge]
+The load factor of his hashmap is 0.5. {{< cite "BillionRowChallenge" >}}
 
 The first Zig implementation use also a hashmap.
 But the hashmap comes from the Zig standard library.
-His purpose is generic and uses the Wyhash algorithm to compute the hashes.[cite:@wangyiWangyifudanWyhash2024]
+His purpose is generic and uses the Wyhash algorithm to compute the hashes.{{< cite "wangyiWangyifudanWyhash2024" >}}
 
 The ~Hotspot~ program has been used to create flamegraph of the implementations:
 
@@ -755,7 +756,7 @@ Calculating the base index is mapped into an array, and then, if there are any c
 #+CAPTION: Flamegrph of the C's 1brc implementation
 [[../images/flamegrah_1brc_c.png]]
 
-In the example below, Danny van Kooten, the writer of the C One Billion Rows Challenge, explains how the hashes are calculated for each city. [cite:@OneBillionRows2024a]
+In the example below, Danny van Kooten, the writer of the C One Billion Rows Challenge, explains how the hashes are calculated for each city. {{< cite "OneBillionRows2024a" >}}
 He uses a simple fast multiplication hash combined with linear probing.
 
 In the first bloc, he multiples each letter of the city by 31.
@@ -789,3 +790,5 @@ This merge is performed because there are several threads processing the data.
 However, it also uses the same hashmap as the one used in the first version.
 
 #+INCLUDE: "./zig-package-manager.org" :minlevel 2
+
+{{< references >}}

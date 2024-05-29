@@ -1,3 +1,6 @@
+#+title: Introduction
+#+weight: 1
+
 * Introduction
 
 Nowadays, [[https://www.reddit.com/r/C_Programming/comments/nqkn93/what_do_people_think_of_the_c_replacements_are/][multiple languages]] have emerged to compete with the well-established C language.

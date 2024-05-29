@@ -1,3 +1,6 @@
+#+title: Zig version manager
+#+weight: 5
+
 ** Zig version manager
 Using ZIG before 1.0 might require you to often switch between master and the last official release.
 

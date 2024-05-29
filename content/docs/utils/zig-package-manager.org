@@ -1,3 +1,6 @@
+#+title: Zig package manager
+#+weight: 6
+
 ** Zig package manager
 Since 0.11, Zig has now an official built-in package manager named.
 

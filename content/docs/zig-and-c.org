@@ -1,4 +1,6 @@
-<<<<<<< HEAD
+#+title: Zig and C
+#+weight: 12
+
 ** Zig and C
 *** Introduction
 The interoperability between Zig and C is one of the most important feature of Zig. But why ?

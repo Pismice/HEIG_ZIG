@@ -1,3 +1,5 @@
+#+title: Comptime
+#+weight: 11
 #+bibliography: bibliography.bib
 
 * Comptime
@@ -32,7 +34,7 @@ superfluous, redundant, and smelly:
 *** Compile-time variable
 
 In Zig, there are variables that can be evaluated at compile-time, in fact, Zig allows computing mutating variables at compile-time but all the inputs need to be known also at compile-time.
-If not, the compiler will throw a compile error. [cite:@DocumentationZigProgramming]
+If not, the compiler will throw a compile error. {{< cite "DocumentationZigProgramming" >}}
 
 For a mutating variable at compile-time, Zig requires naming the variables with a ~comptime var~.
 But if the variable is a constant, the compiler requires to use a ~const~. 
@@ -41,7 +43,7 @@ Like in the example below, the variable named ~variableAtCompileTime~ is evaluat
 On the other hand, the variable named ~constantAtRuntime~ cannot be a comptime variable because its dependency is based on unknown before runtime.
 
 Moreover, in the example, the ~inline for~ is used to unroll the for loop.
-This allows to use for loops in comptime indeed, if a standard for loop is used, it will cause an error because the capture value will be evaluated at runtime.[cite:@DocumentationZigProgramming] 
+This allows to use for loops in comptime indeed, if a standard for loop is used, it will cause an error because the capture value will be evaluated at runtime.{{< cite "DocumentationZigProgramming" >}} 
 #+begin_src zig :imports '(std) :exports both
   const stdout = std.io.getStdOut().writer();
 
@@ -70,9 +72,9 @@ This allows to use for loops in comptime indeed, if a standard for loop is used,
 In Zig, an expression can have a ~comptime~ to tell the compiler to evaluate the expression at compile-time.
 Like a compile-time variable, if an expression cannot be evaluated at compile-time, a compile-time error will be thrown.
 
-With a prefixed ~comptime~ keyword Zig can interpret a function at compile-time instead of runtime. [cite:@DocumentationZigProgramming]
+With a prefixed ~comptime~ keyword Zig can interpret a function at compile-time instead of runtime. {{< cite "DocumentationZigProgramming" >}}
 
-A good example of demonstrating comptime expression is in the standard documentation [cite:@DocumentationZigProgramming].
+A good example of demonstrating comptime expression is in the standard documentation {{< cite "DocumentationZigProgramming" >}}.
 The results show that the comptime expression is faster than the runtime one when the code is executed (runtime) because the work has already been done.
 But this will work only with code that hasn't runtime dependency code.
 
@@ -163,7 +165,7 @@ error: operator < not allowed for type 'bool'
 
 Moreover, comptime can also be used as a type definition.
 For this, the function needs to return a ~type~.
-The example below is based on [[https://zig.guide/language-basics/comptime][the zig guide]] [cite:@ComptimeZigGuide2024], it's shows that it can define a new type with a function.
+The example below is based on [[https://zig.guide/language-basics/comptime][the zig guide]] {{< cite "ComptimeZigGuide2024" >}}, it's shows that it can define a new type with a function.
 #+begin_src zig :imports '(std) :main 'no :testsuite yes
   fn Matrix(
       comptime T: type,
@@ -522,3 +524,5 @@ For this example, a basic struct named ~Person~ will be transformed to CSV.
 
 ** Bonus
 Here is a very nice blog written by a core member of the ZIG community if you want to dig further: https://kristoff.it/blog/what-is-zig-comptime/
+
+{{< references >}}
