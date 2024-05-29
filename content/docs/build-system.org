@@ -749,12 +749,12 @@ The ~Hotspot~ program has been used to create flamegraph of the implementations:
 
 If you look at Zig's flamegraph, you can see that 40% of the cycle time is used to insert the city into the hashmap.
 #+CAPTION: Flamegrph of the Zig's 1brc implementation
-[[../images/flamegraph_1brc_zig_1.png]]
+[[/images/flamegraph_1brc_zig_1.png]]
 
 In C, on the other hand, the insertion time in the hashmap is not measurable because it is included in the ~process_chunck~ function but does not require any complex hash calculation.
 Calculating the base index is mapped into an array, and then, if there are any collisions, the index is incremented.
 #+CAPTION: Flamegrph of the C's 1brc implementation
-[[../images/flamegrah_1brc_c.png]]
+[[/images/flamegrah_1brc_c.png]]
 
 In the example below, Danny van Kooten, the writer of the C One Billion Rows Challenge, explains how the hashes are calculated for each city. {{< cite "OneBillionRows2024a" >}}
 He uses a simple fast multiplication hash combined with linear probing.
