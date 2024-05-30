@@ -1,0 +1,138 @@
+#+title: Linux Kernel Module
+
+* Linux Kernel module
+
+- parler du faite que nous voulons réalier un module kernel linux
+- Mettre un exemple the module C
+- Parler du Makefile particulier pour le kernel module
+- Monter qu'on arrive a faire un module en Zig (sans toucher aux header C)
+- parler des problèmes de compilation des header
+- Conclusion: Dire que certain projet fonctionnait il y a 5 ans mais que je ne suis pas sûr si l'erreur si c'est un skill issues de ma part ou s'il y a des problèmes avec Zig
+
+In Linux two world exist, the user space and the kernel space.
+But why ?
+
+The user space is the mode where the user's applications are executed.
+All the standard application works in this world.
+In fact, this mode can isolate the processes form each other.
+So each process can access the memory as if it were the only one on the operating system.
+Moreover, the programs cannot access directly to the hardware, they need to go through a kernel driver.
+
+The kernel space, is the space where the operating system works.
+The driver peripherals runs in this mode, and they have access to the hardware.
+However, if there is bug in a driver, the OS will likely crash.
+That's why a driver code need to have as little bug as possible.
+
+So that the two spaces can interact, there are two communication option.
+1. The syscall
+   - The communication is done via syscalls.
+     There are software interruption that allow to switch from user space to kernel space, and access to kernel function.
+     Linux syscalls are for example ~open~, ~write~, ...
+2. Pseudofile system
+   - These are entries in speciﬁc ﬁchier systems and this enables communication between the kernel and the user space.
+
+The Linux kernel modules are used when we need to access the hardware or other kernel module.
+A kernel module run in the kernel space.
+As the Linux kernel is written in C, the kernel modules are also written in C, but in recent year we can also use Rust.
+
+In this chapter, we will try to find if we can create Linux kernel module in Zig.
+
+** Hello World kernel module
+To getting started, we will begin to create a C Hello world module.
+For our examples, we are using an embedded target, this target is a nanopi neo plus 2.
+The nanopi uses buildroot to create a custom Linux distribution.
+
+The code folowing code shows the skelton of a Linux kernel module.
+The fonction ~skeleton_ini~ will be call on the startup of the module.
+And the fonction ~skeleton_exit~ will be call when the module is unloaded 
+#+begin_src C
+  #include <linux/module.h>	// needed by all modules
+  #include <linux/init.h>		// needed for macros
+  #include <linux/kernel.h>	// needed for debugging
+
+  static int __init skeleton_init(void)
+  {
+    pr_info ("Linux module skeleton loaded\n");
+    return 0;
+  }
+
+  static void __exit skeleton_exit(void)
+  {
+    pr_info ("Linux module skeleton unloaded\n");
+  }
+
+  module_init (skeleton_init);
+  module_exit (skeleton_exit);
+
+  MODULE_AUTHOR ("SSY");
+  MODULE_DESCRIPTION ("Module skeleton");
+  MODULE_LICENSE ("GPL");
+#+end_src
+
+But unfortunately, a kernel module cannot be compiled as easily as a normal app.
+
+For that, there are two way to compile a module.
+- Statically: the module is compiled and linked statically into the kernel.
+- Dynamically : the module is compiled a part and it can be load dynamically in the kernel.
+
+As the example is separate from the linux kernel, we need to build it dynamically.
+The compilation used is name =out-of-tree= because the compilation is outside the linux tree structure.
+
+The following make file is used to compile the kernel module example.
+#+begin_src make
+    # Part executed when called from kernel build system
+    ifneq ($(KERNELRELEASE),)
+    obj-m += mymodule.o          ## name of the generated module
+    mymodule-objs := exercice1.o  ## list of objets needed by that module
+    CFLAGS_skeleton := -DDEBUG   ## to enable printing of debugging messages
+
+    # Part executed when called from standard make in the module source directory
+    else
+    CVER     := aarch64-buildroot-linux-gnu-
+    KVER     := 5.15.148
+    CPU      := arm64
+
+    KDIR     := /buildroot/output/build/linux-$(KVER)
+    TOOLS    := /buildroot/output/host/usr/bin/$(CVER)
+    MODPATH  := /rootfs
+    PWD := $(shell pwd)
+
+    all:
+        $(MAKE) -C $(KDIR) M=$(PWD) ARCH=$(CPU) CROSS_COMPILE=$(TOOLS) modules
+
+    clean:
+        $(MAKE) -C $(KDIR) M=$(PWD) 
+
+    endif
+#+end_src
+  
+The module is generate in three parts:
+1. The makefile is called with the ~all~ command.
+2. In the beginning the ~KERNELRELEASE~ variable is not defined.
+   Make will call the kernel make file included in the ~KDIR~ variable,
+3. The kernel make file will generate the kernel module thanks to the ~M~ variable the make file know the path source code.
+
+Once compiled, we can insert the kernel module in the kernel.
+For that, we need to use the ~insmod~ command.
+#+begin_src shell
+  insmod mymodule.ko
+#+end_src
+
+And this will print on the console:
+#+begin_example
+ [ 1574.692482] Linux module skeleton loaded
+#+end_example
+If the output isn't printed, we can display the kernel ring buffer with the command:
+#+begin_src shell
+  dmesg
+#+end_src
+
+And to unload the kernel module from the kernel:
+#+begin_src shell
+  rmmod mymodule.ko
+#+end_src
+
+And this will print:
+#+begin_example
+ [ 1577.734250] Linux module skeleton unloaded
+#+end_example
