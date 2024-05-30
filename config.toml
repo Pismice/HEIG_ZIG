@@ -1,0 +1,3 @@
+baseURL = 'http://pismice.github.io/HEIG_ZIG/'
+languageCode = 'en-us'
+title = 'Heig Zig documentation'

@@ -1,3 +1,6 @@
+#+title: Web
+#+weight: 8
+
 * Web frameworks
 In this section we are going to explore the different ways of doing WEB servers in Zig.
 

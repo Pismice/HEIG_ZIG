@@ -1,3 +1,6 @@
+#+title: Defer
+#+weight: 7
+
 ** defer
 If you are coming from the C world, this keyword might surprise you and greatly impact your life, if you already know it from other languages like Go, bear with us to see how it is particulary useful in a language that has to manage its own memory.
 

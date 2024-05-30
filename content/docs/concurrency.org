@@ -1,3 +1,6 @@
+#+title: Concurrency
+#+weight: 14
+
 * Concurrency
 ** Introduction
 The objectives of this chapter is to go in depth about the different ways to do concurrency in ZIG.

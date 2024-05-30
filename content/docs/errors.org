@@ -1,3 +1,6 @@
+#+title: Errors
+#+weight: 3
+
 ** Errors
 In ZIG, [[https://ziglang.org/documentation/master/#Errors][errors]] are juste values.
 

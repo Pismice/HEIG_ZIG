@@ -1,7 +1,9 @@
-** Tracking
-*** Race conditions
-TODO Check the differnt tools to track race conditions between threads.
-I already looked into the std.Thread and found nothing, so I will have to dig deeper.
+#+title: Tracking
+#+weight: 9
+
+## Tracking
+### Race conditions
+>>>>>>> main:content/docs/tracking.org
 
 *** Memory leak
 **** C allocations

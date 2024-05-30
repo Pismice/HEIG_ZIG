@@ -1,3 +1,6 @@
+#+title: External files
+#+weight: 2
+
 ** Reading external files
 Reading external files is a common task in programming. In this section we are going to look at a few different ways to achieve it.
 *** @embedFile
