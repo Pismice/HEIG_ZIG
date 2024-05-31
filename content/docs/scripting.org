@@ -1,3 +1,6 @@
+#+title: Scripting
+#+weight: 14
+
 * Scripting
 ** What is scripting ?
 [[https://en.wikipedia.org/wiki/Scripting_language]["In computing, a script is a relatively short and simple set of instructions that typically automate an otherwise manual process."]].
@@ -7,7 +10,11 @@ On the same page we can also read "Scripts are usually interpreted rather than c
 But even after looking at this, it is still beter to try by ourselves.
 
 ** Project description
-When using i3, it exists the possiblity to rename your workspaces, but it is a tidious process. You have to write a first command:
+When using [[https://i3wm.org/][i3]], a tiling wm in linux, it exists the possiblity to rename your workspaces, but it is a tidious process. You have to write a tiling wm in linux, a first command:
+#+CAPTION: Requests per second for different frameworks
+#+NAME:   fig:SED-HR4049
+[[i3-msg.png]]
+
 #+BEGIN_SRC sh
 i3-msg -t get_workspaces # return in a json format the list of workspaces and their properties
 #+END_SRC
@@ -142,7 +149,7 @@ Here we are going to have to format our string in order to print it.
 #+BEGIN_SRC zig
 std.debug.print("Should have changed workspace {s} from {s} -> {s}", .{ args[1], name, new_name });
 #+END_SRC
-In Python, we can just print the result without the need for special formatting, which is way faster and nicer.
+In Python, we can just print the result without the need for special formatting, which is way faster and nicer to write.
 #+BEGIN_SRC python
 print("Should have changed the name of the workspace with id " + sys.argv[1] + "from" + old_name + " to " + new_name)
 #+END_SRC
@@ -153,7 +160,7 @@ Overall we have 76 lines for the Zig implementation and 39 lines for the Python 
 I used hyperfine in order to benchmark and see which implementation is faster.
 
 Zig implementation: Time (mean ± σ): 3.0 ms ± 0.5 ms
-Python implementation: Time (mean ± σ): 28.4 s ± 4.9 s
+Python implementation: Time (mean ± σ): 28.4 ms ± 4.9 ms
 
 The results are what we excepted, Zig is a compiled language and is way faster than Python, but the question is, is it worth it ?
 
@@ -176,5 +183,3 @@ To conclude I would not recommend using Zig for scripting, it simply is not the 
 
 If you want to you can find the GitHub repository of the project [[https://github.com/Pismice/rename-i3-workspace][here]] if you want to take a look at the whole code.
 If the project seems cool to you can also install the scripts on your system by following the instructions in the README.
-
-What libraries did i use ?

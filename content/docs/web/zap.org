@@ -40,7 +40,7 @@ fn on_request(r: zap.Request) void {
 The [[https://github.com/zigzap/zap][repo]] gives you a lot of [[https://github.com/zigzap/zap/tree/master/examples][exemples]] in order to get started.
 
 **** Alternatives and performance comparaison
-The zap library provides a few other REST API frameworks to compare with Zap, all the codes fromt he different languages/framework just return a simple "Hello World" message when their endpoint is called.
+The zap library provides a few other REST API frameworks to compare with Zap in a *wrk* folder, all the codes from the different languages/framework just return a simple "Hello World" message when their endpoint is called.
 
 The benchmarks compare 2 different metrics:
 
