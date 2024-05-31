@@ -13,4 +13,7 @@ hugo.linux
 /.hugo_build.lock
 
 docs/WIP
+docs/index.odt
+docs/index.tex
+docs/index.pdf
 WIP

@@ -2,23 +2,19 @@
 #+weight: 3
 
 ** Errors
-https://ziglang.org/documentation/0.11.1/#Errors
+In ZIG, [[https://ziglang.org/documentation/master/#Errors][errors]] are juste values.
 
-In ZIG errors are juste values.
+Those values are those of a special type of enum =error=.
 
-Those values are those of an special type of enum "error".
-
-When you declare your enum using this keyword instead of "enum", the compiler is going to know that those values are going to be errors, therefore they can be catched, tried, ...
-
+When you declare your enum using this keyword instead of =enum=, the compiler is going to know that those values are going to be errors, therefore they can be catched, tried and so on.
 
 *** Handling errors in the application flow
-Functions can return either a value or an error, this is done by adding the "!" to the return type of a function
-With the "!" the return type of the function below is the coerced "anyerror!u8"
+Functions can return either a value or an error, this is done by adding the =!= to the return type of a function
+With the =!= the return type of the function below is the coerced =anyerror!u8=
 
-Note 1: "anyerror" is just a u16 under the hood.
-Note 2: It is important that the syntax is ErrorSet!Payload if you write it by hand and NOT Payload!ErrorSet
+Note that =anyerror= is just a u16 under the hood and that it is important the the syntax of the type is =ErrorSet!Payload= and not =Payload!ErrorSet=.
 
-When a function can return an error we have to either "try" or "catch" it.
+When a function can return an error we have to either =try= or =catch= it.
 
 #+source: simple
 #+begin_src zig :imports '(std)
@@ -48,7 +44,7 @@ test "should panic" {
 
 *** Errdefer
 This exemple is taken from the [[https://ziglang.org/documentation/master/#errdefer][official documentation]]
-Errdefer is a particularity of ZIG, it allows the user to execute some code when the function returns an error, it is useful exemple for deallocating variables you would have normally returned from the function, but since the function failed you deallocate that memory to avoid a memory leak.
+[[https://ziglang.org/documentation/master/#errdefer][errdefer]] is a particularity of ZIG, it allows the user to execute some code when the function returns an error, it is useful exemple for deallocating variables you would have normally returned from the function, but since the function failed you deallocate that memory to avoid a memory leak.
 #+source: simple
 #+begin_src zig :imports '(std)
 fn createFoo(param: i32) !Foo {

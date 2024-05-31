@@ -1,0 +1,185 @@
+#+title: Scripting
+#+weight: 14
+
+* Scripting
+** What is scripting ?
+[[https://en.wikipedia.org/wiki/Scripting_language]["In computing, a script is a relatively short and simple set of instructions that typically automate an otherwise manual process."]].
+
+On the same page we can also read "Scripts are usually interpreted rather than compiled.", which might already give us a hint if Zig is the right tool for the job or not.
+
+But even after looking at this, it is still beter to try by ourselves.
+
+** Project description
+When using [[https://i3wm.org/][i3]], a tiling wm in linux, it exists the possiblity to rename your workspaces, but it is a tidious process. You have to write a tiling wm in linux, a first command:
+#+CAPTION: Requests per second for different frameworks
+#+NAME:   fig:SED-HR4049
+[[i3-msg.png]]
+
+#+BEGIN_SRC sh
+i3-msg -t get_workspaces # return in a json format the list of workspaces and their properties
+#+END_SRC
+
+After that you to found the name of the workspace you want to rename, then you have to write a second command:
+#+BEGIN_SRC sh
+i3-msg 'rename workspace "4: surfing-the-web" to "4: zig-project"'
+#+END_SRC
+
+And only after those 2 commands your workspace is renamed.
+
+What was needed was a script that would as an input only take the number of the workspace that is going to be renamed and the new name without the number (eg. "4: ").
+
+In order to do that, we have to interact with processes and manipulate string, we are going to see step by step how to do that in our "script":
+
+** Implementation and comparaison with an other scripting language
+I decided to write the same script, first in Zig and then in Python, in order to compare the two languages and see if Zig is a good choice for scripting.
+
+We are going to go through the different steps of the script and see how it is done in Zig and in Python, compare the 2 and see which is best suited for the job.
+
+*** Part 1: Declaring constants
+First we are going to define our constants and our allocator
+#+BEGIN_SRC zig
+const allocator = std.heap.page_allocator;
+const app_name: []const u8 = "/bin/i3-msg";
+var params: []const []const u8 = &.{ app_name, "-t", "get_workspaces" };
+#+END_SRC
+
+In python we don't need the allocator since it is a garbage collected language, but we still need to define our constants and we see that the syntax is quite nicer in Python
+#+BEGIN_SRC python
+app_name = "/bin/i3-msg"
+params = app_name + " -t get_workspaces"
+#+END_SRC
+
+*** Part 2: Getting the output of the process
+Then we are going to call the process and get the output
+#+BEGIN_SRC zig
+const result = try std.ChildProcess.run(.{
+    .allocator = allocator,
+    .argv = params,
+    .cwd = null,
+    .cwd_dir = null,
+    .env_map = null,
+    .max_output_bytes = 51200,
+    .expand_arg0 = .no_expand,
+});
+defer {
+    allocator.free(result.stdout);
+    allocator.free(result.stderr);
+}
+const text_result = result.stdout;
+#+END_SRC
+The python code contains way less parameters, notably those related to memory management.
+#+BEGIN_SRC python
+result = subprocess.run(params, shell=True, capture_output=True, text=True)
+#+END_SRC
+
+*** Part 3: Making the new name
+Here we are allocating dynamic memory to the arguments and then declaring the new name of the workspace
+#+BEGIN_SRC zig
+const args = try std.process.argsAlloc(allocator);
+defer std.process.argsFree(allocator, args);
+const new_name = try std.fmt.allocPrint(allocator, "{s}: {s}", .{ args[1], args[2] });
+defer allocator.free(new_name);
+#+END_SRC
+Again, we don't have to worry about allocation and deallocating memory. Moreover, string maniuplation are way easier in Python.
+#+BEGIN_SRC python
+new_name = sys.argv[1] + ": " + sys.argv[2]
+#+END_SRC
+
+*** Part 4: Getting the current name of the workspace from the id of the workspace we want to rename
+There is no std regex functions or anything that contains string manipulations in Zig, so we have to do it by hand by analyzing the characters of the string. Obviously, this is a very error-prone and hard task.
+#+BEGIN_SRC zig
+const needle: []const u8 = try std.fmt.allocPrint(allocator, "num\":{s}", .{args[1]});
+defer allocator.free(needle);
+var pos_in_text_result = std.mem.indexOf(u8, text_result, needle);
+pos_in_text_result.? += 15;
+if (std.mem.eql(u8, args[1], "10")) {
+    pos_in_text_result.? += 1;
+}
+
+var start_of_name = std.mem.indexOf(u8, text_result[pos_in_text_result.? .. pos_in_text_result.? + 50], ",\"");
+start_of_name.? += 2;
+start_of_name.? += pos_in_text_result.?;
+
+var end_of_name = std.mem.indexOf(u8, text_result[pos_in_text_result.? .. pos_in_text_result.? + 50], "\"");
+end_of_name.? += start_of_name.?;
+
+const diff = end_of_name.? - start_of_name.?;
+const name = text_result[start_of_name.? - 3 - diff .. end_of_name.? - 3 - diff];
+const old_name = try std.fmt.allocPrint(allocator, "\"{s}\"", .{name});
+defer allocator.free(old_name);
+#+END_SRC
+In Python, we the help of a regex library we can easily extract the name of the workspace from the json output.
+#+BEGIN_SRC python
+pattern = fr'"num":{sys.argv[1]},"name":"([^"]+)"'
+match = re.search(pattern, result.stdout)
+
+if match:
+    old_name = match.group(1)
+
+print(old_name)
+#+END_SRC
+
+*** Part 5: Re running a process to rename the workspace
+Finally, we are going to run the process to rename the workspace using the inputs we have extracted and created.
+Here we arrive at the same conclusions that we had in Part 2
+#+BEGIN_SRC zig
+params = &.{ app_name, "rename", "workspace", old_name, "to", new_name };
+
+const modif_result = try std.ChildProcess.run(.{
+    .allocator = allocator,
+    .argv = params,
+    .cwd = null,
+    .cwd_dir = null,
+    .env_map = null,
+    .max_output_bytes = 51200,
+    .expand_arg0 = .no_expand,
+});
+defer {
+    allocator.free(modif_result.stdout);
+    allocator.free(modif_result.stderr);
+}
+#+END_SRC
+And again in Python.
+#+BEGIN_SRC python
+result = subprocess.run(params, shell=True, capture_output=True, text=True)
+#+END_SRC
+
+*** Part 6: Printing the result message
+Here we are going to have to format our string in order to print it.
+#+BEGIN_SRC zig
+std.debug.print("Should have changed workspace {s} from {s} -> {s}", .{ args[1], name, new_name });
+#+END_SRC
+In Python, we can just print the result without the need for special formatting, which is way faster and nicer to write.
+#+BEGIN_SRC python
+print("Should have changed the name of the workspace with id " + sys.argv[1] + "from" + old_name + " to " + new_name)
+#+END_SRC
+
+Overall we have 76 lines for the Zig implementation and 39 lines for the Python implementation, the syntax is also way more readable in Python. One of the main reasons we could save up so many lines in Python is because we have a lot of fine libraries that are simple to use, notably *re* and *subprocess*.
+
+** Benchmark
+I used hyperfine in order to benchmark and see which implementation is faster.
+
+Zig implementation: Time (mean ± σ): 3.0 ms ± 0.5 ms
+Python implementation: Time (mean ± σ): 28.4 ms ± 4.9 ms
+
+The results are what we excepted, Zig is a compiled language and is way faster than Python, but the question is, is it worth it ?
+
+** Libraries used
+*** Zig
+- [[https://ziglang.org/documentation/master/std/#std.child_process.ChildProcess][std.ChildProcess]]
+- [[https://ziglang.org/documentation/master/std/#std.fmt][std.fmt]]
+- [[https://ziglang.org/documentation/master/std/#std.mem][std.mem]]
+*** Python
+- [[https://docs.python.org/3/library/subprocess.html][subprocess]]
+- [[https://docs.python.org/3/library/re.html][re]]
+- [[https://docs.python.org/3/library/sys.html][sys]]
+
+** Conclusion
+Was Zig the good choice ? No, Zig is not a good choice for scripting, it is way too verbose and not suited for the task. Python is way better suited for the job, it is way more readable and way easier to use. There are a lot of things that Zig is not really good at if you want to go fast and notably string manipulation and memory management.
+
+Doing those things by hand was not an easy task and it was very error-prone, it is way better to use a language that has libraries that are already made for you and that are easy to use, 20ms of difference in the performances is not was is going to make your script experience nicer, at least not for most scripts.
+
+To conclude I would not recommend using Zig for scripting, it simply is not the right tool for the job.
+
+If you want to you can find the GitHub repository of the project [[https://github.com/Pismice/rename-i3-workspace][here]] if you want to take a look at the whole code.
+If the project seems cool to you can also install the scripts on your system by following the instructions in the README.

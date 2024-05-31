@@ -2,21 +2,22 @@
 #+weight: 2
 
 ** Reading external files
-There are multiple ways to do it in ZIG:
+Reading external files is a common task in programming. In this section we are going to look at a few different ways to achieve it.
 *** @embedFile
-This method is simply going to embed the file in the binary at compile time.
+This [[https://ziglang.org/documentation/master/#embedFile][method]] is simply going to embed the file in the binary at compile time. So if your file is large it might not be the best option, but for small files you are going to get the advantage of not having to open a file at runtime.
 
 Beware that by using this method the path to the file is going to be relative to the file you are calling it from and that the file must be in the same package.
 
 By using the other methods below you can use a file from anywhere but relative to your root folder and not main.zig.
+
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
 const input = @embedFile("input.txt");
 std.debug.print("{s}", .{input});
 #+end_src
 
 *** Use an allocator to dynamically store the content of the file 
-By using the method: readToEndAlloc 
-#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+By using the [[https://ziglang.org/documentation/master/std/#std.fs.File.readToEndAlloc][readToEndAlloc]] method from the std.fs.File. This is useful the size of the file that is going to be opened is unknown or big. By doing this you are going to leverage heap memory allocation to store exactly what you need.
+#+begin_src zig ':tangle yes'
 // Alocator
 var gp = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
 defer gp.deinit();
@@ -35,8 +36,10 @@ const file_content = try file.readToEndAlloc(allocator, std.math.maxInt(usize));
 defer allocator.free(file_content);
 #+end_src
 
+#+RESULTS:
+
 *** Read the file and put it in a buffer
-By using the method readAll 
+By using the method [[https://ziglang.org/documentation/master/std/#std.fs.File.readAll][readAll]], this is the most traditional way to do it. Like in in C the content of a file is going to be stored in a buffer allocated in the stack. Useful particulary if you know the size of the file you want to read.
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
 // Path
 var path_buffer: [std.fs.MAX_PATH_BYTES]u8 = undefined;
@@ -52,8 +55,6 @@ const size = try file.readAll(&content_buffer);
 
 std.debug.print("{s}", .{content_buffer[0..size]});
 #+end_src
-
-TODO reading files with org babel doesnt work yet idk why
 
 Sources: 
 - https://ziglang.org/documentation/master/std/#std.fs.File.readToEndAlloc

@@ -27,3 +27,38 @@ std.debug.print("Hello I am {} years old", .{12});
 
 This is an [[https://github.com/ziglang/zig/issues/19158][ongoing issue]] by the time I am writing this in 0.12.0
 
+*** Assigning to an arrray of array of u8
+This is a very common thing to, if you basically want to make an "array of strings", the way you would want to do it is that way:
+#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+const app_name: []const u8 = "/bin/i3-msg";
+var params: []const []const u8 = .{ app_name, "-t", "get_workspaces" };
+#+end_src
+
+But this is going to give the following error:
+#+begin_example
+error: type '[]const []const u8' does not support array initialization syntax
+#+end_example
+
+With the following hint:
+#+begin_example
+note: inferred array length is specified with an underscore: '[_][]const u8'
+#+end_example
+
+So you might try to follow the hint, but the hint here is not that good all, and give you false directions:
+#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+var params: []const []const u8 = [_][]const u8{ app_name, "-t", "get_workspaces};
+#+end_src
+
+Ending up with the following error:
+#+begin_src
+error: array literal requires address-of operator (&) to coerce to slice type '[]const []const u8'
+#+end_src
+
+And then you can finally work you way around by coming back to the first syntax and adding the *&* operator like so:
+#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+var params: []const []const u8 = &.{ app_name, "-t", "get_workspaces" };
+#+end_src
+
+This is because that is the way you write [[https://discord.com/channels/605571803288698900/1243368828461912127][slice literals according to this discord discussion]]. There were no documentions related to that on the official website at the time of writing.
+
+
