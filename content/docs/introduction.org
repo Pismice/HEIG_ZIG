@@ -23,20 +23,21 @@ Note that this documentation is generated from emacs with org-mode and that you 
 This documentation is being worked on by 2 students from the HEIG-VD, in the context of a course for one and a Bachelor Thesis for the other.
 The goal of this documentation is to explore the Zig language in-depth, by first learning a few basics of the language we judge interesting/useful, and then by exploring more advanced topics.
 
-This work is mainly aimed at engineers who already have experiences in C but might consider using Zig as a replacement/alternative. If you are a complete beginner, you might still learn a lot by reading this, but we highly encourage you to look at other ressources aimed at beginners aswell.
+This work is mainly aimed at engineers who already have experiences in C but might consider using Zig as a replacement/alternative. If you are a complete beginner, you might still learn a lot by reading this, but we highly encourage you to look at other ressources aimed at beginners.
 
 The big + this project offers compare to other guides/documentations is that here we are going to learn the language with [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] because *one snippet of code is worth 1000 words*.
 
 The advanced topics covered are mostly structured like so:
 1. Explaining the concept and see what is done in other languages (mostly C)
 2. Look at the different ways to do it in Zig
-3. Analyze and benchmark them
+3. Analisis and benchmark 
 4. Giving an opinion and conclusion about what was analyzed in part 3
 
 Note that we wrote this documentation with the help of AI assistants like ChatGPT and GH Copilot.
+These tools were used only to improve the syntax and spelling of texts.
 
 ** What this documentation IS NOT
-This is *not* a guide to learn Zig as first-language, this documentation wants to go in-depth in certain parts of the language.
+This is *not* a guide to learn Zig as first-language, this documentation wants to go in-depth in certain parts of the language, and totally neglets others.
 
 To understand what is described in this documentation, you should first read up on the basics of the Zig language, in particular, its guide, which contains a wealth of information.
 - [[https://zig.guide][Zig guide]]
@@ -44,11 +45,11 @@ To understand what is described in this documentation, you should first read up 
 
 ** How to use this documentation
 
-This documentation is built to guide to user through different examples.
-Those examples have been created to use literate programming, in fact, the documentation is built on Emacs with the org mode.
+This documentation is built to guide to reader through different examples.
+Those examples have been created using literate programming, in fact, the documentation is built on Emacs with the org mode.
 You can follow the examples and execute them directly in [[https://www.gnu.org/software/emacs/][Emacs]].
 
-For that, you need to:
+The easiest way to do so it:
 1. Install the configuration created for that (see the section below)
 2. When all is configured, in Emacs you can select the example that you want to execute and use the command ~C-c C-c~.
    The output will be created or updated below the source block. If you want more documentation, you can check the [[https://orgmode.org/worg/org-contrib/babel/intro.html][Org babel documentation]]
@@ -56,10 +57,15 @@ For that, you need to:
 You can follow the examples with the Zig version 0.12.
 But Zig is in constant evolution we *may* have to use other versions at some point in this guide, but if that is the case we will precise it.
 
-** Build Emacs configuration
+** Emacs configuration
 To read this documentation interactively, you can use Emacs.
 For that, you need to have the Emacs version =29.2= or =29.3= installed to use some plugins that will be installed later.
 You can find the installation instructions [[https://www.gnu.org/software/emacs/download.html][HERE]], the instructions will depend on your system.
+
+For example, if you using Fedora, you can install Emacs trought it package manager:
+#+begin_src shell
+  sudo dnf install emacs
+#+end_src
 
 *** Clone this documentation
 You need to clone this repository.
@@ -69,7 +75,7 @@ You can use this command to clone:
   git clone https://github.com/Pismice/HEIG_ZIG.git
 #+end_src
 
-*** Use Emacs
+*** Using Emacs
 To use Emacs with this documentation, you need to follow these instructions.
 
 Execute Emacs and you will have a welcome window.
@@ -77,7 +83,7 @@ To navigate to this documentation, you need to use the following shortcut: ~C-x 
 This will open a command in the bottom left corner.
 With this command, you can select the path of the file you want to open.
 
-If you want to open this introduction file, you need in the first place enter the directory path where you have cloned this documentation.
+If you want to open the introduction file, you need in the first place enter the directory path where you have cloned this documentation.
 When you are in the root directory of the documentation, you can find all the documentation files in the directory:
 #+begin_example sh
 ./content/docs/*
@@ -90,14 +96,16 @@ And this introduction file can be found in :
 
 More Emacs documentation can be found [[https://www.gnu.org/software/emacs/tour/][HERE]].
 
-*** Install Zig emacs org babel plugin
-To install the plugins that will be used to interact with the example codes, you need to follow the different steps:
+Now that we have opened the file, we can then start installing the necessary plugins to use the documentation with Literate programming.
+
+1. _Install Zig emacs org babel plugin_
+To install the plugins that will be used to interact with the example codes, you need to follow the different steps.
 
 Open this =introduction.org= file with Emacs.
 Below, you will find instructions to create your Emacs configuration.
 This configuration will be built interactively.
 
-1. _First step_
+1.1. _First step_
 Place your cursor in the code block below and use ~C-c C-c~ (~ctrl-c ctrl-c~) to evaluate the code below.
 It will add a shell interpreter inside org-babel configuration, it will be used when shell commands are evaluated.
 #+begin_src emacs-lisp
@@ -105,7 +113,7 @@ It will add a shell interpreter inside org-babel configuration, it will be used 
   (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
 #+end_src
 
-2. _Second step_
+1.2. _Second step_
 The shell command will clone an org babel [[https://github.com/samuel-schlaeppy/ob-zig.el.git][zig plugin]] necessary to execute some Zig examples directly in Emacs with Org babel.
 
 The ~HEADER~ parameter below (in the code block) configures the directory path by default.
@@ -117,7 +125,7 @@ Once you have changed the ~HEADER~ parameter, you can place your cursor in the c
   git clone https://github.com/samuel-schlaeppy/ob-zig.el.git
 #+end_src
 
-*** Create an emacs configuration file
+2. _Create an emacs configuration file_
 In the last section, the plugin =Ob-Zig= has been installed, this plugin will help to evaluate Zig example codes.
 To use correctly this plugin, in the code block below, you need to change the string ~./PATH-WHERE-THE-OB-ZIG-PLUGIN-IS-INSTALLED/ob-zig.el~ where you have cloned the plugin =ob-zig.el=.
 In addition, you need to change in the code block the string =PATH-TO-THE-ZIG-EXECUTABLE= to insert the path of the Zig executable.
@@ -160,7 +168,7 @@ This file can be loaded from your emacs configuration (see section below).
    '(org-babel-load-languages '((C . t) (emacs-lisp . t) (shell . t))))
 #+end_src
 
-*** Execute the configuration file from the configuration
+3. _Execute the configuration file from the configuration_
 You can put the code below in your ~init.el~ it will load the file produced before and load the necessary package to learn Zig with literate programming.
 But you need the specify the directory path of the ~zigIterativeProgramming.el~ file (first line below).
 (the ~init.el~ can be found in ~~/.emacs.d/~ or can be created in ~~/.config/emacs/~
