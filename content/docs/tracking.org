@@ -1,10 +1,6 @@
 #+title: Tracking
 #+weight: 9
 
-## Tracking
-### Race conditions
->>>>>>> main:content/docs/tracking.org
-
 *** Memory leak
 **** C allocations
 For high performances and very few safety checks, you might want to use the [[https://ziglang.org/documentation/master/std/#std.heap.c_allocator][std.heap.c allocator]].
@@ -32,47 +28,47 @@ You can have more informations on the topic following a discussion I had on the 
 **** Memory leaks
 In the exemple below, the memory allocated to *a* is freed (with *destroy* here), if you were to comment the *destroy* line, the GPA would detect a memory leak and tell you what memory leaked giving a stacktrace and the memory address of the leaked memory.
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
-var gpa = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
-defer {
-    const status = gpa.deinit(); // deinit is going to detect memory leaks, calls gpa.detectLeaks() under the hood
-
-    if (status == .leak) {
-        std.debug.print("Memory leak detected\n", .{});
-    } else {
-        std.debug.print("No memory leak detected\n", .{});
-    }
-}
-const allocator = gpa.allocator();
-
-const a = try allocator.create(u8);
-allocator.destroy(a); // Memory freed
+  var gpa = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
+  defer {
+      const status = gpa.deinit(); // deinit is going to detect memory leaks, calls gpa.detectLeaks() under the hood
+  
+      if (status == .leak) {
+          std.debug.print("Memory leak detected\n", .{});
+      } else {
+          std.debug.print("No memory leak detected\n", .{});
+      }
+  }
+  const allocator = gpa.allocator();
+  
+  const a = try allocator.create(u8);
+  allocator.destroy(a); // Memory freed
 #+end_src
 
 **** Use after free
 Following the previous exemple we are going to try to access the memory after it has been freed, this will result in a use-after-free error.
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
-var gpa = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
-defer _ = gpa.deinit(); // deinit is going to detect memory leaks, calls gpa.detectLeaks() under the hood
-
-const allocator = gpa.allocator();
-
-const a = try allocator.create(u8);
-allocator.destroy(a); // Memory freed
-
-a.* = 4; // USE AFTER FREE
+  var gpa = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
+  defer _ = gpa.deinit(); // deinit is going to detect memory leaks, calls gpa.detectLeaks() under the hood
+  
+  const allocator = gpa.allocator();
+  
+  const a = try allocator.create(u8);
+  allocator.destroy(a); // Memory freed
+  
+  a.* = 4; // USE AFTER FREE
 #+end_src
 
 **** Invalid free
 By still keeping the previous exemples, we are going to double free and get an error.
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
-var gpa = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
-defer _ = gpa.deinit(); // deinit is going to detect memory leaks, calls gpa.detectLeaks() under the hood
-
-const allocator = gpa.allocator();
-
-const a = try allocator.create(u8);
-allocator.destroy(a); // Memory freed
-allocator.destroy(a); // DOUBLE FREE
+  var gpa = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
+  defer _ = gpa.deinit(); // deinit is going to detect memory leaks, calls gpa.detectLeaks() under the hood
+  
+  const allocator = gpa.allocator();
+  
+  const a = try allocator.create(u8);
+  allocator.destroy(a); // Memory freed
+  allocator.destroy(a); // DOUBLE FREE
 #+end_src
 
 *** Sources 

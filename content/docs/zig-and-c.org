@@ -22,19 +22,19 @@ In Zig, the for loop is not used as much as in C.
 Instead, the while loop is used more often. The for loop is used when iterating over multiples elements of a container (typically slices or arrays), so it basically is a kind of foreach loop. In all the other cases the while loop is used.
 
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
-const items = [_]u16 { 1, 4, 0, 1 };
-var sum: u16 = 0;
-for (items) |value| {
-    sum += value;
-}
-std.debug.print("Sum: {}\n", .{sum});
+  const items = [_]u16 { 1, 4, 0, 1 };
+  var sum: u16 = 0;
+  for (items) |value| {
+      sum += value;
+  }
+  std.debug.print("Sum: {}\n", .{sum});
 #+end_src
-
+  
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
-for (0..3) |i| {
-    i += 1;
-    std.debug.print("i: {}\n", .{i});
-}
+  for (0..3) |i| {
+      i += 1;
+      std.debug.print("i: {}\n", .{i});
+  }
 #+end_src
 
 **** Pointers
@@ -52,60 +52,60 @@ Since in Zig there is no implicit conversions, depending on the project you migh
 Exemple:
 ZIG:
 #+begin_src zig
-fn rgb_to_grayscale_1d(img: *imageh.img_1D_t, result: *imageh.img_1D_t) void {
-    var i: usize = 0;
-    while (i < @as(usize, @intCast(img.height * img.width))) : (i += 1) {
-        const index = i * @as(usize, @intCast(img.components));
-        const grayscale_value: u8 = @intFromFloat(imageh.FACTOR_R * @as(f64, @floatFromInt(img.data[imageh.R_OFFSET + index])) +
-            imageh.FACTOR_G * @as(f64, @floatFromInt(img.data[imageh.G_OFFSET + index])) +
-            imageh.FACTOR_B * @as(f64, @floatFromInt(img.data[imageh.B_OFFSET + index])));
-        result.data[i] = grayscale_value;
-    }
-}
+  fn rgb_to_grayscale_1d(img: *imageh.img_1D_t, result: *imageh.img_1D_t) void {
+      var i: usize = 0;
+      while (i < @as(usize, @intCast(img.height * img.width))) : (i += 1) {
+          const index = i * @as(usize, @intCast(img.components));
+          const grayscale_value: u8 = @intFromFloat(imageh.FACTOR_R * @as(f64, @floatFromInt(img.data[imageh.R_OFFSET + index])) +
+              imageh.FACTOR_G * @as(f64, @floatFromInt(img.data[imageh.G_OFFSET + index])) +
+              imageh.FACTOR_B * @as(f64, @floatFromInt(img.data[imageh.B_OFFSET + index])));
+          result.data[i] = grayscale_value;
+      }
+  }
 #+end_src
 C:
 #+begin_src c
-void rgb_to_grayscale_1D(const struct img_1D_t *img, struct img_1D_t *result) {
-  printf("height: %d", img->height);
-  for (size_t i = 0; i < img->height * img->width; i++) {
-    int index = i * img->components;
-    uint8_t grayscale_value = (uint8_t)(FACTOR_R * img->data[R_OFFSET] +
-                                        FACTOR_G * img->data[G_OFFSET] +
-                                        FACTOR_B * img->data[B_OFFSET]);
-    result->data[i] = grayscale_value;
+  void rgb_to_grayscale_1D(const struct img_1D_t *img, struct img_1D_t *result) {
+    printf("height: %d", img->height);
+    for (size_t i = 0; i < img->height * img->width; i++) {
+      int index = i * img->components;
+      uint8_t grayscale_value = (uint8_t)(FACTOR_R * img->data[R_OFFSET] +
+                                          FACTOR_G * img->data[G_OFFSET] +
+                                          FACTOR_B * img->data[B_OFFSET]);
+      result->data[i] = grayscale_value;
+    }
   }
-}
 #+end_src
 
 
 *** How to call a C function from Zig
 Add those lines to your build.zig file:
 #+begin_src zig
-exe.addIncludePath(.{ .path = "c-src" }); // Folder containing the C files
-exe.linkLibC(); // Link the C standard library (which is zig own libc btw)
-#+end_src
-
-Then you can call the C functions like this from your Zig code:
+  exe.addIncludePath(.{ .path = "c-src" }); // Folder containing the C files
+  exe.linkLibC(); // Link the C standard library (which is zig own libc btw)
+  #+end_src
+  
+  Then you can call the C functions like this from your Zig code:
 #+begin_src zig
-const std = @import("std");
-const c_hello = @cImport({
-    @cInclude("hello.c");
-});
-
-pub fn main() !void {
-    c_hello.hello();
-
-    const res = c_hello.add(1, 2);
-    std.debug.print("1 + 2 = {d}\n", .{res});
-}
+  const std = @import("std");
+  const c_hello = @cImport({
+      @cInclude("hello.c");
+  });
+  
+  pub fn main() !void {
+      c_hello.hello();
+  
+      const res = c_hello.add(1, 2);
+      std.debug.print("1 + 2 = {d}\n", .{res});
+  }
 #+end_src
 Note that you can only do 1 =@cImport= per project. So what i recommend you to do is create a file containing all the c libraries you need in a file like so:
 #+begin_src zig
-pub const c = @cImport({
-    @cInclude("stdio.h");
-    @cInclude("stdlib.h");
-    @cInclude("image.h");
-});
+        pub const c = @cImport({
+            @cInclude("stdio.h");
+            @cInclude("stdlib.h");
+            @cInclude("image.h");
+        });
 #+end_src
 Then call this zig file in your other zig files.
 
@@ -114,19 +114,19 @@ You can continue your C project without using Clang or GCC but by using Zig with
 
 In order to have a c file (main.c) as the entry point of your project using the zig build tool you have to add/comment the following lines to your build.zig file:
 #+begin_src zig
-const exe = b.addExecutable(.{
-    .name = "c_project",
-    // .root_source_file = b.path("src/main.zig"),
-    .target = target,
-    .optimize = optimize,
-});
-exe.root_module.addCSourceFile(.{ .file = .{ .path = "src/main.c" }, .flags = &.{"-std=c99"} });
-exe.linkLibC();
+  const exe = b.addExecutable(.{
+      .name = "c_project",
+      // .root_source_file = b.path("src/main.zig"),
+      .target = target,
+      .optimize = optimize,
+  });
+  exe.root_module.addCSourceFile(.{ .file = .{ .path = "src/main.c" }, .flags = &.{"-std=c99"} });
+  exe.linkLibC();
 #+end_src
 
 If you want to have more C files than just main.c you can add them like so:
 #+begin_src zig
-exe.addCSourceFile(.{ .file = .{ .path = "c-src/image.c" }, .flags = &.{"-std=c99"} });
+  exe.addCSourceFile(.{ .file = .{ .path = "c-src/image.c" }, .flags = &.{"-std=c99"} });
 #+end_src
 
 **** export and extern keywords
@@ -145,7 +145,7 @@ You can translate any code but the code is going to be completly unreadable, so 
 You have better time importing the C code in your Zig code.
 Note that if you want to translate a C file that uses the libc you have to add the -lc flag like so:
 #+begin_src shell
-zig translate-c main.c -lc
+  zig translate-c main.c -lc
 #+end_src
 
 **** Comparison with other langauges that use C code
@@ -153,7 +153,7 @@ To test if integrating C code in Zig projects is really as seemless as some clai
 
 In order to do that I wrote a small C library:
 #+begin_src c
-int add(int a, int b) { return a + b; }
+  int add(int a, int b) { return a + b; }
 #+end_src
 
 What I am going to do is test how much time it takes each program to run this function x times. (in this case =x = 100'000'000=)
@@ -163,64 +163,64 @@ Note: I didnt use any optimization in flag in python (because it did not change 
 Then in order to compare the 2 languages I wrote 4 programs:
 - Zig code that has and add function implementation in Zig
 #+begin_src zig
-const std = @import("std");
-
-fn add(a: u32, b: u32) u32 {
-    return a + b;
-}
-
-pub fn main() !void {
-    var i: usize = 0;
-    while (i < 100000000) : (i += 1) {
-        _ = add(3, 7);
-    }
-    std.debug.print("done\n", .{});
-}
+  const std = @import("std");
+  
+  fn add(a: u32, b: u32) u32 {
+      return a + b;
+  }
+  
+  pub fn main() !void {
+      var i: usize = 0;
+      while (i < 100000000) : (i += 1) {
+          _ = add(3, 7);
+      }
+      std.debug.print("done\n", .{});
+  }
 #+end_src
 *Result:* ~0.38sec
 
 - Vanilla Python code that has and add function implementation in Python
 #+begin_src python
-def add(a, b):
-    return a + b
-
-
-for i in range(100000000):
-    add(3, 7)
-print("done!")
+  def add(a, b):
+      return a + b
+  
+  
+  for i in range(100000000):
+      add(3, 7)
+  print("done!")
 #+end_src
 *Result:* ~10sec
 
 - Zig code that imports the C library
 #+begin_src zig
-const std = @import("std");
-pub const c = @cImport({
-    @cInclude("mylib.c");
-});
-
-pub fn main() !void {
-    var i: usize = 0;
-    while (i < 100000000) : (i += 1) {
-        _ = c.add(3, 7);
-    }
-    std.debug.print("done!\n", .{});
-}
+  const std = @import("std");
+  pub const c = @cImport({
+      @cInclude("mylib.c");
+  });
+  
+  pub fn main() !void {
+      var i: usize = 0;
+      while (i < 100000000) : (i += 1) {
+          _ = c.add(3, 7);
+      }
+      std.debug.print("done!\n", .{});
+  }
 #+end_src
 *Result:* ~0.41sec
 
 - Python code that imports the C library
 #+begin_src python
-import ctypes
-
-mylib = ctypes.CDLL('./mylib.so')
-
-mylib.add.argtypes = (ctypes.c_int, ctypes.c_int)
-mylib.add.restype = ctypes.c_int
-
-for i in range(100000000):
-    result = mylib.add(3, 4)
-
-print("Result of last addition:", result)
+  import ctypes
+  
+  mylib = ctypes.CDLL('./mylib.so')
+  
+  mylib.add.argtypes = (ctypes.c_int, ctypes.c_int)
+  mylib.add.restype = ctypes.c_int
+  
+  for i in range(100000000):
+      result = mylib.add(3, 4)
+  
+  print("Result of last addition:", result)
 #+end_src
 *Result:* ~50sec
 

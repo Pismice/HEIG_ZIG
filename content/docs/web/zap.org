@@ -12,28 +12,28 @@ The framework works by defining callbacks that are going to be called when a cer
 
 Here you define the callback
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
-var listener = zap.Endpoint.Listener.init(
-    allocator,
-    .{
-        .port = 3000,
-        .on_request = on_request, // HERE
-        .log = true,
-        .public_folder = "examples/endpoint/html",
-        .max_clients = 100000,
-        .max_body_size = 100 * 1024 * 1024,
-    },
-);
+  var listener = zap.Endpoint.Listener.init(
+      allocator,
+      .{
+          .port = 3000,
+          .on_request = on_request, // HERE
+          .log = true,
+          .public_folder = "examples/endpoint/html",
+          .max_clients = 100000,
+          .max_body_size = 100 * 1024 * 1024,
+      },
+  );
 #+end_src
 
 And then it is going to call the following function
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
-fn on_request(r: zap.Request) void {
-    if (r.path) |the_path| {
-        std.debug.print("REQUESTED PATH: {s}\n", .{the_path});
-    }
-
-    r.sendBody("<html><body><h1>Hello from ZAP!!!</h1></body></html>") catch return;
-}
+  fn on_request(r: zap.Request) void {
+      if (r.path) |the_path| {
+          std.debug.print("REQUESTED PATH: {s}\n", .{the_path});
+      }
+  
+      r.sendBody("<html><body><h1>Hello from ZAP!!!</h1></body></html>") catch return;
+  }
 #+end_src
 
 **** Exemples
@@ -46,11 +46,11 @@ The benchmarks compare 2 different metrics:
 
 #+CAPTION: Requests per second for different frameworks
 #+NAME:   fig:SED-HR4049
-[[./images/req_per_sec_graph.png]]
+[[/images/req_per_sec_graph.png]]
 
 #+CAPTION: Transfers per second for different frameworks
 #+NAME:   fig:SED-HR4049
-[[./images/xfer_per_sec_graph.png]]
+[[/images/xfer_per_sec_graph.png]]
 
 We can see that zap is very performant which is what was excepted from something that leverages a powerful C library like facil.io. We can see that the only interpreted language in the benchmarks (python) is the slowest, which is also expected.
 

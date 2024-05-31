@@ -11,29 +11,29 @@ Beware that by using this method the path to the file is going to be relative to
 By using the other methods below you can use a file from anywhere but relative to your root folder and not main.zig.
 
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
-const input = @embedFile("input.txt");
-std.debug.print("{s}", .{input});
+  const input = @embedFile("input.txt");
+  std.debug.print("{s}", .{input});
 #+end_src
 
 *** Use an allocator to dynamically store the content of the file 
 By using the [[https://ziglang.org/documentation/master/std/#std.fs.File.readToEndAlloc][readToEndAlloc]] method from the std.fs.File. This is useful the size of the file that is going to be opened is unknown or big. By doing this you are going to leverage heap memory allocation to store exactly what you need.
-#+begin_src zig ':tangle yes'
-// Alocator
-var gp = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
-defer gp.deinit();
-const allocator = gp.allocator();
-
-// Path
-var path_buffer: [std.fs.MAX_PATH_BYTES]u8 = undefined;
-const path = try std.fs.realpath("./input.txt", &path_buffer);
-
-// Open file
-const file = try std.fs.openFileAbsolute(path, .{});
-defer file.close();
-
-// Read
-const file_content = try file.readToEndAlloc(allocator, std.math.maxInt(usize));
-defer allocator.free(file_content);
+#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+  // Alocator
+  var gp = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
+  defer gp.deinit();
+  const allocator = gp.allocator();
+  
+  // Path
+  var path_buffer: [std.fs.MAX_PATH_BYTES]u8 = undefined;
+  const path = try std.fs.realpath("./input.txt", &path_buffer);
+  
+  // Open file
+  const file = try std.fs.openFileAbsolute(path, .{});
+  defer file.close();
+  
+  // Read
+  const file_content = try file.readToEndAlloc(allocator, std.math.maxInt(usize));
+  defer allocator.free(file_content);
 #+end_src
 
 #+RESULTS:
@@ -41,19 +41,19 @@ defer allocator.free(file_content);
 *** Read the file and put it in a buffer
 By using the method [[https://ziglang.org/documentation/master/std/#std.fs.File.readAll][readAll]], this is the most traditional way to do it. Like in in C the content of a file is going to be stored in a buffer allocated in the stack. Useful particulary if you know the size of the file you want to read.
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
-// Path
-var path_buffer: [std.fs.MAX_PATH_BYTES]u8 = undefined;
-const path = try std.fs.realpath("./input.txt", &path_buffer);
-
-// Open file
-const file = try std.fs.openFileAbsolute(path, .{});
-defer file.close();
-
-// Read
-var content_buffer: [1024]u8 = undefined;
-const size = try file.readAll(&content_buffer);
-
-std.debug.print("{s}", .{content_buffer[0..size]});
+  // Path
+  var path_buffer: [std.fs.MAX_PATH_BYTES]u8 = undefined;
+  const path = try std.fs.realpath("./input.txt", &path_buffer);
+  
+  // Open file
+  const file = try std.fs.openFileAbsolute(path, .{});
+  defer file.close();
+  
+  // Read
+  var content_buffer: [1024]u8 = undefined;
+  const size = try file.readAll(&content_buffer);
+  
+  std.debug.print("{s}", .{content_buffer[0..size]});
 #+end_src
 
 Sources: 

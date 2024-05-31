@@ -17,41 +17,41 @@ Here is an exemple where `defer` really shines:
 In the following code, the programmer forgot to free the memory assigned to ptr_cool_number by calling *destroy*. Memeory leaks like that could be hard to find in a large codebase because you would have to check every single allocation and find its corresponding free somewhere in the code.
 
 #+begin_src zig :imports '(std) :main 'no :testsuite 'yes
-test "we sometime forget to free memory" {
-    const allocator = std.testing.allocator; // Allocator that detect memory leaks
-
-    const bytes = try allocator.alloc(u64, 10);
-
-    for (0..9) |i| {
-        bytes[i] = i;
-    }
-
-    // ... lot of code normally here :)
-
-    const ptr_cool_number = try allocator.create(u64);
-    ptr_cool_number.* = bytes[2];
-
-    //allocator.destroy(ptr_cool_number);
-    allocator.free(bytes);
-}
+  test "we sometime forget to free memory" {
+      const allocator = std.testing.allocator; // Allocator that detect memory leaks
+  
+      const bytes = try allocator.alloc(u64, 10);
+  
+      for (0..9) |i| {
+          bytes[i] = i;
+      }
+  
+      // ... lot of code normally here :)
+  
+      const ptr_cool_number = try allocator.create(u64);
+      ptr_cool_number.* = bytes[2];
+  
+      //allocator.destroy(ptr_cool_number);
+      allocator.free(bytes);
+  }
 #+end_src
 
 But this could be better by using the =defer= keyword and writing the dealloaction code right after the allocation one. This way if you have a memory leak, you just have to see everywhere you allocated and be sure there is a deallocation next to it.
 
 #+begin_src zig :imports '(std) :main 'no :testsuite 'yes
-test "and sometimes we just use defer and life is better" {
-    const allocator = std.testing.allocator; // Allocator that detect memory leaks
-
-    const bytes = try allocator.alloc(u64, 10);
-    defer allocator.free(bytes);
-
-    for (0..9) |i| {
-        bytes[i] = i;
-    }
-
-    const ptr_cool_number = try allocator.create(u64);
-    defer allocator.destroy(ptr_cool_number);
-
-    ptr_cool_number.* = bytes[2];
-}
+  test "and sometimes we just use defer and life is better" {
+      const allocator = std.testing.allocator; // Allocator that detect memory leaks
+  
+      const bytes = try allocator.alloc(u64, 10);
+      defer allocator.free(bytes);
+  
+      for (0..9) |i| {
+          bytes[i] = i;
+      }
+  
+      const ptr_cool_number = try allocator.create(u64);
+      defer allocator.destroy(ptr_cool_number);
+  
+      ptr_cool_number.* = bytes[2];
+  }
 #+end_src

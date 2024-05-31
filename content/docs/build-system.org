@@ -192,9 +192,9 @@ Here's the command to cross-compile the executable (the executable is also strip
 
 The executable on the embedded target runs flawlessly, below is shown the output of the target:
 #+begin_example
-# ./main
-All your codebase are belong to us.
-Run `zig build test` to run the tests.
+  # ./main
+  All your codebase are belong to us.
+  Run `zig build test` to run the tests.
 #+end_example
 
 ** Performance comparaison & SMID

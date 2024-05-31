@@ -13,36 +13,36 @@ We recommend using [[https://github.com/tristanisham/zvm][ZVM]] (stands for Zig 
 *** Basic usage
 Installing the tool:
 #+begin_src bash
-curl https://raw.githubusercontent.com/tristanisham/zvm/master/install.sh | bash
-echo "# ZVM" >> $HOME/.profile
-echo export ZVM_INSTALL="$HOME/.zvm/self" >> $HOME/.profile
-echo export PATH="$PATH:$HOME/.zvm/bin" >> $HOME/.profile
-echo export PATH="$PATH:$ZVM_INSTALL/" >> $HOME/.profile
+  curl https://raw.githubusercontent.com/tristanisham/zvm/master/install.sh | bash
+  echo "# ZVM" >> $HOME/.profile
+  echo export ZVM_INSTALL="$HOME/.zvm/self" >> $HOME/.profile
+  echo export PATH="$PATH:$HOME/.zvm/bin" >> $HOME/.profile
+  echo export PATH="$PATH:$ZVM_INSTALL/" >> $HOME/.profile
 #+end_src
 
 Listing all the versions available to download:
 #+begin_src bash
-zvm ls --all
+  zvm ls --all
 #+end_src
 
 Downloading a specific version:
 #+begin_src bash
-zvm i master
+  zvm i master
 #+end_src
 
 Display all your downloaded versions:
 #+begin_src bash
-zvm ls
+  zvm ls
 #+end_src
 
 Use one of those versions:
 #+begin_src bash
-zvm use master
+  zvm use master
 #+end_src
 
 There are other commands available, you can check them by running: 
 #+begin_src bash
-zvm help
+  zvm help
 #+end_src
 Or checking the [[https://github.com/tristanisham/zvm][ZVM repository]].
 
