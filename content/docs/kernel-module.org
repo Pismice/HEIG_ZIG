@@ -1,50 +1,42 @@
 #+title: Linux Kernel Module
 
 * Linux Kernel module
-
-- parler du faite que nous voulons réalier un module kernel linux
-- Mettre un exemple the module C
-- Parler du Makefile particulier pour le kernel module
-- Monter qu'on arrive a faire un module en Zig (sans toucher aux header C)
-- parler des problèmes de compilation des header
-- Conclusion: Dire que certain projet fonctionnait il y a 5 ans mais que je ne suis pas sûr si l'erreur si c'est un skill issues de ma part ou s'il y a des problèmes avec Zig
-
-In Linux two world exist, the user space and the kernel space.
-But why ?
+In Linux two worlds exist, the user space and the kernel space.
+But why?
 
 The user space is the mode where the user's applications are executed.
-All the standard application works in this world.
-In fact, this mode can isolate the processes form each other.
+All the standard applications work in this world.
+In fact, this mode can isolate the processes from each other.
 So each process can access the memory as if it were the only one on the operating system.
 Moreover, the programs cannot access directly to the hardware, they need to go through a kernel driver.
 
-The kernel space, is the space where the operating system works.
-The driver peripherals runs in this mode, and they have access to the hardware.
-However, if there is bug in a driver, the OS will likely crash.
-That's why a driver code need to have as little bug as possible.
+The kernel space is the space where the operating system works.
+The driver peripherals run in this mode, and they have access to the hardware.
+However, if there is a bug in a driver, the OS will likely crash.
+That's why a driver code needs to have as few bugs as possible.
 
-So that the two spaces can interact, there are two communication option.
+So that the two spaces can interact, there are two communication options.
 1. The syscall
    - The communication is done via syscalls.
-     There are software interruption that allow to switch from user space to kernel space, and access to kernel function.
+     There are software interruptions that allow to switch from user space to kernel space and access to kernel function.
      Linux syscalls are for example ~open~, ~write~, ...
-2. Pseudofile system
+2. Pseudo file system
    - These are entries in speciﬁc ﬁchier systems and this enables communication between the kernel and the user space.
 
-The Linux kernel modules are used when we need to access the hardware or other kernel module.
-A kernel module run in the kernel space.
-As the Linux kernel is written in C, the kernel modules are also written in C, but in recent year we can also use Rust.
+The Linux kernel modules are used when we need to access the hardware or other kernel modules.
+A kernel module runs in the kernel space.
+As the Linux kernel is written in C, the kernel modules are also written in C, but in recent years we can also use Rust.
 
-In this chapter, we will try to find if we can create Linux kernel module in Zig.
+In this chapter, we will try to find out if we can create a Linux kernel module in Zig.
 
 ** Hello World kernel module
-To getting started, we will begin to create a C Hello world module.
+To get started, we will begin to create a C Hello World module.
 For our examples, we are using an embedded target, this target is a nanopi neo plus 2.
 The nanopi uses buildroot to create a custom Linux distribution.
 
-The code folowing code shows the skelton of a Linux kernel module.
-The fonction ~skeleton_ini~ will be call on the startup of the module.
-And the fonction ~skeleton_exit~ will be call when the module is unloaded 
+The following code shows the skeleton of a Linux kernel module.
+The function ~skeleton_ini~ will be called on the startup of the module.
+And the function ~skeleton_exit~ will be called when the module is unloaded.
 #+begin_src C
   #include <linux/module.h>	// needed by all modules
   #include <linux/init.h>		// needed for macros
@@ -106,11 +98,11 @@ The following make file is used to compile the kernel module example.
     endif
 #+end_src
   
-The module is generate in three parts:
+The module is generated in three parts:
 1. The makefile is called with the ~all~ command.
 2. In the beginning the ~KERNELRELEASE~ variable is not defined.
    Make will call the kernel make file included in the ~KDIR~ variable,
-3. The kernel make file will generate the kernel module thanks to the ~M~ variable the make file know the path source code.
+3. The kernel make file will generate the kernel module thanks to the ~M~ variable the make file knows the path source code.
 
 Once compiled, we can insert the kernel module in the kernel.
 For that, we need to use the ~insmod~ command.
@@ -136,3 +128,251 @@ And this will print:
 #+begin_example
  [ 1577.734250] Linux module skeleton unloaded
 #+end_example
+
+** Module Kernel C and Zig
+Now we would create a kernel module in Zig.
+There are some examples created in the past and they created kernel modules with a C interaction.
+In fact, they use a base module written in C and they export the function in Zig.
+We tried to reproduce the same idea.
+
+For that, we create a base hello world kernel module in C.
+After that, we import a C header file that has a function prototype ~my_init_module~.
+This function will compute an int, and the result is printed.
+
+#+begin_src C
+  #include <linux/module.h>	// needed by all modules
+  #include <linux/init.h>		// needed for macros
+  #include <linux/kernel.h>	// needed for debugging
+
+  #include <linux/io.h>		/* needed for mmio handling */
+
+  #include "test_driver.h"
+
+  static int __init skeleton_init(void)
+  {
+    int result;
+    pr_info ("Linux module skeleton loaded\n");
+    result = my_init_module();
+    pr_info("Addition from Zig: %d\n", result);
+    return 0;
+  }
+
+  static void __exit skeleton_exit(void)
+  {
+    pr_info ("Linux module skeleton unloaded\n");
+  }
+
+  module_init (skeleton_init);
+  module_exit (skeleton_exit);
+
+  MODULE_AUTHOR ("SSY");
+  MODULE_DESCRIPTION ("Module skeleton");
+  MODULE_LICENSE ("GPL");
+#+end_src
+
+The C header file has only one function prototype, and it is used in the kernel module.
+Its name is =test_driver.h=.
+This fonction return only a int.
+#+begin_src C
+  #ifndef ADD_H
+  #define ADD_H
+
+  int my_init_module(void);
+
+  #endif 
+#+end_src
+
+And now we have created the Zig code.
+This file only export a function =my_init_module=, and it file name is =test_driver.zig=
+The naming convention is very important: the name of the Zig file must be the same as the name of the header file.
+In the compilation phase, this will link the C code to the Zig.
+In addition, as mentioned in the chapter on interoperability between C and Zig, the Zig function must use the =export= keyword, for it to be called by the C code.
+The function returns a ~c_int~ type to be compatible with a ~int~ in C.
+#+begin_src zig
+  export fn my_init_module() c_int {
+      return 4 + 3;
+  }
+#+end_src
+
+And now the complicated part.
+We need to link the Zig code to the module written in C, while still in the Linux kernel toolchain.
+Here is the make file used to compile the module.
+
+The make file is similar to the one used for Hello World in Zig, but we added a compilation step: compiling the Zig file to =.o=.
+We use the =build-obj= command to create a =.o= from the Zig file, and we cross-compile it so that it is compatible with the target.
+For the =.o= file to be used for linking, we need to add the =.o= file to =mymodule-objs=. 
+#+begin_src make
+    ZIG := /workspace/zig/zig-linux-x86_64-0.11.0/zig
+    # Part executed when called from kernel build system:
+    ifneq ($(KERNELRELEASE),)
+
+    %.o: %.zig
+        echo $(PWD)
+        cd ${PWD} && $(ZIG) build-obj \
+            $< -target aarch64-freestanding-gnu
+        echo "Build Zig"
+
+    obj-m += mymodule.o		## name of the generated module
+
+    mymodule-y := driver.o test_driver.o
+    mymodule-objs := driver.o test_driver.o 	## list of objects needed for that module
+    CFLAGS_driver.o := -DDEBUG
+
+    # Part executed when called from standard make in module source directory:
+    else
+    CVER     := aarch64-buildroot-linux-gnu-
+    KVER     := 5.15.148
+    CPU      := arm64
+
+    KDIR     := /buildroot/output/build/linux-$(KVER)
+    TOOLS    := /buildroot/output/host/usr/bin/$(CVER)
+    MODPATH  := /rootfs
+    PWD := $(shell pwd)
+
+    all:
+        $(MAKE) -C $(KDIR) M=$(PWD) ARCH=$(CPU) CROSS_COMPILE=$(TOOLS) modules
+
+    clean:
+        $(MAKE) -C $(KDIR) M=$(PWD) clean
+        echo $(PATH)
+
+    install:
+        $(MAKE) -C $(KDIR) M=$(PWD) INSTALL_MOD_PATH=$(MODPATH) modules_install
+
+    endif
+#+end_src
+
+Now we can insert the module into the kernel as in the C example.
+#+begin_src shell
+  insmod mymodule.ko
+#+end_src
+
+And we see that the module will display the result from the Zig code.
+#+begin_example
+ [   29.922190] mymodule: loading out-of-tree module taints kernel.
+ [   29.928667] Linux module skeleton loaded
+ [   29.932617] Addition from Zig: 7
+#+end_example
+
+This is the code the unload the module:
+#+begin_src shell
+ rmmod mymodule.ko
+#+end_src
+The module is unloaded successfully.
+#+begin_example
+[  118.883499] Linux module skeleton unloaded
+#+end_example
+
+
+** Use kernel function from Zig
+We have seen that it is possible to create a kernel module that uses Zig functions, but this is of little use to us if we cannot use the Linux kernel functions.
+Without these functions, we can't interact with the kernel and the hardware.
+
+We have kept the same architecture as in the previous chapter, but we have modified the Zig file.
+It also has an import from the ~linux/printk.h~ file.
+This import allows it to write to the kernel's ring buffer with the ~printk~ function.
+#+begin_src zig
+  const c = @cImport({
+      @cInclude("linux/printk.h");
+  });
+
+  export fn my_init_module() c_int {
+      c.printk("Hello World from Zig\n");
+      return 4 + 3;
+  }
+#+end_src
+
+But now we need to link the Linux header files to our Zig compilation.
+To do this, we tried a technique found on a GitHub repository.
+Thanks to a Linux compilation variable, we have a list of the header files.
+A =sed= command will then transform this list of files into arguments for the Zig build command.
+It will then look like this:
+#+begin_example
+-isystem ./arch/arm64/include -isystem ./arch/arm64/include/generated -isystem ./include -isystem ./arch/arm64/include/uapi -isystem ./arch/arm64/include/generated/uapi -isystem ./include/uapi -isystem ./include/generated/uapi
+#+end_example
+
+The =-isystem= argument is to add folders when searching for source files.
+So we have the Linux headers files.
+
+Here is the make file used below, we also had to add a =--library c= argument to tell it to link against the system library.
+#+begin_src make
+    MODPATH := /rootfs
+    ZIG := /workspace/zig/zig-linux-x86_64-0.11.0/zig
+
+    # Part executed when called from kernel build system:
+    ifneq ($(KERNELRELEASE),)
+
+    PWD_linux := $(shell pwd)
+    KERNEL_HEADER = $(shell echo "${LINUXINCLUDE}" | grep -ohE '\-I[^ ]+' | sed -e 's/-I/-isystem /')
+
+    %.o: %.zig
+        echo $(KERNEL_HEADER)
+        echo $(PWD)
+        echo $(PWD_linux)
+        cd ${PWD_linux} && $(ZIG) build-obj \
+            --library c\
+            ${KERNEL_HEADER} \
+            $< -target aarch64-freestanding-gnu
+        echo "Compile Zig"
+
+    obj-m += mymodule.o		## name of the generated module
+
+    mymodule-y := driver.o test_driver.o
+    mymodule-objs := driver.o test_driver.o 	## list of objects needed for that module
+    CFLAGS_driver.o := -DDEBUG
+
+    # Part executed when called from standard make in module source directory:
+    else
+    CVER     := aarch64-buildroot-linux-gnu-
+    KVER     := 5.15.148
+    CPU      := arm64
+
+    KDIR     := /buildroot/output/build/linux-$(KVER)
+    TOOLS    := /buildroot/output/host/usr/bin/$(CVER)
+    MODPATH  := /rootfs
+    PWD := $(shell pwd)
+
+    all:
+        $(MAKE) -C $(KDIR) M=$(PWD) ARCH=$(CPU) CROSS_COMPILE=$(TOOLS) modules
+
+    clean:
+        $(MAKE) -C $(KDIR) M=$(PWD) clean
+        echo $(PATH)
+
+    install:
+        $(MAKE) -C $(KDIR) M=$(PWD) INSTALL_MOD_PATH=$(MODPATH) modules_install
+    endif
+#+end_src
+
+Unfortunately, when we try to compile this module, we get an error.
+Zig can't find references by reading the Linux header. Here's a fragment of the error. 
+
+#+begin_example
+/workspace/zig/zig-kernel/test_driver.zig:1:11: error: C import failed
+const c = @cImport({
+          ^~~~~~~~
+referenced by:
+    my_init_module: /workspace/zig/zig-kernel/test_driver.zig:6:5
+    remaining reference traces hidden; use '-freference-trace' to see all reference traces
+./include/asm-generic/rwonce.h:64:8: error: unknown type name '__no_sanitize_or_inline'
+static __no_sanitize_or_inline
+       ^
+./include/asm-generic/rwonce.h:82:8: error: unknown type name '__no_kasan_or_inline'
+static __no_kasan_or_inline
+       ^
+./arch/arm64/include/asm/atomic_ll_sc.h:191:1: error: unknown type name 'atomic64_t'
+ATOMIC64_OPS(add, add, I)
+...
+#+end_example
+
+We tried a number of different techniques, but we were unable to compile.
+
+** Conclusion
+Writing a kernel module in Zig is not perfect.
+In fact, we see that we can create a module with C and Zig, but we cannot use kernel functions.
+
+We found examples of working Linux kernels, but they are all 5 years old.
+For the moment, we haven't determined where the error is coming from, whether it's due to an error on our part, whether the Zig language no longer supports this way of compiling, or whether Buildroot's configuration doesn't allow it.
+We need to perform more tests, for example, try using an older version of Zig and see if it works.
+But unfortunately, we don't have enough time.
+Perhaps future versions of Zig will make it possible to unblock this situation.
