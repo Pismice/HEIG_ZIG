@@ -525,4 +525,3 @@ For this example, a basic struct named ~Person~ will be transformed to CSV.
 Here is a [[https://kristoff.it/blog/what-is-zig-comptime/][very nice blog]] written by a core member of the ZIG community if you want to dig further: 
 
 {{< references >}}
->>>>>>> main:content/docs/comptime.org

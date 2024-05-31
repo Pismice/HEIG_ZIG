@@ -2,9 +2,9 @@
 #+weight: 6
 
 ** Zig package manager
-Since 0.11, Zig has now an official built-in package manager named.
+Since 0.11, Zig has now an official built-in package manager named [[https://ziglang.org/download/0.11.0/release-notes.html#Package-Management][ZON]].
 
-There is no global repository like [[https://crates.io][crates.io]](Rust) or [[https://npm.js.com][npmjs]](Node.js) for Zig packages. Instead, Zig packages are distributed as git repositories.
+There is no global repository storage like [[https://crates.io][crates.io]](Rust) or [[https://npm.js.com][npmjs]](Node.js) for Zig packages. Instead, Zig packages are distributed as git repositories.
 
 In order to add packages to your project you are going to create and edit a file in the root of your project named "build.zig.zon" (zon stands for Zig Object Notation, which is an equivalent to json).
 
@@ -50,13 +50,4 @@ Note: here it is specific to the zap package, you might have different options a
   const zap = @import("zap");
 #+end_src
 
-Your packages will be downloaded and compiled when you build your project.
-
-*** Sources
-https://zig.news/edyu/zig-package-manager-wtf-is-zon-558e
-https://zig.news/edyu/zig-package-manager-wtf-is-zon-2-0110-update-1jo3
-https://ziglang.org/download/0.11.0/release-notes.html#Package-Management
-https://ziggit.dev/t/how-to-package-a-zig-source-module-and-how-to-use-it/3457
-https://github.com/ziglang/zig/blob/master/doc/build.zig.zon.md
-https://ziglang.org/download/0.11.0/release-notes.html#Package-Management
-https://github.com/zigzap/zap
+Your packages will be downloaded and compiled when you build your project, for further configurations you can check the [[https://github.com/ziglang/zig/blob/master/doc/build.zig.zon.md][documentation]].

@@ -70,7 +70,3 @@ By still keeping the previous exemples, we are going to double free and get an e
   allocator.destroy(a); // Memory freed
   allocator.destroy(a); // DOUBLE FREE
 #+end_src
-
-*** Sources 
-- https://discord.com/channels/605571803288698900/1235733415886721064
-- https://zig.guide/standard-library/allocators

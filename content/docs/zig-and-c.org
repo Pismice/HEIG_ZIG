@@ -44,7 +44,7 @@ Zig has 2 different pointers:
 Which can both be optional by adding a =?=.
 
 But actually.... there is a third pointer type:
-- The C pointer: =[*c]T=
+- The [[https://ziglang.org/documentation/master/#C-Pointers][C pointer]]: =[*c]T=
 This one is to be avoided as much as possible. The only reasons for its existence is for the translation from C code to Zig code, when the translater is not able to know what to convert it to in Zig (eg. sometimes it does not know if it can convert it to a non-optional pointer or not which could cause undefined behaviors).
 
 **** Type conversions
@@ -137,7 +137,7 @@ If you want to have more C files than just main.c you can add them like so:
 [[https://ziglang.org/documentation/master/#Variables][Zig documentation for those 2 keywords.]]
 
 *** How is it done under the hood
-When you do =@cImport(@cInclude("foo.h"))= in your zig code it runs translate-c and exposes the function and type definitions.
+When you do =@cImport(@cInclude("foo.h"))= in your zig code it runs translate-c and exposes the function and type definitions. The differences between =@cImport= and =translate-c= are developped in the [[https://ziglang.org/documentation/master/#cImport-vs-translate-c][Zig documentation]].
 
 *** Util to translate C code to Zig
 zig translate-c is an util built in the zig toolchains that allows you to translate C code to Zig code.
@@ -234,10 +234,3 @@ The second interesting thing is that the 2 Zig codes dont vary that much (if the
 We can conclude that calling C code from Zig is really seemless, because at runtime ... everything is Zig code.
 
 Note that for some unkown reason yet my LSP becomes very slow when working in a Zig project with C files and sometimes crashes. I have to investigate this further.
-
-Sources:
-- https://ziglang.org/documentation/master/#C-Pointers
-- https://ziglang.org/documentation/master/#C-Type-Primitives
-- https://zig.news/sobeston/using-zig-and-translate-c-to-understand-weird-c-code-4f8
-- https://mtlynch.io/notes/zig-call-c-simple/
-- https://ziglang.org/documentation/master/#cImport-vs-translate-c

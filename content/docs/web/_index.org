@@ -14,7 +14,3 @@ Zap is the way to go if it is needed to make a minimal REST API. Other than that
 
 TODO: I can not make a complete conclusion yet since I havent explored all the solutions.
 TODO: Take the benchmarks used for zap and add tokamak and jetzig and zig std (already done zap and zig std)
-
-Sources:
-https://www.reddit.com/r/reactjs/comments/16blsh3/how_do_i_use_react_with_an_express_application/
-https://lemire.me/blog/2023/10/07/web-server-hello-world-benchmark-go-vs-node-js-vs-nim-vs-bun/

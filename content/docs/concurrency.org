@@ -503,7 +503,7 @@ And the equivalent Zig code:
 
 As we can see with those exemples, it is so easy to work with a C library, so using libxev truly is not a good solution, since we can use libuv seemlessely. Moreover, libuv is a very stable library that is used by a lot of people and is very well maintained. 
 
-On the contrary libxev does not have frequent updates, which makes it hard to use in a constantly moving Zig environment. By the time of the writing of this, there is no 0.12.0 version of libxev available yet. The PR has been made days ago but it is still not merged. Even though 0.12.0 has been out for more than a month now.
+On the contrary libxev does not have frequent updates, which makes it hard to use in a constantly moving Zig environment. By the time of the writing of this, there is no 0.12.0 version of libxev available yet. The PR has been made days ago but it is still not merged. Even though 0.12.0 has been out for more than a month now. I also tried asking a [[https://github.com/mitchellh/libxev/issues/92][question]] on the libxev repository, but I did not get any response. All of that shows that libxev is not a very active project anymore and considering the fact that it is "alpha-ish", this might not be a good idea to jump into a project which has nevery and probably never will evolve.
 
 *** zigcoro
 [[https://github.com/rsepassi/zigcoro][This solution]] uses stackful asymmetric coroutines.
@@ -577,29 +577,25 @@ libuv might be the solution if the needed application is single-threaded and lev
 
 TODO for the case of zigoro it is going to depend on what the maintainer is going to say about the issues I opened.
 
-** Sources:
-- https://dl.acm.org/doi/pdf/10.1145/1462166.1462167
-- https://www.lua.org/pil/9.1.html
-- https://blog.orhun.dev/zig-bits-04/ (regarder regul pour voir si il m a rep)
-- https://github.com/mitchellh/libxev/issues/92 (regul ...)
-- ChatGPT et GH Copilot
-- https://github.com/lewissbaker/cppcoro
-- https://ericniebler.com/2020/11/08/structured-concurrency/
-- https://en.wikipedia.org/wiki/Fiber_(computer_science)
-- https://github.com/rsepassi/zigcoro
-- https://github.com/mitchellh/libxev
-- https://github.com/libuv/libuv
-- https://github.com/libuv/libuv/blob/v1.x/docs/src/guide/basics.rst
-- https://docs.libuv.org/en/v1.x/guide/basics.html (ptetre le meme que celui au dessus)
-- https://github.com/dotnet/runtimelab/issues/2398
-- https://kristoff.it/blog/zig-colorblind-async-await/
-- https://tigerbeetle.com/blog/a-friendly-abstraction-over-iouring-and-kqueue/
-- https://docs.libuv.org/en/v1.x/design.html#the-i-o-loop
-- https://docs.libuv.org/en/v1.x/guide/threads.html
-- https://softwareengineering.stackexchange.com/questions/254140/is-there-a-difference-between-fibers-coroutines-and-green-threads-and-if-that-i
-- https://github.com/ziglang/zig/issues/6025
-- https://www.reddit.com/r/Zig/comments/177e4cb/what_are_you_doing_for_async/
-- https://github.com/catdevnull/awesome-zig?tab=readme-ov-file#network
-- https://stackoverflow.com/questions/41891989/what-is-the-difference-between-asymmetric-and-symmetric-coroutines
-- https://www.baeldung.com/java-threading-models#:~:text=The%20big%20difference%20between%20green,executing%20at%20any%20given%20time.
-- https://stackoverflow.com/questions/28977302/how-do-stackless-coroutines-differ-from-stackful-coroutines
+{{< cite "ProgrammerFriendlyAbstractionIo_uring" >}}
+{{< cite "jamboreeAnswerHowStackless2015" >}}
+{{< cite "olkAnswerHowStackless2015" >}}
+{{< cite "trebbienAnswerWhatDifference2017" >}}
+{{< cite "xlrgAnswerWhatDifference2017" >}}
+{{< cite "AsyncAwaitSuspend" >}}
+{{< cite "nuloCatdevnullAwesomezig2024" >}}
+{{< cite "DesignOverviewLibuv" >}}
+{{< cite "FiberComputerScience2024" >}}
+{{< cite "GreenThreadExperiment" >}}
+{{< cite "rHowStacklessCoroutines2015" >}}
+{{< cite "bakerLewissbakerCppcoro2024" >}}
+{{< cite "LibuvDocsSrc" >}}
+{{< cite "MultithreadingThereDifference" >}}
+{{< cite "ProgrammingLua" >}}
+{{< cite "mouraRevisitingCoroutines2009" >}}
+{{< cite "nieblerStructuredConcurrency2020" >}}
+{{< cite "ThreadingModelsJava2019" >}}
+{{< cite "ThreadsLibuvDocumentation" >}}
+{{< cite "WhatAreYou2023" >}}
+{{< cite "cinchblueWhatDifferenceAsymmetric2017" >}}
+{{< cite "WhatZigColorblind" >}}

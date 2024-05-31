@@ -55,8 +55,3 @@ By using the method [[https://ziglang.org/documentation/master/std/#std.fs.File.
   
   std.debug.print("{s}", .{content_buffer[0..size]});
 #+end_src
-
-Sources: 
-- https://ziglang.org/documentation/master/std/#std.fs.File.readToEndAlloc
-- https://ziglang.org/documentation/master/std/#std.fs.File.readAll
-- https://ziglang.org/documentation/master/#embedFile
