@@ -26,7 +26,7 @@ So that the two spaces can interact, there are two communication options.
 
 The Linux kernel modules are used when we need to access the hardware or other kernel modules.
 A kernel module runs in the kernel space.
-{{ < cite "ArchitectureGeneraleSystemes" >}}
+{{< cite "ArchitectureGeneraleSystemes" >}}
 As the Linux kernel is written in C, the kernel modules are also written in C, but in recent years we can also use Rust.
 
 In this chapter, we will try to find out if we can create a Linux kernel module in Zig.
@@ -374,12 +374,13 @@ Writing a kernel module in Zig is not perfect.
 In fact, we see that we can create a module with C and Zig, but we cannot use kernel functions.
 
 We found examples of working Linux kernels, but they are all 5 years old.
-{{ < cite "nrdmnNrdmnZig_kernel_module2023" >}}
-{{ < cite "262588213843476TryingWriteLinux" >}}
-{{ < cite "ZigKoMakefile" >}}
+{{< cite "nrdmnNrdmnZig_kernel_module2023" >}}
+{{< cite "262588213843476TryingWriteLinux" >}}
+{{< cite "ZigKoMakefile" >}}
 For the moment, we haven't determined where the error is coming from, whether it's due to an error on our part, whether the Zig language no longer supports this way of compiling, or whether Buildroot's configuration doesn't allow it.
 We need to perform more tests, for example, try using an older version of Zig and see if it works.
 But unfortunately, we don't have enough time.
 Perhaps future versions of Zig will make it possible to unblock this situation.
 
 {{< references >}}
+
