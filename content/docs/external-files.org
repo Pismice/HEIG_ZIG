@@ -6,9 +6,9 @@ Reading external files is a common task in programming. In this section we are g
 *** @embedFile
 This [[https://ziglang.org/documentation/master/#embedFile][method]] is simply going to embed the file in the binary at compile time. So if your file is large it might not be the best option, but for small files you are going to get the advantage of not having to open a file at runtime.
 
-Beware that by using this method the path to the file is going to be relative to the file you are calling it from and that the file must be in the same package.
+Note that their are [[https://thephd.dev/finally-embed-in-c23][plans]] to add this feature to C as well.
 
-By using the other methods below you can use a file from anywhere but relative to your root folder and not main.zig.
+Beware that by using this method the path to the file is going to be relative to the file you are calling it from and that the file must be in the same working directory. If the file that is needed is somewhere else, it is mandatory to use other methods like the ones below for exemple.
 
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
   const input = @embedFile("input.txt");
@@ -16,7 +16,7 @@ By using the other methods below you can use a file from anywhere but relative t
 #+end_src
 
 *** Use an allocator to dynamically store the content of the file 
-By using the [[https://ziglang.org/documentation/master/std/#std.fs.File.readToEndAlloc][readToEndAlloc]] method from the std.fs.File. This is useful the size of the file that is going to be opened is unknown or big. By doing this you are going to leverage heap memory allocation to store exactly what you need.
+A bit closer to what you except to see in C there is a way of opening files using the [[https://ziglang.org/documentation/master/std/#std.fs.File.readToEndAlloc][readToEndAlloc]] method from the std.fs.File. This is useful the size of the file that is going to be opened is unknown or big. By doing this you are going to leverage heap memory allocation to store exactly what you need.
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
   // Alocator
   var gp = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
@@ -39,7 +39,7 @@ By using the [[https://ziglang.org/documentation/master/std/#std.fs.File.readToE
 #+RESULTS:
 
 *** Read the file and put it in a buffer
-By using the method [[https://ziglang.org/documentation/master/std/#std.fs.File.readAll][readAll]], this is the most traditional way to do it. Like in in C the content of a file is going to be stored in a buffer allocated in the stack. Useful particulary if you know the size of the file you want to read.
+An alternative, which is the classic C way of doing this, is using the method [[https://ziglang.org/documentation/master/std/#std.fs.File.readAll][readAll]], this is the most traditional way to do it. Like in in C the content of a file is going to be stored in a buffer allocated in the stack. Useful particulary if you know the size of the file you want to read.
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
   // Path
   var path_buffer: [std.fs.MAX_PATH_BYTES]u8 = undefined;
@@ -55,6 +55,34 @@ By using the method [[https://ziglang.org/documentation/master/std/#std.fs.File.
   
   std.debug.print("{s}", .{content_buffer[0..size]});
 #+end_src
+
+If you want to partially read you can set a smaller buffer size and use the [[https://ziglang.org/documentation/master/std/#std.fs.File.read][read]] method.
+
+*** mmap from the C library
+If ou want to have shared memory between processes or optimize your code you can use the [[https://man7.org/linux/man-pages/man2/mmap.2.html][mmap function]] from the C library. 
+#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+  // Path
+  var path_buffer: [std.fs.MAX_PATH_BYTES]u8 = undefined;
+  const path = try std.fs.realpath("./input.txt", &path_buffer);
+
+  // Open file
+  const file = try std.fs.openFileAbsolute(path, .{});
+  defer file.close();
+
+  // Get the file size
+  const file_info = try file.stat();
+  const filesize = file_info.size;
+
+  // Map the file into memory
+  const mapped = try std.os.mmap(null, filesize, std.os.linux.PROT.READ, std.c.MAP.PRIVATE, file.handle, 0);
+  defer _ = std.c.munmap(mapped.ptr, filesize);
+
+  // Read and write to the stdout DIRECTLY
+  const stdout = std.io.getStdOut().writer();
+  try stdout.print("{s}", .{mapped});
+#+end_src
+
+Note that for this method to work, linking libc is mandatory.
 
 Sources: 
 - https://ziglang.org/documentation/master/std/#std.fs.File.readToEndAlloc

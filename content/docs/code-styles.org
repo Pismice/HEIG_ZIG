@@ -3,6 +3,10 @@
 #+bibliography: bibliography.bib
 
 ** Code styles
+All of the above affirmations are taken from the [[https://ziglang.org/documentation/master/#Style-Guide][Zig Style Guide]] itself.
+
+Here we just point out what we consider the most important.
+
 *** Style guide
 **** fmt
 First it is important to know that Zig comes with a formatter that you can use using:
@@ -20,7 +24,7 @@ This util is going to enforce basic things for you like:
 3. =snake_case_variable_name=: for variables and everything else
 
 *** undefined and null values
-In Zig you can leave variables uninitialized, but you have to do that explicitly contrary to C where you can leave variables uninitialized and never truly notice it. Note that leaving the value undefined is going to leave the memory of this variable to some complete nonsense value (except in Debug mode where it will be [[https://github.com/ziglang/zig/issues/15603][set to 0xaa]])
+In Zig you can leave variables uninitialized, but you have to do that explicitly contrary to C where you can leave variables uninitialized and never truly notice it. Note that leaving the value undefined is going to leave the memory of this variable to some complete unpredicatble value (except in Debug mode where it will be [[https://github.com/ziglang/zig/issues/15603][set to 0xaa]])
 
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
   const stdout = std.io.getStdOut();
@@ -52,7 +56,7 @@ This is to be avoided as much as possible, if you have some in your code it migh
 
 
 *** Zen
-Zig encourages you to use the [[https://ziglang.org/documentation/0.12.0/#Zen][Zen philosophy]], they reflect well the spirit behind Zig, here they are:
+Zig encourages you to use the [[https://ziglang.org/documentation/0.12.0/#Zen][Zen philosophy]], they reflect well the spirit behind Zig, here are those principles:
 - Communicate intent precisely.
 - Edge cases matter.
 - Favor reading code over writing code.

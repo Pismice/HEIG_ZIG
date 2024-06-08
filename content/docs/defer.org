@@ -8,13 +8,12 @@ If you are coming from the C world, this keyword might surprise you and greatly 
 
 Might not sound like much, because you might think "I could just put it at the of my scope", you are not entirely wrong but:
 - Doing so makes your code less readable/understandable, because you have to scroll to the end of the function to find the code you might need that is related something hundred of lines above.
-- Humans are error proned and sometimes forget, by instantly adding a defer after the related code you can be sure not to forget it later.
+- Humans are prone to error and sometimes forget things. By instantly adding a defer after the related code you can be sure not to forget it later.
+- When having to modify an old codebase, it is very hard to know or remember where deallocations are made, having the defer keyword give the possiblity to most of the time have the deallocation next to the allocation.
 
 *** Exemple
-Here is an exemple where `defer` really shines:
-
-*** Freeing memory
-In the following code, the programmer forgot to free the memory assigned to ptr_cool_number by calling *destroy*. Memeory leaks like that could be hard to find in a large codebase because you would have to check every single allocation and find its corresponding free somewhere in the code.
+In this exemple, the use of the =defer= keyword really shines.
+Here the programmer forgot to free the memory assigned to =ptr_cool_number= by calling *destroy*. Memeory leaks like that could be hard to find in a large codebase because you would have to check every single allocation and find its corresponding free somewhere in the code.
 
 #+begin_src zig :imports '(std) :main 'no :testsuite 'yes
   test "we sometime forget to free memory" {
@@ -36,7 +35,7 @@ In the following code, the programmer forgot to free the memory assigned to ptr_
   }
 #+end_src
 
-But this could be better by using the =defer= keyword and writing the dealloaction code right after the allocation one. This way if you have a memory leak, you just have to see everywhere you allocated and be sure there is a deallocation next to it.
+But this could be improved by using the =defer= keyword and writing the dealloaction code right after the allocation one. This way if you have a memory leak, you just have to see everywhere you allocated and be sure there is a deallocation next to it.
 
 #+begin_src zig :imports '(std) :main 'no :testsuite 'yes
   test "and sometimes we just use defer and life is better" {
