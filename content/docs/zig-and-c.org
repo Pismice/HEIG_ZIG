@@ -7,19 +7,17 @@ The interoperability between Zig and C is one of the most important feature of Z
 
 It is one of the main goal of Zig to [[https://ziglang.org/][incrementally improve your C/C++/Zig codebase]], so you could use C code almost as much as easy as you could use Zig code.
 
-It allows to have both of a *modern* language and a *mature* ecosystem.
+It allows to have both the advtanges of a *modern* language and a *mature* ecosystem.
 
-*** Main differences between Zig and C in the syntax
+*** Main syntaxic differences between Zig and C
 There are a few main differences between the 2 languages that you have high chance of encountering but obviously not all of them are listed here.
 
 **** Types
-Before going further it might be useful to have the [[https://ziglang.org/documentation/master/#Primitive-Types][Zig primitives]] and their [[https://ziglang.org/documentation/master/#C-Type-Primitives][equivalent in C]] close so that it can help to better understand the code shown below in this chapter.
-
-TODO I am thinking or putting those array directly here in the doc, it would be simpler
+The official zig documentation gives you the [[https://ziglang.org/documentation/master/#Primitive-Types][Zig primitives]] and their [[https://ziglang.org/documentation/master/#C-Type-Primitives][equivalent in C]] those 2 arrays are very important to have in mind when working with both languages.
 
 **** Loops
 In Zig, the for loop is not used as much as in C. 
-Instead, the while loop is used more often. The for loop is used when iterating over multiples elements of a container (typically slices or arrays), so it basically is a kind of foreach loop. In all the other cases the while loop is used.
+Instead, the while loop is used more often. The for loop is used when iterating over multiples elements of a container (typically slices or arrays), so it basically is a kind of *foreach* loop. In all the other cases the while loop is used.
 
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
   const items = [_]u16 { 1, 4, 0, 1 };
@@ -109,7 +107,7 @@ Note that you can only do 1 =@cImport= per project. So what i recommend you to d
 #+end_src
 Then call this zig file in your other zig files.
 
-*** How to call a Zig function from C / Continuing a C project with Zig
+*** How to call a Zig function from C
 You can continue your C project without using Clang or GCC but by using Zig with all its toolchain it comes with.
 
 In order to have a c file (main.c) as the entry point of your project using the zig build tool you have to add/comment the following lines to your build.zig file:
@@ -161,7 +159,8 @@ What I am going to do is test how much time it takes each program to run this fu
 Note: I didnt use any optimization in flag in python (because it did not change anything) and neither in Zig because I didnt want the compiler to try to optimize the code and be lazy.
 
 Then in order to compare the 2 languages I wrote 4 programs:
-- Zig code that has and add function implementation in Zig
+
+1: Zig code that has and add function implementation in Zig
 #+begin_src zig
   const std = @import("std");
   
@@ -179,7 +178,7 @@ Then in order to compare the 2 languages I wrote 4 programs:
 #+end_src
 *Result:* ~0.38sec
 
-- Vanilla Python code that has and add function implementation in Python
+2: Vanilla Python code that has and add function implementation in Python
 #+begin_src python
   def add(a, b):
       return a + b
@@ -191,7 +190,7 @@ Then in order to compare the 2 languages I wrote 4 programs:
 #+end_src
 *Result:* ~10sec
 
-- Zig code that imports the C library
+3: Zig code that imports the C library
 #+begin_src zig
   const std = @import("std");
   pub const c = @cImport({
@@ -208,7 +207,7 @@ Then in order to compare the 2 languages I wrote 4 programs:
 #+end_src
 *Result:* ~0.41sec
 
-- Python code that imports the C library
+4: Python code that imports the C library
 #+begin_src python
   import ctypes
   

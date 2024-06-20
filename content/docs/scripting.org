@@ -3,7 +3,7 @@
 
 * Scripting
 ** What is scripting ?
-[[https://en.wikipedia.org/wiki/Scripting_language]["In computing, a script is a relatively short and simple set of instructions that typically automate an otherwise manual process."]].
+[[https://en.wikipedia.org/wiki/Scripting_language]["In computing, a script is a relatively short and simple set of instructions that typically automate an otherwise manual process."]]. Scripts are very useful to increase the productivity of a worklfow.
 
 On the same page we can also read "Scripts are usually interpreted rather than compiled.", which might already give us a hint if Zig is the right tool for the job or not.
 
@@ -11,24 +11,27 @@ But even after looking at this, it is still beter to try by ourselves.
 
 ** Project description
 [[https://i3wm.org/][i3]] is a tiling window manager for linux, it allows you to have multiple workspaces and to switch between them easily. Those workspaces can me renamed so that you can find yourself better in your workflow.
+
+In this exemple we have a few workspaces named: /1/, /2/, /3/, /9:other/ and /10:telegram/.
+
 #+CAPTION: i3-example
 #+NAME:   fig:SED-HR4049
 [[/images/i3.png]]
 
-In this exemple we have a few workspaces named: /1/, /2/, /3/, /9:other/ and /10:telegram/.
+We can interact with *i3* using the =i3-msg= command.
 
 #+BEGIN_SRC sh
   i3-msg -t get_workspaces # return in a json format the list of workspaces and their properties
 #+END_SRC
 
-For rename a workspace you have to run a command like this one:
+To rename a workspace you have to run a command like this one:
 #+BEGIN_SRC sh
   i3-msg 'rename workspace "4: surfing-the-web" to "4: zig-project"'
 #+END_SRC
 
 The main problem with this command is that you have to rewrite the number of the workspace twice, which is not very practical.
 
-This project allow the suer to just write the number of the workspace he wants to rename and the new name without the number and the script will do the rest.
+This project allow the user to just write the number of the workspace he wants to rename and the new name without the number and the script will do the rest.
 
 Which looks like this:
 #+BEGIN_SRC sh
@@ -37,10 +40,10 @@ Which looks like this:
 
 What was needed was a script that would as an input only take the number of the workspace that is going to be renamed and the new name without the number (eg. "4: ").
 
-In order to do that, we have to interact with processes and manipulate string, we are going to see step by step how to do that in our "script":
+In order to do that, we have to interact with processes and manipulate strings, we are going to see step by step how to do that in our script:
 
 ** Implementation and comparaison with an other scripting language
-I decided to write the same script, first in Zig and then in Python, in order to compare the two languages and see if Zig is a good choice for scripting.
+I decided to write the same script twice, first in Zig and then in Python, in order to compare the two languages and see if Zig is a good choice for scripting purposes.
 
 We are going to go through the different steps of the script and see how it is done in Zig and in Python, compare the 2 and see which is best suited for the job.
 
@@ -171,7 +174,7 @@ I used hyperfine in order to benchmark and see which implementation is faster.
 Zig implementation: Time (mean ± σ): 3.0 ms ± 0.5 ms
 Python implementation: Time (mean ± σ): 28.4 ms ± 4.9 ms
 
-The results are what we excepted, Zig is a compiled language and is way faster than Python, but the question is, is it worth it ?
+The results are what we excepted, Zig is a compiled language and is way faster than Python, but the question is, is it worth it ? Obviously it greatly depends on your use case, but generally for scripts that you run only sometimes on your machine and that is not supposed to scale, those differences are not really important.
 
 ** Libraries used
 *** Zig
@@ -184,11 +187,12 @@ The results are what we excepted, Zig is a compiled language and is way faster t
 - [[https://docs.python.org/3/library/sys.html][sys]]
 
 ** Conclusion
-Was Zig the good choice ? No, Zig is not a good choice for scripting, it is way too verbose and not suited for the task. Python is way better suited for the job, it is way more readable and way easier to use. There are a lot of things that Zig is not really good at if you want to go fast and notably string manipulation and memory management.
+Was Zig the good choice ? Mostly no, Zig is not a good choice for scripting, it is way too verbose and not suited for the task. Python is way better suited for the job, it is way more readable and way easier to use. There are a lot of things that Zig is not really good at if you want to go fast and notably do string manipulation and memory management.
 
-Doing those things by hand was not an easy task and it was very error-prone, it is way better to use a language that has libraries that are already made for you and that are easy to use, 20ms of difference in the performances is not was is going to make your script experience nicer, at least not for most scripts.
+Doing those things by hand was not an easy task and it was very error-proned, it is way better to use a language that has libraries that are already made for you and that are easy to use, 20ms of difference in the performances is not was is going to make your script experience nicer, at least not for most scripts.
 
 To conclude I would not recommend using Zig for scripting, it simply is not the right tool for the job.
 
-If you want to you can find the GitHub repository of the project [[https://github.com/Pismice/rename-i3-workspace][here]] if you want to take a look at the whole code.
-If the project seems cool to you can also install the scripts on your system by following the instructions in the README.
+You can find the GitHub repository of the project [[https://github.com/Pismice/rename-i3-workspace][here]] if you want to take a look at the whole code.
+
+If the project seems cool to you can also install the scripts on your system by following the instructions in the README of the repository.
