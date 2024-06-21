@@ -9,8 +9,12 @@ On the same page we can also read "Scripts are usually interpreted rather than c
 
 But even after looking at this, it is still beter to try by ourselves.
 
+The main reasons why I still want to try Zig is because it is a language modern compared to C or C++ which are languages not very used in the scripting world as far as I know. So with the aspects of a modern language that makes the programmer life easier and with C like performances, I still thought Zig could have a shot at this task.
+
+Zig also has the advantage of being a very familiar language compared to typical scripting languages like bash. So instead of learning a new language, I could just use Zig which I am familiar with already.
+
 ** Project description
-[[https://i3wm.org/][i3]] is a tiling window manager for linux, it allows you to have multiple workspaces and to switch between them easily. Those workspaces can me renamed so that you can find yourself better in your workflow.
+[[https://i3wm.org/][i3]] is a tiling window manager for linux, it allows you to have multiple workspaces and to switch between them easily. Those workspaces can be renamed so that you can find yourself better in your workflow.
 
 In this exemple we have a few workspaces named: /1/, /2/, /3/, /9:other/ and /10:telegram/.
 
