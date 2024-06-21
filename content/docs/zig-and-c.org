@@ -154,9 +154,9 @@ If you want to have more C files than just main.c you can add them like so:
 #+end_src
 
 **** export and extern keywords
-**export** the function to the outside so that the C ABI can see it.
+=export= the function to the outside so that the C ABI can see it.
 
-*extern* is used to link against an exported variable from an other object.
+=extern= is used to link against an exported variable from an other object.
 
 [[https://ziglang.org/documentation/master/#Variables][Zig documentation for those 2 keywords.]]
 

@@ -44,7 +44,7 @@ Which looks like this:
 
 What was needed was a script that would as an input only take the number of the workspace that is going to be renamed and the new name without the number (eg. "4: ").
 
-In order to do that, we have to interact with processes and manipulate strings, we are going to see step by step how to do that in our script:
+In order to do that, we have to interact with processes and manipulate strings, we are going to see step by step how to do that in our script.
 
 ** Implementation and comparaison with an other scripting language
 I decided to write the same script twice, first in Zig and then in Python, in order to compare the two languages and see if Zig is a good choice for scripting purposes.
