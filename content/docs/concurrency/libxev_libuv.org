@@ -1,0 +1,53 @@
+*** libxev/libuv
+[[https://github.com/mitchellh/libxev][Libxev]] is a Zig library that provides an event loop for non-blocking IO. The project state is "alpha-ish" to cite them from their README. 
+
+The mains reasons behind the creation of this library 2 years ago were: using =io_uring= under the hood, and writing an event loop like libuv but in Zig. 
+
+The first reason is not really relevant anymore, because since then libuv has implemented =io_uring= aswell so that really is not a plus anymore. 
+
+For the second reason while being commendable and nice to use since it is native Zig, is not really a massive argument for someone who just want to have an event loop, because libuv is already a very good library that is used by a lot of people and is very stable. The only problem of libuv is that it is written in C, so you might have to do a bit of gymnastics in order to use it.
+
+In order to use [[https://libuv.org/][libuv]], which a C library in your project we are going to have to link the libc and add the =-uv= compilation option in the =build.zig= file like so:
+#+begin_src zig
+  exe.linkLibC();
+  exe.linkSystemLibrary("uv");
+  #+end_src
+  
+  After that we are going to reproduce the basic exemple in C provided by the [[https://docs.libuv.org/en/v1.x/guide/basics.html][libuv documentation]] in Zig, so here is the C code:
+  #+begin_src c
+  #include <stdio.h>
+  #include <uv.h>
+  
+  int main() {
+      uv_loop_t *loop = uv_default_loop();
+  
+      printf("Default loop.\n");
+      uv_run(loop, UV_RUN_DEFAULT);
+  
+      uv_loop_close(loop);
+      return 0;
+  }
+#+end_src
+
+And the equivalent Zig code:
+#+begin_src zig
+  const std = @import("std");
+  const c = @cImport({
+      @cInclude("stdio.h");
+      @cInclude("uv.h");
+  });
+  
+  pub fn main() !void {
+      const loop: [*c]c.uv_loop_t = c.uv_default_loop();
+  
+      std.debug.print("Default loop.\n", .{});
+      _ = c.uv_run(loop, c.UV_RUN_DEFAULT);
+  
+      _ = c.uv_loop_close(loop);
+  }
+#+end_src
+
+As we can see with those exemples, it is so easy to work with a C library, so using libxev truly is not a good solution, since we can use libuv seemlessely. Moreover, libuv is a very stable library that is used by a lot of people and is very well maintained. 
+
+On the contrary libxev does not have frequent updates, which makes it hard to use in a constantly moving Zig environment. By the time of the writing of this, there is no 0.12.0 version of libxev available yet. The PR has been made days ago but it is still not merged. Even though 0.12.0 has been out for more than a month now.
+

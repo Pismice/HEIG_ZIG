@@ -153,7 +153,7 @@ If you want to have more C files than just main.c you can add them like so:
   exe.addCSourceFile(.{ .file = .{ .path = "c-src/image.c" }, .flags = &.{"-std=c99"} });
 #+end_src
 
-**** export and extern keywords
+**** Controlling linking
 =export= the function to the outside so that the C ABI can see it.
 
 =extern= is used to link against an exported variable from an other object.

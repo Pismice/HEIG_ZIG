@@ -1,0 +1,130 @@
+#+title: Concurrency
+#+weight: 30
+#+hugo_cascade_type: docs
+#+math: true
+
+** Introduction
+The objectives of this chapter is to go in depth about the different ways to do concurrency in ZIG.
+
+We are first going to explore a few definitions and concepts that are going to be useful to understand the rest of the chapter.
+
+Then we are going to explore the different ways we could achieve concurrency in Zig.
+
+By the end you should be able to see the pros and cons of each solution and choose the one that fits your needs to develop your next Zig projects.
+
+** Definitions
+Before diving into the different ways to do concurrency in ZIG, let's first define some terms that are useful to understand the basics of concurrency (not related to Zig). Some terms we are going to explain here might not even be needed in the next sections, but might help you clarify your concurency concepts.
+
+It is important to note that the borders between some definitions are really blur and it is possible that you read a slightly different definition in another source.
+
+*** Coroutine
+Courtines enable the management of concurrent tasks like callbacks do (which make them not concurrent by nature but they are a tool to achieve concurrency). Their great power lies in their ability to write concurent task like you would write sequential code. They achieve this by yielding control between them. They are used for cooperative multitasking, since the control flow is managed by themselves and not the OS. You might see them in a lot of languages like Python, Lua, Kotlin, ... with keywords like **yield**, **resume**, **suspend**, ...
+
+Coroutines can be either stackful or stackless, we are not gonna dive deep into this concept since most of the time you are going to use stackful coroutines since they allow you to suspend from within a nested stackframe (the only strength of stackless coroutines: efficiency)
+
+Coroutines can also be symmetric or asymmetric:
+
+**** Symmetric coroutines
+The only way to transfer the control flow is by explicitly passing control **to another coroutine**.
+
+**** Asymmetric coroutines (called asymmetric because the control-transfer can go both ways)
+- They have two control-transfer mechanisms:
+1. invoking another coroutine which is going to be the subcoroutine of the calling coroutine
+2. suspending itself and giving control back to the caller
+
+*** Green threads (userland threads)
+Green threads, also known as userland threads are managed by a runtime or VM (userspace either way) instead of the OS scheduler (kernel space) that manages standard kernel threads. 
+
+They are lightweight compared to OS threads as they have a lower overhead (since it is managed in userspace instead of kernel). 
+Even though they are not real OS threads, there are still OS threads that manage them under the hood. Paritculary useful for short-lived tasks. Green threads are most likely to be cooperative and yield control between them, even though it could be possible that they are managed by a runtime that has its own scheduler and can preempt them.
+
+Green threads might be better for multiple short lived tasks (eg: web server) because of their low overhead when context switching and memory usage.
+
+Be careful when using green threads not to use blocking functions, because blocking 1 green thread might mean blocking all the green threads because they most likely all run on the same kernel thread.
+
+*** Preemptive multitasking
+In preemptive multitasking it is the underlying architecture (not us, but the OS or the runtime for exemple) that is in charge of choosing which threads to execute and when. This implies that our threads can be stopped (preempted) at any time, even if it is in the middle of a task. 
+
+This method gives the advantage of not having to worry about a thread being starved, since the underlying architecture is going to make sure that everyone gets enough CPU time. As we can see in the 2 graphs for preemptive and cooperative multitasking, the preemptive multitasking might context switch our tasks too much, which can lead to a lot of overhead.
+
+There is an interesting thing that is happening in this graph, at the end we see that task 1 is only doing a very small job, which cost a context switch for almost no job, but the scheduler does not know that a task remains only a small job until done and can context switch it.
+#+CAPTION: Preemptive multitasking
+#+NAME:   fig:SED-HR4049
+[[/images/premp.svg]]
+
+*** Cooperative multitasking
+Contrary to preemptive multitasking, it is the progammer job to choose which and when the differents threads are executed. Threads are going to run until they are explicitly yielding control back. 
+
+This method gives the advantage to have the progammer to have a fine grained control over his ressources, but also implies that the programmer has to think about not starving threads.
+
+In cooperative multitasking, we can yield the control back whenever we want, which leads to much less overhead compared to preemptive multitasking.
+#+CAPTION: Cooperative multitasking
+#+NAME:   fig:SED-HR4049
+[[/images/coop.svg]]
+
+*** Kernel threads
+Multithreading, it is the most basic and history way to do concurrency, it works by running the work on multiple threads that are going to be exectued in parallel (if the CPU can), each thread runs independently of the others. Unlike asynchronous event-driven programming, threads typically block until their assigned task completes.
+
+Threads are managed by the OS scheduler which is going to decide when to execute which thread.
+
+Parallelism becomes achievable through multithreading (even though its not 100% guaranteed). Threads also offer robust isolation, with each thread possessing its own execution context, stack, and local variables, ensuring task independence and preventing interference.
+
+However, scalability can become a concern when managing numerous threads. The overhead of resource allocation by the operating system kernel for each thread may lead to scalability issues, particularly in high-demand environments. To mitigate this, thread pools are often employed to minimize the overhead of thread creation and destruction, thus optimizing performance and resource utilization.
+
+To avoid this overhead, thread pools are often used, which manage a set of threads that can be reused for multiple tasks. This approach reduces the overhead of creating and destroying threads for each task, making it more efficient and scalable.
+
+*** Event-driven programming
+Event-driven programming, is basically an event loop that listen for "events". This architecture. Under the hood this works by having an event loop that is going to poll for events and check regulary if an event has been emitted. Those events can be for exemple interupts or signals.
+
+*** Asynchronous programming (non-blocking IO)
+Asynchronous IO can be achieved by opening non-blocking sockets and the by using one of those 2 methods:
+- polling systems (epoll, kqueue, ...) that are going to poll frequently to see if a non-blocking call got its response back. Polling systems are better if there are a lot of IO operations, but less effective when less because they are going to poll for nothing most of the time.
+- events (interupts, signals, ...) that are going to signal the caller that the response is is back and ready. Event-driven programming is less performant when the workload is high because interrupts have a big overhead. 
+When in this mode the execution flow of the program is unkown because we don't know when a non-blocking function might be ready for use and therefore take back the control flow of the application.
+
+This method is useful if there a lot of IO operations, so that we can start processing other things while waiting for this IO operation.
+
+You might think that threads can do that aswell and spawn a thread each time there is a blocking call, the thread is going to be put in non-ready mode until the blocking call is done and then re-ready, the thread wakes up and yield the result for exemple. It is true threads can handle the job aswell, but the overhead of creating and managin a thread is much higher than the overhead of creating a non-blocking call. So when you have high workload, we generally prefer non-blockion IO calls.
+
+A popular library that is used for asynchronous programming is libuv, the giant behind nodejs.
+
+Under the hood libuv is basically a single threaded [[https://docs.libuv.org/en/v1.x/design.html#the-i-o-loop][event-loop]] which is going to perform all IOs on non-blocking sockets that are polled by pollers like epoll, kqueue, ...
+
+** Conclusion
+Almost each of the presented solutions have their own specific applications and are not really interchangeable. The solution that is going to be the best for most of the projects is simply spawning threads, even though they have a quite big overhead, if the application doesn't have hundred of threads running at the same time, it should largely do the job.
+
+async/await is a great feature, but since it is not supported anymore it is cleary not a viable option at the moment.
+
+libuv might be the solution if the needed application is single-threaded and leverages non-blocking sockets, particulary useful for servers that have to handle massive loads of IO operations.
+
+zigcoro might be the way to go if you plan on using async/await in the future, since it has almost the same features the migration should be quite easy.
+
+Obviously, it is still possible to use any C solution, the same way we did with libuv.
+
+** Sources:
+- https://dl.acm.org/doi/pdf/10.1145/1462166.1462167
+- https://www.lua.org/pil/9.1.html
+- https://blog.orhun.dev/zig-bits-04/ (regarder regul pour voir si il m a rep)
+- https://github.com/mitchellh/libxev/issues/92 (regul ...)
+- ChatGPT et GH Copilot
+- https://github.com/lewissbaker/cppcoro
+- https://ericniebler.com/2020/11/08/structured-concurrency/
+- https://en.wikipedia.org/wiki/Fiber_(computer_science)
+- https://github.com/rsepassi/zigcoro
+- https://github.com/mitchellh/libxev
+- https://github.com/libuv/libuv
+- https://github.com/libuv/libuv/blob/v1.x/docs/src/guide/basics.rst
+- https://docs.libuv.org/en/v1.x/guide/basics.html (ptetre le meme que celui au dessus)
+- https://github.com/dotnet/runtimelab/issues/2398
+- https://kristoff.it/blog/zig-colorblind-async-await/
+- https://tigerbeetle.com/blog/a-friendly-abstraction-over-iouring-and-kqueue/
+- https://docs.libuv.org/en/v1.x/design.html#the-i-o-loop
+- https://docs.libuv.org/en/v1.x/guide/threads.html
+- https://softwareengineering.stackexchange.com/questions/254140/is-there-a-difference-between-fibers-coroutines-and-green-threads-and-if-that-i
+- https://github.com/ziglang/zig/issues/6025
+- https://www.reddit.com/r/Zig/comments/177e4cb/what_are_you_doing_for_async/
+- https://github.com/catdevnull/awesome-zig?tab=readme-ov-file#network
+- https://stackoverflow.com/questions/41891989/what-is-the-difference-between-asymmetric-and-symmetric-coroutines
+- https://www.baeldung.com/java-threading-models#:~:text=The%20big%20difference%20between%20green,executing%20at%20any%20given%20time.
+- https://stackoverflow.com/questions/28977302/how-do-stackless-coroutines-differ-from-stackful-coroutines
+

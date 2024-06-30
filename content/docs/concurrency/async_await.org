@@ -1,0 +1,54 @@
+*** Officials, not supported anymore async/await
+This method uses suspensible stackless coroutines, this solution does not necessarly mean that you are going to have multiple threads or parallelism.
+
+We are not going to dive deeper into this solution because it has been deprecated since 0.11 and is not coming back soon.
+
+However it is still a good reading and way to understand concurency to read this [[https://zig.guide/async/introduction/][very good guide]] that was made for this solution.
+By reading this you might notice that **async/await** might **never** come out.
+
+Note that if this solution is to be brought again it might come with breaking changes, so the syntax might change.
+
+You can find a [[https://github.com/ziglang/zig/issues/6025][Github discussion]] about the progress of this feature and why it is not implemented in the current version.
+
+You can see [[https://ziglang.org/download/0.12.0/release-notes.html#AsyncAwait-Feature-Status][here]] the main reasons why this solution is not implemented yet.
+
+**** Function coloring
+By adding async/await you introduce a new problem. Tracking the execution flow of the program becomes much harder and inpredictable and this job is done by the compiler, providing a sequential looking code to the user. With function coloring introduced every async code has to be called in an async function, which may lead to situations where you have to refactor a lot of your code to be async just for a few functions. This is very nicely sumed up by this [[https://x.com/ryanrwinchester/status/1702730128520830994][image from Ryan Winchester]]
+#+CAPTION: Function coloring
+#+NAME:   fig:SED-HR4049
+[[/images/fcolor.png]]
+
+Here is an exemple in JavaScript where you have to have an =async= main function because it is calling an other async function, if you remove the =async= keyword from the main function it is not going to work anymore.
+
+#+begin_src javascript
+  async function fetchData() {
+	try {
+		await new Promise(resolve => setTimeout(resolve, 1000));
+		const data = { message: "Hello, World!" };
+		console.log("Data fetched:", data);
+		return data;
+	} catch (error) {
+		console.error("Error fetching data:", error);
+	}
+  }
+  
+  async function main() {
+  	const data = await fetchData();
+  	console.log("Main function received data:", data);
+  }
+  
+  main();
+#+end_src
+
+Zig solves this problem by not needing to put an =async= keyworkd when our function is asynchronous, instead the compiler can know at compile time if a function is async or not if it contains an =await= keyword.
+
+In Zig 2 exact same codes can behave in a blocking or non-blocking way depending only on this simple declaration:
+#+begin_src zig
+  pub const io_mode = .evented;
+#+end_src
+
+This allow to have the same code for both blocking and non-blocking IO programs, which is a very useful so that you do not have to do the the job twice like in python where [[https://github.com/aio-libs][aio-libs]] had to be written in order to have the same libraries once for blocking and once for non-blocking code.
+
+We are not going to dive deeper into function coloring and async/await for the moment so if you want to know more about it, I highly recommend this [[https://kristoff.it/blog/zig-colorblind-async-await/][short read]] made by a core member of the Zig Foundation.
+
+

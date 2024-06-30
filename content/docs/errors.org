@@ -6,11 +6,12 @@ In ZIG, [[https://ziglang.org/documentation/master/#Errors][errors]] are juste v
 
 Those values are those of a special type of enum, that looks just like an enum but with the =error= keyword added.
 #+begin_src zig
-const TcpConnectionError = error{
-    HandshakeFailed,
-    ConnectionClosed,
-    UnexpectedData,
-};
+  const TcpConnectionError = error{
+      HandshakeFailed,
+      ConnectionClosed,
+      UnexpectedData,
+  };
+#+end_src
 
 When you declare your enum using this keyword instead of =enum=, the compiler is going to know that those values are going to be errors, therefore they can be catched, tried and so on.
 
@@ -62,21 +63,21 @@ This is the default error used when you just add the =!= withtout precsing the e
   [[https://ziglang.org/documentation/master/#errdefer][errdefer]] is a particularity of ZIG, it allows the user to execute some code when the function returns an error, it is useful exemple for deallocating variables you would have normally returned from the function, but since the function failed you deallocate that memory to avoid a memory leak.
   #+source: simple
   #+begin_src zig :imports '(std)
-  fn createFoo(param: i32) !Foo {
-      const foo = try tryToAllocateFoo();
-      // now we have allocated foo. we need to free it if the function fails.
-      // but we want to return it if the function succeeds.
-      errdefer deallocateFoo(foo);
-  
-      const tmp_buf = allocateTmpBuffer() orelse return error.OutOfMemory;
-      // tmp_buf is truly a temporary resource, and we for sure want to clean it up
-      // before this block leaves scope
-      defer deallocateTmpBuffer(tmp_buf);
-  
-      if (param > 1337) return error.InvalidParam;
-  
-      // here the errdefer will not run since we're returning success from the function.
-      // but the defer will run!
-      return foo;
-  }
+    fn createFoo(param: i32) !Foo {
+       const foo = try tryToAllocateFoo();
+       // now we have allocated foo. we need to free it if the function fails.
+       // but we want to return it if the function succeeds.
+       errdefer deallocateFoo(foo);
+   
+       const tmp_buf = allocateTmpBuffer() orelse return error.OutOfMemory;
+       // tmp_buf is truly a temporary resource, and we for sure want to clean it up
+       // before this block leaves scope
+       defer deallocateTmpBuffer(tmp_buf);
+   
+       if (param > 1337) return error.InvalidParam;
+   
+       // here the errdefer will not run since we're returning success from the function.
+       // but the defer will run!
+       return foo;
+   }
 #+end_src

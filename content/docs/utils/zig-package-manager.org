@@ -40,8 +40,9 @@ Simply add the following code after the "addExectuable" function
           .target = target,
           .optimize = optimize,
   });
-  exe.addModule("zap", zap.module("zap"));
-  exe.linkLibrary(zap.artifact("facil.io"));
+  // exe.addModule("zap", zap.module("zap")); // If you are using < 0.12.0
+  exe.root_module.addImport("zap", zap.module("zap"));
+  exe.linkLibrary(zap.artifact("facil.io")); // Specific to zap
 #+end_src
 Note: here it is specific to the zap package, you might have different options and no need to link a library for an other package (zap uses facil.io under the hood)
 
