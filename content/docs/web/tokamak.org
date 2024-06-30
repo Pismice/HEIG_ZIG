@@ -1,1 +1,152 @@
 *** Tokamak
+[[https://github.com/cztomsik/tokamak/tree/main][This server-side web framework]] has been created on April 2024 by [[https://github.com/cztomsik][cztomsik]]. It currently ammounst 238 stars on GitHub, has 4 contributors, 0 release and is currently still in early development stage. Despite that, the author is using it in a project that is to be soon in production.
+
+One of the core concepts of Tokamak is to heavily leverage dependecy injection to make the development of web applications easier. As far as I know it is the only web framework in Zig that does that.
+has the main characteristic of working a lot with dependency injection which we are going to tackle the concept futher in this post.
+
+
+**** Dependency Injection
+To illustrate what DI is and why it is uses in Tokamak, let's have a look at an exemple given to me by the author itself.
+
+When writing a WEB application you might need multiple objects (dependencies) in various handlers. Those dependencies often being databases, loggers, etc. The most intuitive way to do it would be to pass each needed dependency as a parameter to each handler.
+#+begin_src js
+  // Our dependencies
+  var logger = newLogger();
+  var db = newDatabase();
+
+  // Our handlers
+  web.get("/hello", hello(req, logger))
+  web.get("/register", register(req, db, logger))
+  web.get("/complex", complex(req, rep, db, logger, ...)) // This can get out of hand quickly
+#+end_src
+
+This solution might look cool at first, but one of the main reason I did not write it in Zig is because it is simply impossible to express that in the language because Zig does not support closures.
+
+An other basic and straight up solution would be to use global variables and just use them in the handlers. It work great but it is not a good practice to have global variables in your code. This makes the code coupled and harder to test and maintain.
+#+begin_src js
+  // Our dependencies
+  var logger = newLogger();
+  var db = newDatabase();
+
+  // Our handlers
+  web.get("/hello", hello)
+  web.get("/register", register)
+  web.get("/complex", complex)
+
+  // Simply use the global variables in the handlers
+  ...
+#+end_src
+
+An other solution would be to use a big variables to store the dependencies, but this is not a good practice aswell as it also makes the code very coupled and dependant on that =context= variable.
+
+#+begin_src js
+  var context = {
+    logger: newLogger(),
+    db: newDatabase(),
+    ...
+  }
+
+  // Our dependencies
+  var logger = newLogger();
+  var db = newDatabase();
+
+  // Our handlers
+  web.get("/hello", hello(req, context))
+  web.get("/register", register(req, context))
+  web.get("/complex", complex(req, context))
+#+end_src
+
+The solution Tokamak puts forward is to use DI. How it is done under the hood is that all the handlers have the same signature pfn (*tk.Context) anyerror!void= which allows the framework to chain the handlers. The framework is going to do a bit a magic for you by injecting all the depencies you need in the handlers when you need them by using this =*tk.Context= object. So from the developer point of view, you just have to write the handlers and the framework will take care of the rest. This also makes the code more testable and maintainable since everything is decoupled now, you could easily copy paste one of your handlers in an other project and it would work just fine.
+
+#+begin_src js
+  // Our dependencies
+  var logger = newLogger();
+  var db = newDatabase();
+
+  // Our handlers
+  web.get("/hello", hello)
+  web.get("/register", register)
+  web.get("/complex", complex)
+
+  // Simply add the paramters you need to your handler function signature
+  ...
+  fn register(myDb) {
+    // Do something with myDb
+  }
+#+end_src
+
+
+**** Core features
+
+A basic Tokamak application is really is to get up and running really fast.
+
+#+begin_src zig
+  const tk = @import("tokamak");
+  
+  pub fn main() !void {
+      _ = try tk.Server.run(allocator, handler, .{ .port = 8080 });
+  }
+  
+  fn handler() ![]const u8 {
+      return "Wow tokamak is so easy!";
+}
+#+end_src
+
+A lot of the work relies on dependency injection to make the work easier. Like here with the =*tk.Request= and the =std.mem.Alloctor= injectors.
+#+begin_src zig
+  // Those 2 parameters are injected by the framework
+  fn handler(req: *tk.Request, allocator: std.mem.Allocator) ![]const u8 {
+    for (req.query_params) |param| {
+        std.debug.print("{s} = {s}\n", .{ param.name, param.value });
+    }
+
+    const username = req.getQueryParam("username");
+    return std.fmt.allocPrint(allocator, "Hello {s} !", .{username.?}); // Note that here we assume that the user passed a "username" query parameter
+  }
+#+end_src
+
+We can also inject our own dependecies like a database connection or a logger.
+#+begin_src zig
+  var db: ?*c.sqlite3 = undefined;
+  const rc = c.sqlite3_open("test.db", &db);
+  _ = try tk.Server.run(allocator, handler, .{ .port = 8080, .injector = try tk.Injector.from(.{db.?}) });
+#+end_src
+
+And then use it in any of our handlers by just adding it as a parameter.
+#+begin_src zig
+  fn populate(db: *c.sqlite3) ![]const u8 {
+      const req =
+          \\CREATE TABLE IF NOT EXISTS EMPLOYEES(
+          \\ID INT PRIMARY KEY     NOT NULL, 
+          \\NAME           TEXT    NOT NULL,
+          \\AGE            INT     NOT NULL,
+          \\ADDRESS        CHAR(50),
+          \\SALARY         REAL )
+      ;
+  
+      const rc = c.sqlite3_exec(db, req, null, null, null); // Not working properly + no error handling, just for the sake of the example
+      return "Database populated!";
+  }
+#+end_src
+
+The framework also supports things like Routing and Middlewares, which are very similar to those of other framework like Express.js.
+
+A typical handler for a Tokamak application might look like this.
+#+begin_src zig
+  const handler = tk.chain(.{
+      tk.logger(.{}),
+      tk.get("/", tk.send("Coucou")),
+      tk.get("contact", contact),
+      tk.get("populate", populate),
+      tk.get("html", tk.sendStatic("src/static/index.html")), // Serve a static file
+      tk.group("/api", tk.router(api)), // Allows for a group of routes to be prefixed with /api
+      tk.send(error.NotFound), // Fallback if no route is found
+  });
+#+end_src
+
+**** Conclusion
+From an user experience point of view everything is very understandable and easy to grasp compared to a micro-framework like Zap. The documentation minimal but still explores all of the main features of what it has to offer. The project is very young and small and mainly made by a single person. The author has been very responsive and useful to answer a lot of my questions so I thank him very much for that.
+
+Performance wise, the framework is not the fastest out there. The main reason is because it uses =std.http= under the hood which is the blocking and slow official library. The author claims to change that to use [[https://github.com/karlseguin/http.zig][http.zig]] in the next update which should make the framework a lot faster.
+
+To summarize, Tokamak is to http.zig what Spring it to Servlets in the Java world. A abstraction layer on top of basics utilises like handling requests by adding things like Dependency Injection.
