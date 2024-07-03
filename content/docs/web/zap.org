@@ -1,3 +1,7 @@
+#+title: Zap
+#+weight: 2
+#+hugo_cascade_type: docs
+
 *** Zap
 **** Description
 [[https://github.com/zigzap/zap][Zap]] is a micro web framework that is mainly uses to write REST APIs.
@@ -63,16 +67,19 @@ Note that benchmarks like that are not ground truth, they might be misleading fo
 TODO I plan to add more frameworks in order to have more comparaison in the future.
 
 **** facil.io
-TODO I am thinking of analyzing facil.io which is the real worker behind Zap. In order to take better concluions. Maybe use facil.io without zig and see how it performs ? It should be the same since Zap is only a wrapper, but it might be worth a shot.
+Since Zap is just a wrapper around facil.io, they have very similar performances. We can clearly see that with the benchmarks.
+#+CAPTION: Transfers per second for different frameworks
+#+NAME:   fig:SED-HR4049
+[[/images/facilio.png]]
+I did add a few other random web servers in order to get the order of magnitude right.
 
 **** Conclusion
 Zap is a very intersting project that is not used in production as far I know by anyone except by the author of the framework itself. So I couldn't find any repository of a project uszing zap anywhere, I tried asking on the official Discord but I didn't get any answer.
 
 Even though it should be working for almost all your use cases, it still is a microframework which means that there are not a lot of batteries included and if you need advanced features, you might have to those yourself.
 
-Since Zig is a low level language you are going to have a lot of boilerplate and small things like memory to manage manually. Those are things than can easily be avoided by using other languages (Java, Go, Node, ...)
+Since Zig is a low level language and that the framework is very basic you are going to have a lot of boilerplate and small things like memory to manage manually. Those are things than can easily be avoided by using other languages like Java, Go and Node. You might end up writing a lot more code for things that could have been done easily with other solutions.
 
 It is also important to note that this is a young project with not a lot of contributors and a very small community. So if you are going to use Zap you might have to figure out things on your own or write on the [[https://discord.gg/gcZm8f8K][project discord]]. You might aswell find codes or documentations that are oudated.
 
 To conclude if you don't need **high** performances (C like), I wouldn't recommend this framework to build your REST APIs because other far easiers frameworks are available for the approximatively same performances.
-

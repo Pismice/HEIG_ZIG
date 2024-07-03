@@ -1,0 +1,39 @@
+#+title: http.zig
+#+weight: 3
+#+hugo_cascade_type: docs
+
+*** httpz
+**** Description
+[[https://github.com/karlseguin/http.zig][http.zig]] is a low level HTTP server written fully in Zig. It counts 425 stars on Github and has 12 contributors. It describes itself as an alternative to the currently slow [[https://ziglang.org/documentation/master/std/#std.http.Server][std.http.Server]], the standard library HTTP server we talk about in an other chapter aswell.
+By default it uses non-blocking IO by using either epoll or kqueue and make it work on multiple workers.
+
+**** Examples
+
+Getting started with a basic httpz server is easy and straightforward.
+#+begin_src zig
+  const std = @import("std");
+  const httpz = @import("httpz");
+  
+  pub fn main() !void {
+      var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+      const allocator = gpa.allocator();
+  
+      var server = try httpz.Server().init(allocator, .{ .port = 5882 });
+  
+      var router = server.router();
+  
+      router.get("/hello", hello);
+  
+      try server.listen();
+  }
+  
+  fn hello(req: *httpz.Request, res: *httpz.Response) !void {
+      _ = req;
+      try res.json(.{ .message = "hello" }, .{});
+  }
+#+end_src
+
+To go further you have a lot of [[https://github.com/karlseguin/http.zig?tab=readme-ov-file#complex-use-case-1---shared-global-data][examples]] on the github repository of the project.
+
+**** Conclusion
+httpz is a low level HTTP server written fully in Zig. It is an alternative to the currently slow std.http.Server. It uses non-blocking IO by using either epoll or kqueue and make it work on multiple workers. It is easy to use and has a lot of examples to get started with it. A lot of new zig frameworks are written on top of it, so it is safe to say that it is a good choice for a low level HTTP server in Zig since it probably is the most battle tested one.

@@ -1,0 +1,40 @@
+#+title: std.http.Server
+#+weight: 1
+#+hugo_cascade_type: docs
+
+*** Standard library HTTP server
+The Zig standard library provides a [[https://ziglang.org/documentation/master/std/#std.http.Server][simple low level HTTP server]]. First things we notice when using it is that it is built on top of the [[https://ziglang.org/documentation/master/std/#std.net.Server][std.net.Server]] which is a TCP server. Second thing is that this server is blocking, meaning it can handle only 1 connection at a time which is pretty inconvenient for an HTTP server seeking performances.
+User experience is also not great since the implementation is changing in almost every updates, this means that all the ressources online are outdated and the documention is not very complete or hard to find like in this case where the tutorial was only mentionned in the [[https://ziglang.org/download/0.12.0/release-notes.html#Rework-Server-Entirely][0.12.0 release note]].
+
+*** Examples
+#+begin_src zig
+  const addr = try std.net.Address.parseIp("127.0.0.1", 4242);
+  var server: std.net.Server = try std.net.Address.listen(addr, .{ .reuse_address = true, .reuse_port = true });
+  var idx: usize = 0;
+
+  std.debug.print("Server up and running !\n", .{});
+
+  while (true) {
+      var buffer: [524288]u8 = undefined; // Buffer size does not affect performance
+      var conn = try server.accept(); // Blocking call
+      idx += 1;
+      defer conn.stream.close();
+
+      var http_server_with_client = std.http.Server.init(conn, &buffer);
+
+      while (http_server_with_client.state == .ready) {
+          // Read request
+          var req = http_server_with_client.receiveHead() catch |err| switch (err) {
+              error.HttpConnectionClosing => break,
+              else => {
+                  std.debug.print("Unhandled error {any}", .{err});
+                  return;
+              },
+          };
+          _ = try req.reader();
+
+          // Send response
+          try req.respond("bonjour", .{});
+      }
+  }
+#+end_src

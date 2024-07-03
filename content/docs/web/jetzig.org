@@ -1,1 +1,91 @@
+#+title: Jetzig
+#+weight: 5
+#+hugo_cascade_type: docs
+
 *** Jetzig
+**** Description
+[[https://www.jetzig.dev/][Jetzig]] is a very complete and opinionated web framework. It offers all the basics of a web framework, such as routing, middleware and cookies. It also offers a [[https://github.com/jetzig-framework/zmpl][templating language written in Zig]]. The project aims to be 100% Zig and not use any C code. It is also relatively fast because it uses [[https://github.com/karlseguin/http.zig][http.zig]] as its HTTP server.
+
+**** CLI
+Jetzig project structure are quite complex and opinionated, that is why it comes with a CLI to generate a new project.
+
+To install the CLI I recommend directly cloning the repository instead of downloading the zip file so that you avoid downloading an outdated version of the CLI, indeed updates are frequent as they hve to keep up with Zig and http.zig.
+
+#+begin_src shell
+  git clone https://github.com/jetzig-framework/jetzig
+  cd jetzig/cli
+  zig build install
+  mv zig-out/bin/jetzig /usr/local/bin // Assuming /usr/local/bin is in your PATH
+#+end_src
+
+And after that you should be able to use the =jetzig= CLI anywhere in your terminal.
+
+You can use this command to see all the available commands:
+#+begin_src shell
+  jetzig --help
+#+end_src
+
+The CLI can do far more than simply generate a new project, it can generate all the different components of a Jetzig project, such as views, layouts and middlewares.
+
+**** Examples
+**** Tailwind Middleware
+One of the upcoming features of Jetzig is a Tailwind middleware that allow to only include the CSS rules used by your project to keep the file size as small as possible, however before this feature comes out you have two options.
+
+The first is to simply use the CDN of Tailwind in the =.zmpl= file.
+#+begin_src html
+  <!DOCTYPE html>
+  <html lang="en">
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tailwind CSS</title>
+    <link href="../../../output.css" rel="stylesheet">
+  </head>
+  
+  <body>
+    <div class="h1 bg-red-500 text-white p-4 rounded">
+      Hello with my CDN Tailwind!
+    </div>
+  </body>
+  
+  </html>
+#+end_src
+
+The problem with this solution is that you are going to serve the entire Tailwind CSS file at runtime for each request.
+
+The second which makes most of the work at build time is according to the author of the framework himself it is almost equivalent to what he imagined for the Tailwind middleware. We are simply going to install Tailwind in our project following the [[https://tailwindcss.com/docs/installation][official documentation]] and modifying some parts to fit the structure of our project.
+
+#+begin_src shell
+  # At the root of our project folder
+  npm install -D tailwindcss
+  npx tailwindcss init
+#+end_src
+
+The modify the =tailwind.config.js= file to fit the structure of our project.
+#+begin_src javascript
+  /** @type {import('tailwindcss').Config} */
+  module.exports = {
+    content: ["./src/app/views/**/*.zmpl"],
+    theme: {
+      extend: {},
+    },
+    plugins: [],
+  }
+#+end_src
+
+Then in our =/public= directory create an =input.css= file.
+#+begin_src css
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+#+end_src
+
+Then simply start the Tailwind build process.
+#+begin_src shell
+  npx tailwindcss -i ./public/input.css -o ./public/output.css --watch
+#+end_src
+
+To conclude with this second solution you do not really need the future Tailwind middleware.
+
+**** Conclusion

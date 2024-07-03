@@ -1,9 +1,13 @@
+#+title: Tokamak
+#+weight: 4
+#+hugo_cascade_type: docs
+
 *** Tokamak
+**** Description
 [[https://github.com/cztomsik/tokamak/tree/main][This server-side web framework]] has been created on April 2024 by [[https://github.com/cztomsik][cztomsik]]. It currently ammounst 238 stars on GitHub, has 4 contributors, 0 release and is currently still in early development stage. Despite that, the author is using it in a project that is to be soon in production.
 
 One of the core concepts of Tokamak is to heavily leverage dependecy injection to make the development of web applications easier. As far as I know it is the only web framework in Zig that does that.
 has the main characteristic of working a lot with dependency injection which we are going to tackle the concept futher in this post.
-
 
 **** Dependency Injection
 To illustrate what DI is and why it is uses in Tokamak, let's have a look at an exemple given to me by the author itself.
@@ -56,6 +60,8 @@ An other solution would be to use a big variables to store the dependencies, but
   web.get("/complex", complex(req, context))
 #+end_src
 
+This previous solution is the one used in this [[https://github.com/karlseguin/http.zig?tab=readme-ov-file#complex-use-case-1---shared-global-data][http.zig example]] where the =Global= struct act as the context.
+
 The solution Tokamak puts forward is to use DI. How it is done under the hood is that all the handlers have the same signature pfn (*tk.Context) anyerror!void= which allows the framework to chain the handlers. The framework is going to do a bit a magic for you by injecting all the depencies you need in the handlers when you need them by using this =*tk.Context= object. So from the developer point of view, you just have to write the handlers and the framework will take care of the rest. This also makes the code more testable and maintainable since everything is decoupled now, you could easily copy paste one of your handlers in an other project and it would work just fine.
 
 #+begin_src js
@@ -76,7 +82,7 @@ The solution Tokamak puts forward is to use DI. How it is done under the hood is
 #+end_src
 
 
-**** Core features
+**** Examples
 
 A basic Tokamak application is really is to get up and running really fast.
 
@@ -126,6 +132,14 @@ And then use it in any of our handlers by just adding it as a parameter.
   
       const rc = c.sqlite3_exec(db, req, null, null, null); // Not working properly + no error handling, just for the sake of the example
       return "Database populated!";
+  }
+#+end_src
+
+It is also easy to set cookies.
+#+begin_src zig
+  fn cookie(rep: *tk.Response) ![]const u8 {
+      try rep.setCookie("name", "chocolate", .{});
+      return "The cookie has been set!";
   }
 #+end_src
 

@@ -1,0 +1,9 @@
+#+title: Conclusion
+#+weight: 100
+#+hugo_cascade_type: docs
+
+Zap is the way to go if it is needed to make a minimal REST API. Other than that it quickly becomes a nightmare, there are a lot of boilerplates and the code is very hard to produce and understand. Even though the performance is quite good, you can achieve almost the same things using languages like Go or Rust with a lot less effort for almost the same performances.
+
+TODO: I can not make a complete conclusion yet since I havent explored all the solutions.
+TODO: Take the benchmarks used for zap and add tokamak and jetzig and zig std (already done zap and zig std)
+

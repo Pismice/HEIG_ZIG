@@ -1,0 +1,57 @@
+#+title: Project: Video game
+#+weight: 100
+#+hugo_cascade_type: docs
+#+math: true
+
+*** Motivations
+In order to compete my exploration of Zig, I decided to write a "big" application. This project will allow us to see how Zig fits in a larger project since till here we have only written some applications.
+
+The project I decided to go with will be a video game in the style of games like [[https://www.travian.com/international][Travian]]. Which means it will be a multiplayer game where players can construct their villages, build armies, and attack other players (and much more but those are the basics).
+
+The components I am going to need are the following:
+- A WEB server to handle the requests from the clients, this will contain the game logic.
+- A database to store the game state and player informations.
+- A frontend to display the game to the players.
+
+Multiple solutions are possible for each of those components, I am going to discuss in the next chapters what I choose and why.
+
+*** Specifications
+The overall architecture of the game will be the following, here we have an example of a typical use case of a user wanting to build an archer for his army.
+#+CAPTION: Requests per second for different frameworks
+#+NAME:   fig:SED-HR4049
+[[/images/architecture.svg]]
+
+My goal is to have as much Zig as possible and eventually a bit of C so that I can test the Zig-C interoperability.
+
+**** Frontend
+For the client application there is minimum one requirment being that the client has to be able to send and recevie HTTP requests. If I am using anything Zig related this should not be an issue since there is an [[https://ziglang.org/documentation/master/std/#std.http.Client]][HTTP client] in the standard library.
+But a frontend in Zig is not a very common approach, but still I found some possibilities.
+
+Note that my game will not need any 3D, it is a strategic, simulation, management game. So every actions can be done by just sending a simple order (POST request) and any information needed can be retrieved using a GET request.
+
+***** CLI
+The simplest solution would be to have a CLI frontend, this would be the easiest to implement and would be the most Zig-like solution. But I will not go with that for 2 main reasons:
+- It will not be pleasant to play a game where you build your village, your army etc with 0 image and graphical experience.
+- It is contraigning for the player to have to install the game on his computer and run it in the terminal.
+
+***** Terminal User Interface
+With a TUI like [[https://github.com/rockorager/libvaxis][libvaxis]] I could have a better graphical interface than with a CLI, but still it will lack the graphical experience that I want to provide to the players.
+
+***** Native GUI
+[[https://github.com/capy-ui/capy][Capy]] is a GUI library for Zig, it is still in development but it is the most promising solution for a Zig GUI. Even though it does not fit my needs, not being able to force a style to the GUI is a big issue for me. Also it seems very hard to make pleasant designs compared to using HTML+CSS.
+
+***** WebAssembly
+I thought about WebAssembly, but it will not be a possiblity since WebAssembly can not manipulate the webpage but can just communicate with the JavaScript. So I would have to write most of my frontend in JS aswell which loses the interest I had for Wasm. You can find more informations about this [[https://www.reddit.com/r/learnprogramming/comments/wmze79/c_for_web_development/][here]].
+
+***** ImGUI
+[[https://github.com/ocornut/imgui][ImGUI]] is a C++ GUI library that is very popular to make complex native UIs. There is a [[https://github.com/cimgui/cimgui][C wrapper]] for it, so I could use it in my project. And there is yet an other [[https://github.com/SpexGuy/Zig-ImGui][Zig wrapper]] around this C wrapper. The problem with this Zig solution is that it has been abandoned for 2 years nows and there is no other contributor than the author itself. Other than that the C wrapper and the library in general seems way more complex for my needs.
+
+***** Templating engine
+An popular solution for building web frontends is to use a templating engine, most of the Zig web frameworks I explored have one. But the problem with that solution is that I would have to change the architecture of my project, because of sending JSON responses I would send the whole HTML pages with the data in it. For me this is not a good solution as it put too much load on my server and will not allow me in the future to have a mobile application for example because my API will be returning full HTML pages instead of just the JSON data.
+
+***** Classic web frontend
+This is the most classic way of doing web applications, but even with this approach there are multiple solutions. I could use a frontend framework like React, Angular, Vue.js, Svelte, etc. Or simply use HTML+JS. Since I have almost no experience with any except a bit with Vue.js I will go with this solution. Note that here it really depends on the developer's preferences.
+
+**** Backend
+
+**** Database
