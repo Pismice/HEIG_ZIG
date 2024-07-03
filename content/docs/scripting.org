@@ -3,20 +3,20 @@
 
 * Scripting
 ** What is scripting ?
-[[https://en.wikipedia.org/wiki/Scripting_language]["In computing, a script is a relatively short and simple set of instructions that typically automate an otherwise manual process."]]. Scripts are very useful to increase the productivity of a worklfow.
+[[https://en.wikipedia.org/wiki/Scripting_language]["In computing, a script is a relatively short and simple set of instructions that typically automate an otherwise manual process."]]. Thus, increasing the productivity of a worklfow.
 
-On the same page we can also read "Scripts are usually interpreted rather than compiled.", which might already give us a hint if Zig is the right tool for the job or not.
+On the same page we can also read "Scripts are usually interpreted rather than compiled.", which might already give us an hint as if Zig is the right tool for the job or not.
 
-But even after looking at this, it is still beter to try by ourselves.
+But even after reading this, it is still beter to try by ourselves.
 
-The main reasons why I still want to try Zig is because it is a language modern compared to C or C++ which are languages not very used in the scripting world as far as I know. So with the aspects of a modern language that makes the programmer life easier and with C like performances, I still thought Zig could have a shot at this task.
+The main reasons why I still want to try Zig is because it is a modern language compared to other compiled languages like C or C++ which are not very used in the scripting world as far as I know. So with the aspects of a modern language that makes the programmer life easier and with compiled code performances, I still thought Zig could have a shot at this task.
 
 Zig also has the advantage of being a very familiar language compared to typical scripting languages like bash. So instead of learning a new language, I could just use Zig which I am familiar with already.
 
 ** Project description
 [[https://i3wm.org/][i3]] is a tiling window manager for linux, it allows you to have multiple workspaces and to switch between them easily. Those workspaces can be renamed so that you can find yourself better in your workflow.
 
-In this exemple we have a few workspaces named: /1/, /2/, /3/, /9:other/ and /10:telegram/.
+In this exemple we have a few workspaces named: =1=, =2=, =3=, =9:other= and =10:telegram=.
 
 #+CAPTION: i3-example
 #+NAME:   fig:SED-HR4049
@@ -175,8 +175,8 @@ Overall we have 76 lines for the Zig implementation and 39 lines for the Python 
 ** Benchmark
 I used hyperfine in order to benchmark and see which implementation is faster.
 
-Zig implementation: Time (mean ± σ): 3.0 ms ± 0.5 ms
-Python implementation: Time (mean ± σ): 28.4 ms ± 4.9 ms
+| Zig implementation    |  3.0 ms ± 0.5 ms |
+| Python implementation | 28.4 ms ± 4.9 ms |
 
 The results are what we excepted, Zig is a compiled language and is way faster than Python, but the question is, is it worth it ? Obviously it greatly depends on your use case, but generally for scripts that you run only sometimes on your machine and that is not supposed to scale, those differences are not really important.
 
@@ -200,3 +200,5 @@ To conclude I would not recommend using Zig for scripting, it simply is not the 
 You can find the GitHub repository of the project [[https://github.com/Pismice/rename-i3-workspace][here]] if you want to take a look at the whole code.
 
 If the project seems cool to you can also install the scripts on your system by following the instructions in the README of the repository.
+
+I also made an other script in Zig to monitor battery levels and send system notifications when the battery is low, you can find the repository [[https://github.com/Pismice/zbattery][here]].

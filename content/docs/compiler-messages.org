@@ -4,7 +4,7 @@
 ** Compiler messages
 In a language that aims to report most of its issues at compilation time, it is important to have clear and concise error messages. However at the time we are writing this it is sadly not the case. Here are a few compiler messages that you might encounter that are very hard to understand.
 
-*** Trying to print without the correct struct syntax
+*** Trying to print without the incorrect struct syntax
 We are going to start with the most basic one, everyone doing Zig did at least one time
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
   std.debug.print("Hello I am {} years old", 12);

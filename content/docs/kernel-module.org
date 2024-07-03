@@ -67,7 +67,7 @@ But unfortunately, a kernel module cannot be compiled as easily as a normal app.
 
 For that, there are two way to compile a module.
 - Statically: the module is compiled and linked statically into the kernel.
-- Dynamically : the module is compiled a part and it can be load dynamically in the kernel.
+- Dynamically : the module is compiled apart and it can be load dynamically in the kernel.
 
 As the example is separate from the linux kernel, we need to build it dynamically.
 The compilation used is name =out-of-tree= because the compilation is outside the linux tree structure.

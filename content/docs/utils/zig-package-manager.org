@@ -53,6 +53,8 @@ Note: here it is specific to the zap package, you might have different options a
 
 Your packages will be downloaded and compiled when you build your project.
 
+When importing projects be really careful about your Zig version is and what version is the library you are using compatible with. Zig versions are moving really fast and often are not compatible with previous versions.
+
 *** Sources
 https://zig.news/edyu/zig-package-manager-wtf-is-zon-558e
 https://zig.news/edyu/zig-package-manager-wtf-is-zon-2-0110-update-1jo3

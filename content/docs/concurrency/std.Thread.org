@@ -341,5 +341,4 @@ But this leaky abstraction comes at a cost, you can not fine-tune your threads a
 
 If you need specific thread functionalities, like the ones we talked about, you can still do that in Zig by wrapping the C pthread library for exemple or directly use the OS native threads you want.
 
-
-
+If your application is using a lot threads for handling each new connection on a TCP server for example you might thinking about switching to another non-blocking solution, the main reason being that threads are quite heavy and have a non-negligeable overhead because they act like a process and have their own stack.
