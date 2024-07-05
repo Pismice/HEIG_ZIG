@@ -27,6 +27,26 @@ So when you get that type of error message make sure that you are printing your 
 
 This is an [[https://github.com/ziglang/zig/issues/19158][ongoing issue]] by the time I am writing this in 0.12.0
 
+If you have trouble understanding how to correctly format you string, I highly suggest you to refer to this [[https://ziglang.org/documentation/master/std/#std.fmt.format][piece of documentation]], that is not really is to find. This documentation basically gives you those informations that are wrote here exactly the same way they are in the documentation:
+
+TODO Est ce que c'est bon comme ca ou c'est du plagiat sachant que je precise juste au dessus d ou je prends ?
+#+begin_src txt
+  - x and X: output numeric value in hexadecimal notation
+  - s:
+  - for pointer-to-many and C pointers of u8, print as a C-string using zero-termination
+  - for slices of u8, print the entire slice as a string without zero-termination
+  - e: output floating point value in scientific notation
+  - d: output numeric value in decimal notation
+  - b: output integer value in binary notation
+  - o: output integer value in octal notation
+  - c: output integer as an ASCII character. Integer type must have 8 bits at max.
+  - u: output integer as an UTF-8 sequence. Integer type must have 21 bits at max.
+  - ?: output optional value as either the unwrapped value, or null; may be followed by a format specifier for the underlying value.
+  - !: output error union value as either the unwrapped value, or the formatted error value; may be followed by a format specifier for the underlying value.
+  - *: output the address of the value instead of the value itself.
+  - any: output a value of any type using its default format.
+#+end_src
+
 *** Assigning to an arrray of array of u8
 This is a very common thing to, if you basically want to make an "array of strings", the way you would want to do it is that way:
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no

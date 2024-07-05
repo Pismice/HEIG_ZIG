@@ -2,12 +2,13 @@
 #+weight: 4
 #+hugo_cascade_type: docs
 
-*** Tokamak
 **** Description
 [[https://github.com/cztomsik/tokamak/tree/main][This server-side web framework]] has been created on April 2024 by [[https://github.com/cztomsik][cztomsik]]. It currently ammounst 238 stars on GitHub, has 4 contributors, 0 release and is currently still in early development stage. Despite that, the author is using it in a project that is to be soon in production.
 
 One of the core concepts of Tokamak is to heavily leverage dependecy injection to make the development of web applications easier. As far as I know it is the only web framework in Zig that does that.
 has the main characteristic of working a lot with dependency injection which we are going to tackle the concept futher in this post.
+
+If you have trouble understanding what Tokamak is but you are more familiar with the Java world, know that thhe author claim that Tokamak is to http.zig what Spring it to Servlets in the Java world. Basically an abstraction layer on top of basics utilises like handling requests by adding things like Dependency Injection.
 
 **** Dependency Injection
 To illustrate what DI is and why it is uses in Tokamak, let's have a look at an exemple given to me by the author itself.
@@ -82,7 +83,7 @@ The solution Tokamak puts forward is to use DI. How it is done under the hood is
 #+end_src
 
 
-**** Examples
+**** Simple example
 
 A basic Tokamak application is really is to get up and running really fast.
 
@@ -135,14 +136,6 @@ And then use it in any of our handlers by just adding it as a parameter.
   }
 #+end_src
 
-It is also easy to set cookies.
-#+begin_src zig
-  fn cookie(rep: *tk.Response) ![]const u8 {
-      try rep.setCookie("name", "chocolate", .{});
-      return "The cookie has been set!";
-  }
-#+end_src
-
 The framework also supports things like Routing and Middlewares, which are very similar to those of other framework like Express.js.
 
 A typical handler for a Tokamak application might look like this.
@@ -158,9 +151,23 @@ A typical handler for a Tokamak application might look like this.
   });
 #+end_src
 
+**** Cookies
+It is also easy to set cookies.
+#+begin_src zig
+  fn cookie(rep: *tk.Response) ![]const u8 {
+      try rep.setCookie("name", "chocolate", .{});
+      return "The cookie has been set!";
+  }
+#+end_src
+
+**** Future of Tokamak
+All the examples above are compatible only with 0.11.0. Since at the time of writing this 0.13.0 is already out and the author is working on a new breaking version of the framework, I will not dig any deeper for the moment. But I plan to remake this documentation when the new version is out and 0.13.0 compliant.
+
 **** Conclusion
 From an user experience point of view everything is very understandable and easy to grasp compared to a micro-framework like Zap. The documentation minimal but still explores all of the main features of what it has to offer. The project is very young and small and mainly made by a single person. The author has been very responsive and useful to answer a lot of my questions so I thank him very much for that.
 
 Performance wise, the framework is not the fastest out there. The main reason is because it uses =std.http= under the hood which is the blocking and slow official library. The author claims to change that to use [[https://github.com/karlseguin/http.zig][http.zig]] in the next update which should make the framework a lot faster.
 
-To summarize, Tokamak is to http.zig what Spring it to Servlets in the Java world. A abstraction layer on top of basics utilises like handling requests by adding things like Dependency Injection.
+The [[https://github.com/cztomsik/tokamak/tree/main][main branch] has not been updated for a long time now and is only compatible to old Zig versions, so I personnaly do not recommend downgrading your Zig version to work with this Tokamak versino because soon a new breaking releases with lot of changes will be out, by then I will update this documentation.
+
+To summarize, this framework is great but for the moment I recommend waiting for the next release which is going to come with updated documentations as well.

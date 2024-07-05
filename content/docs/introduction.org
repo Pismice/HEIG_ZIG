@@ -25,7 +25,9 @@ The goal of this documentation is to explore the Zig language in-depth, by first
 
 This work is mainly aimed at engineers who already have experiences in C but might consider using Zig as a replacement/alternative. If you are a complete beginner, you might still learn a lot by reading this, but we highly encourage you to look at other ressources aimed at beginners.
 
-The big + this project offers compare to other guides/documentations is that here we are going to learn the language with [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] because *one snippet of code is worth 1000 words*.
+One of the advantages this project offers compare to other guides/documentations is that here we are going to learn the language with [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] because *one snippet of code is worth 1000 words*.
+
+The other advantage is that we are not only going to cover some basic parts of the language but also explore some advanced topics and making analyzes.
 
 The advanced topics covered are mostly structured as follows:
 1. Explaining the concept and see what is done in other languages (mostly C)

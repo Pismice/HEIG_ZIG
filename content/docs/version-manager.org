@@ -1,4 +1,4 @@
-#+title: Zig version manager
+#+title: Version manager
 #+weight: 5
 
 ** Zig version manager

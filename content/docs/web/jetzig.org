@@ -2,7 +2,6 @@
 #+weight: 5
 #+hugo_cascade_type: docs
 
-*** Jetzig
 **** Description
 [[https://www.jetzig.dev/][Jetzig]] is a very complete and opinionated web framework. It offers all the basics of a web framework, such as routing, middleware and cookies. It also offers a [[https://github.com/jetzig-framework/zmpl][templating language written in Zig]]. The project aims to be 100% Zig and not use any C code. It is also relatively fast because it uses [[https://github.com/karlseguin/http.zig][http.zig]] as its HTTP server.
 
@@ -27,7 +26,122 @@ You can use this command to see all the available commands:
 
 The CLI can do far more than simply generate a new project, it can generate all the different components of a Jetzig project, such as views, layouts and middlewares.
 
-**** Examples
+**** Project structure
+Since the framework is quite opinionated because of the fact that it is heavily batteries included, you are going to have a strict complex project structure to comply with.
+{{< filetree/container >}}
+  {{< filetree/folder name="public" >}}
+    {{< filetree/file name="favicon.ico" >}}
+    {{< filetree/file name="styles.css" >}}
+    {{< filetree/file name="jetzig.png" >}}
+  {{< /filetree/folder >}}
+
+  {{< filetree/folder name="src" >}}
+    {{< filetree/folder name="app" >}}
+      {{< filetree/folder name="jobs" >}}
+      {{< /filetree/folder >}}
+      {{< filetree/folder name="mailers" >}}
+      {{< /filetree/folder >}}
+      {{< filetree/folder name="middleware" >}}
+      {{< /filetree/folder >}}
+      {{< filetree/folder name="views" >}}
+        {{< filetree/folder name="root" >}}
+          {{< filetree/file name="index.zmpl" >}}
+        {{< /filetree/folder >}}
+        {{< filetree/folder name="viewo" >}}
+          {{< filetree/file name="index.zmpl" >}}
+          {{< filetree/file name="get.zmpl" >}}
+          {{< filetree/file name="put.zmpl" >}}
+          {{< filetree/file name="post.zmpl" >}}
+          {{< filetree/file name="patch.zmpl" >}}
+          {{< filetree/file name="delete.zmpl" >}}
+        {{< /filetree/folder >}}
+        {{< filetree/file name="root.zig" >}}
+        {{< filetree/file name="viewo.zig" >}}
+      {{< /filetree/folder >}}
+    {{< /filetree/folder >}}
+    {{< filetree/file name="main.zig" >}}
+  {{< /filetree/folder >}}
+
+  {{< filetree/file name="build.zig" >}}
+
+  {{< filetree/file name="build.zig.zon" >}}
+{{< /filetree/container >}}
+
+For each view you create, you get a zig file for handling all the different available HTTP methods and for each you get a =zmpl= file in a folder with the same name as the view.
+
+**** Basic example
+Let's take back the structure we just mentionned and look at the =viewo.zig= endpoint.
+Your entry file looks like this.
+#+begin_src zig
+  const std = @import("std");
+  const jetzig = @import("jetzig");
+  
+  pub fn index(request: *jetzig.Request, data: *jetzig.Data) !jetzig.View {
+      _ = data;
+      return request.render(.ok);
+  }
+  
+  pub fn get(id: []const u8, request: *jetzig.Request, data: *jetzig.Data) !jetzig.View {
+      _ = data;
+      _ = id;
+      return request.render(.ok);
+  }
+  
+  pub fn post(request: *jetzig.Request, data: *jetzig.Data) !jetzig.View {
+      _ = data;
+      return request.render(.created);
+  }
+  
+  pub fn put(id: []const u8, request: *jetzig.Request, data: *jetzig.Data) !jetzig.View {
+      _ = data;
+      _ = id;
+      return request.render(.ok);
+  }
+  
+  pub fn patch(id: []const u8, request: *jetzig.Request, data: *jetzig.Data) !jetzig.View {
+      _ = data;
+      _ = id;
+      return request.render(.ok);
+  }
+  
+  pub fn delete(id: []const u8, request: *jetzig.Request, data: *jetzig.Data) !jetzig.View {
+      _ = data;
+      _ = id;
+      return request.render(.ok);
+  }
+#+end_src
+
+In this endpoint you can pass data to your =zmpl= file. Like here where we pass the =name= parameter of the request or the default "Jeremie" string.
+#+begin_src zig
+  pub fn index(request: *jetzig.Request, data: *jetzig.Data) !jetzig.View {
+      var object = try data.root(.object);
+  
+      const value = try request.params();
+  
+      if (value.get("name")) |name| {
+          try object.put("name", name);
+      } else {
+          try object.put("name", data.string("Jeremie"));
+      }
+  
+      return request.render(.ok);
+  }
+#+end_src
+
+If you visit =http://localhost:8080/viewo= you will get a WEB page containing the following.
+#+begin_src html
+  Your name is Jeremie
+#+end_src
+
+And if you visit =http://localhost:8080/viewo?name=John= you will get the personalised input.
+#+begin_src html
+  Your name is John
+#+end_src
+
+**** Cookies
+TODO
+
+
 **** Tailwind Middleware
 One of the upcoming features of Jetzig is a Tailwind middleware that allow to only include the CSS rules used by your project to keep the file size as small as possible, however before this feature comes out you have two options.
 
@@ -51,6 +165,7 @@ The first is to simply use the CDN of Tailwind in the =.zmpl= file.
   
   </html>
 #+end_src
+
 
 The problem with this solution is that you are going to serve the entire Tailwind CSS file at runtime for each request.
 
@@ -88,4 +203,15 @@ Then simply start the Tailwind build process.
 
 To conclude with this second solution you do not really need the future Tailwind middleware.
 
+**** HTMX Middleware
+The HTMX middleware is going to allow only partial pages reloads, without calling the endpoint agains and do a full page refresh when calling hx-get and hx-target together. More informations can be found on this [[https://discord.com/channels/1203669535488479273/1203669537246019646/1258110254642892801][discord answer]] from the author itself.
+
+To leverage the middleware just uncomment this line in the =main.zig= file.
+#+begin_src zig
+  jetzig.middleware.HtmxMiddleware
+#+end_src
+
+Other than that you can just use HTMX as you would normally do.
+
 **** Conclusion
+- generated code come with lots of comments

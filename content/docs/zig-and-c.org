@@ -111,13 +111,24 @@ Then call this zig file in your other zig files.
 If you C project is more complex and you want to import your header files you must tweak a few things compared to the previous version where you just import C sources files.
 
 With a project like structure like this:
-- build.zig
-- src
-- c-project
-  - include
-    - hello.h
-  - src
-    - hello.c
+{{< filetree/container >}}
+
+  {{< filetree/folder name="c-project" >}}
+
+    {{< filetree/folder name="include" >}}
+      {{< filetree/file name="hello.h" >}}
+    {{< /filetree/folder >}}
+
+    {{< filetree/folder name="src" >}}
+      {{< filetree/file name="hello.c" >}}
+    {{< /filetree/folder >}}
+  {{< /filetree/folder >}}
+
+  {{< filetree/folder name="src" state="closed" >}}
+  {{< /filetree/folder >}}
+
+  {{< filetree/file name="build.zig" >}}
+{{< /filetree/container >}}
 
 First modify the **build.zig** file.
 

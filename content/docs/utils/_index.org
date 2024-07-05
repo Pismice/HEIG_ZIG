@@ -1,5 +1,0 @@
-#+title: Utils
-#+weight: 5
-#+hugo_cascade_type: docs
-#+math: true
-

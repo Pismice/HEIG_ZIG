@@ -172,13 +172,58 @@ Here we are going to have to format our string in order to print it.
 
 Overall we have 76 lines for the Zig implementation and 39 lines for the Python implementation, the syntax is also way more readable in Python. One of the main reasons we could save up so many lines in Python is because we have a lot of fine libraries that are simple to use, notably *re* and *subprocess*.
 
+** Bash implementation
+I also made with the help of ChatGPT a bash implementation of the script, which truly is a scripting language by excellence.
+This implementation is 32 lines long and is quite is easy to read and understand the purpose.
+#+begin_src sh
+  #!/bin/bash
+  
+  # Check if the correct number of arguments is provided
+  if [ "$#" -ne 2 ]; then
+      echo "Usage: $0 <workspace_number> <new_name>"
+      exit 1
+  fi
+  
+  # Variables
+  workspace_number=$1
+  new_name="$workspace_number: $2"
+  app_name="/bin/i3-msg"
+  
+  # Get the current workspaces
+  result=$($app_name -t get_workspaces)
+  
+  # Extract the current name of the workspace
+  # Typical substring of the result = "num":1,"name":"1"
+  pattern="\"num\":$workspace_number,\"name\":\"([^\"]+)\""
+  if [[ $result =~ $pattern ]]; then
+      old_name="${BASH_REMATCH[1]}"
+  else
+      echo "Workspace number $workspace_number not found."
+      exit 1
+  fi
+  
+  echo "Old workspace name: $old_name"
+  
+  # Change the name of the workspace to the new name
+  params="$app_name 'rename workspace \"$old_name\" to \"$new_name\"'"
+  echo "Executing: $params"
+  eval $params
+#+end_src
+
 ** Benchmark
 I used hyperfine in order to benchmark and see which implementation is faster.
 
 | Zig implementation    |  3.0 ms ± 0.5 ms |
 | Python implementation | 28.4 ms ± 4.9 ms |
+| Bash implementation   |  3.7 ms ± 0.3 ms |
 
-The results are what we excepted, Zig is a compiled language and is way faster than Python, but the question is, is it worth it ? Obviously it greatly depends on your use case, but generally for scripts that you run only sometimes on your machine and that is not supposed to scale, those differences are not really important.
+The results are what we excepted for Zig and Python, Zig is a compiled language and is way faster than Python. I am a bit more suprised by how the Bash implementation is that fast. I excepted it to be faster than Python because the latest has many drawbacks:
+- Overhead of the runtime environment with the Python VM
+- Python uses =subprocess= to run the commands when Bash directly runs the commands with no IPC.
+- Startup time of the Python interpreter.
+- Memory usage is far more heavy in the Python runtime environment.
+
+The reason why Zig is still a bit faster than Bash is because it is compiled language there is no need to interpret the code, it is directly executed by the machine. I think that Zig in this particular case still has the drawbacks of having to start processes to run the commands and do IPC.
 
 ** Libraries used
 *** Zig
@@ -191,9 +236,11 @@ The results are what we excepted, Zig is a compiled language and is way faster t
 - [[https://docs.python.org/3/library/sys.html][sys]]
 
 ** Conclusion
-Was Zig the good choice ? Mostly no, Zig is not a good choice for scripting, it is way too verbose and not suited for the task. Python is way better suited for the job, it is way more readable and way easier to use. There are a lot of things that Zig is not really good at if you want to go fast and notably do string manipulation and memory management.
+Was Zig the good choice ? Mostly no, Zig is not a good choice for scripting, it is way too verbose and not suited for the task. Bash or even is way better suited for the job, it is way more readable and way easier to use. There are a lot of things that Zig is not really good at if you want to go fast and notably do string manipulation and memory management.
 
-Doing those things by hand was not an easy task and it was very error-proned, it is way better to use a language that has libraries that are already made for you and that are easy to use, 20ms of difference in the performances is not was is going to make your script experience nicer, at least not for most scripts.
+Doing things like string manipulation by hand was not an easy task and it was very error-proned, it is way better to use a language that has libraries that are already made for you and that are easy to use.
+
+As far as my knowledge goes, most scripts are not really designed to be very fast and scalable, if you run your script occasionaly on your local machine like I did in this example, a 20ms difference is not going to change anything.
 
 To conclude I would not recommend using Zig for scripting, it simply is not the right tool for the job.
 

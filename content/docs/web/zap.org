@@ -2,7 +2,6 @@
 #+weight: 2
 #+hugo_cascade_type: docs
 
-*** Zap
 **** Description
 [[https://github.com/zigzap/zap][Zap]] is a micro web framework that is mainly uses to write REST APIs.
 
@@ -29,7 +28,7 @@ Here you define the callback
   );
 #+end_src
 
-And then it is going to call the following function
+And then it is going to call the following function every time the endpoint is called. We can qualify this function as an handler.
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
   fn on_request(r: zap.Request) void {
       if (r.path) |the_path| {
@@ -41,7 +40,7 @@ And then it is going to call the following function
 #+end_src
 
 **** Exemples
-The [[https://github.com/zigzap/zap][repo]] gives you a lot of [[https://github.com/zigzap/zap/tree/master/examples][exemples]] in order to get started.
+The [[https://github.com/zigzap/zap][repo]] gives you a lot of [[https://github.com/zigzap/zap/tree/master/examples][various exemples]] in order to get started and see what subjects interest you the most.
 
 **** Alternatives and performance comparaison
 The zap library provides a few other REST API frameworks to compare with Zap in a *wrk* folder, all the codes from the different languages/framework just return a simple "Hello World" message when their endpoint is called.
@@ -64,14 +63,12 @@ Note that benchmarks like that are not ground truth, they might be misleading fo
 - Depends on what you are doing at the sime time on the machine
 - The person writing the benchmarks might have miss some optimizations possible for some frameworks
 
-TODO I plan to add more frameworks in order to have more comparaison in the future.
-
 **** facil.io
 Since Zap is just a wrapper around facil.io, they have very similar performances. We can clearly see that with the benchmarks.
 #+CAPTION: Transfers per second for different frameworks
 #+NAME:   fig:SED-HR4049
 [[/images/facilio.png]]
-I did add a few other random web servers in order to get the order of magnitude right.
+Note that I did add a few other random web servers in order to get the order of magnitude right.
 
 **** Conclusion
 Zap is a very intersting project that is not used in production as far I know by anyone except by the author of the framework itself. So I couldn't find any repository of a project uszing zap anywhere, I tried asking on the official Discord but I didn't get any answer.

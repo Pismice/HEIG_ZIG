@@ -6,7 +6,8 @@
 The Zig standard library provides a [[https://ziglang.org/documentation/master/std/#std.http.Server][simple low level HTTP server]]. First things we notice when using it is that it is built on top of the [[https://ziglang.org/documentation/master/std/#std.net.Server][std.net.Server]] which is a TCP server. Second thing is that this server is blocking, meaning it can handle only 1 connection at a time which is pretty inconvenient for an HTTP server seeking performances.
 User experience is also not great since the implementation is changing in almost every updates, this means that all the ressources online are outdated and the documention is not very complete or hard to find like in this case where the tutorial was only mentionned in the [[https://ziglang.org/download/0.12.0/release-notes.html#Rework-Server-Entirely][0.12.0 release note]].
 
-*** Examples
+*** Basic server
+A very basic implementation that simply sends a string over HTTP to the client.
 #+begin_src zig
   const addr = try std.net.Address.parseIp("127.0.0.1", 4242);
   var server: std.net.Server = try std.net.Address.listen(addr, .{ .reuse_address = true, .reuse_port = true });
@@ -38,3 +39,166 @@ User experience is also not great since the implementation is changing in almost
       }
   }
 #+end_src
+
+*** Benchmarks
+Since the implementation is blocking and said to be not performant, I tried by myself to make the standard library server as performant as possible by multi-threading it.
+
+In order to maximise the performances I tweak 2 main parameters:
+- The number of threads
+- What job should be given to the thread
+
+For the number of threads it is going to be heavily dependant on your system, notably how many cores you have at disposal and how much tasks your CPU is handling aside from the server.
+
+As a reminder you can use this Zig code to get the number of cores
+#+begin_src zig
+  std.Thread.getCpuCount()
+#+end_src
+
+Or get the needed information from the command line
+#+begin_src shell
+  lscpu
+#+end_src
+
+I then decided to 7 different implementations:
+- The implementation from the exact code above
+- 2 monothreaded implementations, one with the accept in the main thread and the other with the accept in the spawned thread
+- 4 multi-threaded implementations, 2 with the accept in the main thread and the other 2 with the accept in the spawned thread with different allocated number threads.
+
+All the variations except the first one are based on this one, I just comment/uncomment a few lines to change the implementation.
+#+begin_src zig
+  const std = @import("std");
+  
+  var actives_threads: usize = 0;
+  var m = std.Thread.Mutex{};
+  
+  pub fn main() !void {
+      const addr = try std.net.Address.parseIp("127.0.0.1", 4242);
+      var server: std.net.Server = try std.net.Address.listen(addr, .{ .reuse_address = true, .reuse_port = true });
+  
+      std.debug.print("Server up and running !\n", .{});
+  
+      // Thread pool
+      var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+      defer _ = gpa.deinit();
+      const allocator = gpa.allocator();
+      var pool: std.Thread.Pool = undefined;
+      try pool.init(.{ .allocator = allocator, .n_jobs = 12 });
+      defer pool.deinit();
+  
+      while (true) {
+          if (actives_threads < 12) {
+              m.lock();
+              actives_threads += 1;
+              m.unlock();
+  
+              // FIXME uncomment the version you want
+              
+              // Version with accept
+              //const conn = try server.accept();
+              //try pool.spawn(handleClient2, .{conn});
+              //handleClient2(conn);
+  
+              // Version without accept
+              //handleClient(&server);
+              //try pool.spawn(handleClient, .{&server});
+          }
+      }
+  }
+  
+  // Accept new clients in the spawned thread
+  fn handleClient(server: *std.net.Server) void {
+      const conn = server.*.accept() catch {
+          std.debug.print("Error while accepting a new client\n", .{});
+          return;
+      }; // Blocking call
+      var buffer: [1024]u8 = undefined; // Buffer size does not affect performance
+      var http_server_with_client = std.http.Server.init(conn, &buffer);
+      defer conn.stream.close();
+      defer {
+          m.lock();
+          actives_threads -= 1;
+          m.unlock();
+      }
+  
+      // Simulate work
+      std.time.sleep(1 * std.time.ns_per_ms);
+  
+      while (http_server_with_client.state == .ready) {
+          // Read request
+          var req = http_server_with_client.receiveHead() catch |err| switch (err) { // Blocking call
+              error.HttpConnectionClosing => break,
+              else => {
+                  std.debug.print("Unhandled error {any}\n", .{err});
+                  return;
+              },
+          };
+  
+          _ = req.reader() catch |err| {
+              std.debug.print("Error while reading request: {any}\n", .{err});
+              return;
+          };
+  
+          // Send response
+          req.respond("bonjour", .{}) catch |err| {
+              std.debug.print("Error while sending response: {any}\n", .{err});
+              return;
+          };
+      }
+  }
+  
+  // Does accept in the main thread
+  fn handleClient2(conn: std.net.Server.Connection) void {
+      var buffer: [1024]u8 = undefined; // Buffer size does not affect performance
+      var http_server_with_client = std.http.Server.init(conn, &buffer);
+      defer conn.stream.close();
+  
+      defer {
+          m.lock();
+          actives_threads -= 1;
+          m.unlock();
+      }
+  
+      // Simulate work
+      std.time.sleep(1 * std.time.ns_per_ms);
+  
+      while (http_server_with_client.state == .ready) {
+          // Read request
+          var req = http_server_with_client.receiveHead() catch |err| switch (err) { // Blocking call
+              error.HttpConnectionClosing => break,
+              else => {
+                  std.debug.print("Unhandled error {any}\n", .{err}); // FAILING HERE
+                  return;
+              },
+          };
+  
+          _ = req.reader() catch |err| {
+              std.debug.print("Error while reading request: {any}\n", .{err});
+              return;
+          };
+  
+          // Send response
+          req.respond("bonjour", .{}) catch |err| {
+              std.debug.print("Error while sending response: {any}\n", .{err});
+              return;
+          };
+      }
+  }
+#+end_src
+
+#+CAPTION: Requests per second for different frameworks
+#+NAME:   fig:SED-HR4049
+[[/images/std.png]]
+
+The first main conclusion we can take from this benchmark are that the std.http.Server can be made more performant by multithreading it without big code changes. 
+
+The second conclusion is that it could be slightly better to open a few threads, 6 or 12 in our case and have all of those threads waiting on the =server.accept()= instead of having only the main thread waiting and then dispatching to a newly spawned thread.
+
+TODO Peut etre mettre un schema qui expliquerait mieux ca, mais je pense que c'est assez clair comme ca.
+
+Note that in real world situations the multi-threaded versions are going to be even performant compared to the monothreaded ones, because all the work like accessing a database and treating the request is going to be done inside the spawned threads and not in the main thread.
+
+*** Conclusion
+The standard library HTTP server is not made to be performant or either in production. Its main goal is to test the HTTP client.
+Right now there are [[https://github.com/ziglang/zig/issues?page=1&q=is%3Aissue+is%3Aopen+http+server][no plans]] to change the HTTP server implementation to make it better, but to do so I would guess that they would have to work on 2 mains points:
+- Using non-blocking IO, which is unlikely to happen before the =async/await= feature is implemented back in the language or a polling mechanism like epoll is used.
+- Upgrade from HTTP/1.1 to HTTP/2 or even HTTP/3, because the HTTP/1.1 implementation is limiting in terms of performances.

@@ -1,4 +1,4 @@
-#+title: Zig package manager
+#+title: Package manager
 #+weight: 6
 
 ** Zig package manager
