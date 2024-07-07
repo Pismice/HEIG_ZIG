@@ -17,7 +17,7 @@ There are only 4 different build modes:
 - =ReleaseSafe=
 - =ReleaseSmall=
 
-You can check them in more details [[https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html][here]]
+You can check them in more details [[https://ziglang.org/documentation/master/#Build-Mode][here]]
 
 There are also a few other options you can tweak like avx [[https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html][here]]
 

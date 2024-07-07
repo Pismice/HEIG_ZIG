@@ -1,4 +1,7 @@
-*** OS threads (std)
+#+title: Threads from the std
+#+weight: 3
+#+hugo_cascade_type: docs
+
 **** Basics
 Spawning OS thread in Zig is quite simple, since it is built-in in the standard library. Here is an example of how to spawn 2 threads that are going to print numbers from 0 to x in parallel:
 #+begin_src zig :imports '(std) :main 'no :testsuite 'no

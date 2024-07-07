@@ -112,6 +112,7 @@ Your entry file looks like this.
 #+end_src
 
 In this endpoint you can pass data to your =zmpl= file. Like here where we pass the =name= parameter of the request or the default "Jeremie" string.
+
 #+begin_src zig
   pub fn index(request: *jetzig.Request, data: *jetzig.Data) !jetzig.View {
       var object = try data.root(.object);
@@ -139,8 +140,23 @@ And if you visit =http://localhost:8080/viewo?name=John= you will get the person
 #+end_src
 
 **** Cookies
-TODO
+You can do exactly the same but with cookies.
+#+begin_src zig
+pub fn index(request: *jetzig.Request, data: *jetzig.Data) !jetzig.View {
+    var object = try data.root(.object);
 
+    var cookies = try request.cookies();
+    try cookies.put(.{ .name = "username", .value = "Spongebob" });
+
+    if (cookies.get("username")) |name| {
+        try object.put("name", name.value);
+    } else {
+        try object.put("name", data.string("unknown"));
+    }
+
+    return request.render(.ok);
+}
+#+end_src
 
 **** Tailwind Middleware
 One of the upcoming features of Jetzig is a Tailwind middleware that allow to only include the CSS rules used by your project to keep the file size as small as possible, however before this feature comes out you have two options.
@@ -214,4 +230,4 @@ To leverage the middleware just uncomment this line in the =main.zig= file.
 Other than that you can just use HTMX as you would normally do.
 
 **** Conclusion
-- generated code come with lots of comments
+Jetzig is a very complete and begginer friendly web framework, the CLI guides by creating whatever you need and puting it in the right place, making all the Jetzig projects follow the same structure. The framework is currently under heavy deployment and plan to add even more features like database integration into the project. The templating language allow you to develop your frontend and backend in the same language, which is a great advantage for small projects. The only downside is that there are a lot of features and not all of them are deeply documented yet, note that all the the generated code is heavily commented so you can try to understand what is happening by reading the source code.

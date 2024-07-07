@@ -1,3 +1,7 @@
+#+title: async/await
+#+weight: 2
+#+hugo_cascade_type: docs
+
 *** Officials, not supported anymore async/await
 This method uses suspensible stackless coroutines, this solution does not necessarly mean that you are going to have multiple threads or parallelism.
 

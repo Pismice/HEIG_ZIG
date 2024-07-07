@@ -1,3 +1,7 @@
+#+title: Zigcoro
+#+weight: 2
+#+hugo_cascade_type: docs
+
 *** zigcoro
 [[https://github.com/rsepassi/zigcoro][This solution]] uses stackful asymmetric coroutines.
 This library is made to provide similar functionalities to async/await "old" model, so that if/when the official async/await solution is coming back, it will be easy to switch your project from using zigcoro to the official async/await. Under the hood this library uses the [[https://github.com/mitchellh/libxev][libxev]] library that we talked about earlier in order to have an event loop.
@@ -54,7 +58,8 @@ First we are going to run all of them in a single-threaded environment, so that 
   }
 #+end_src
 
-I tried to make inter-thread communication with chanels by modifying this exemple but I could not do it. I opened [[https://github.com/rsepassi/zigcoro/issues/22][an issue]] on the zigcoro repository to ask for help. I am waiting for a response before making any conclusion.
+Note that chanels are made for inter coroutine communication only. I tried to use them for inter thread communication but it can not work as states in this [[https://github.com/rsepassi/zigcoro/issues/22][issue]].
 
-Zigcoro is only maintained by 2 people, even though they still update frequently for the new zig versions, the library has not evolved for a while and there are some PR that are just hanging there for a while. If chanels can work to make inter-thread synchronization possible, it might be a good library.
+Zigcoro is only maintained by 2 people, even though they still update frequently for the new zig versions, the library has not evolved for a while and there are some PR that are just hanging there for a while.
 
+The library can still be useful to leverage async/await powers before Zig makes it official with its own event loop as well and not [[https://github.com/mitchellh/libxev][libxev]].

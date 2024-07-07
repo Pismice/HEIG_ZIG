@@ -1,0 +1,41 @@
+#+title: Conclusion
+#+weight: 100
+#+hugo_cascade_type: docs
+
+Zig is a really new language which is not very mature yet, that is why you mind find only a few ressources online about the state of concurrency in Zig. However there are already a few pioneers who have really intersting projects or talks. The first that greatly helped understand concurency especially in Zig is [[https://x.com/kingprotty?lang=en][King Protty]] who answered a few of my questions on the Zig Discord server and also made 2 nice videos [[https://www.youtube.com/watch?v=8k33ZvWYQ20][1]] [[https://www.youtube.com/watch?v=Ul8OO4vQMTw][2]]. The big project that uses concurency in Zig is [[https://tigerbeetle.com/][TigerBeetle]] who designed a highly efficient database engine using.
+
+The normal way to do async IO in Zig would be to use its async/await feature, but since it is not supported anymore it is completly out of the picture for now. If you still find it interesting to work this way then Zigocor might be the best fit since it is almost the interface so when async/await will come back into the language it will be an easy migration, except if the async/await of the language release breaking changes.
+
+The most traditional way to deal with asynchronous code would be to use Kernal threads that are disposable in standard library making it easy to use without having to import any external library. The basic functionnalites are very equivalent to those of [[https://man7.org/linux/man-pages/man7/pthreads.7.html][POSIX threads]] making it easy to understand for any C developer.
+
+If you want to monitor non-blocking IO operations without spawning kernel threads which have a big overhead, libuv is the event loop that you should use and epoll if you prefer a lower abstraction level and only need to work linux.
+
+If none of those solutions fit your needs, don't forget that you can always use any C library.
+
+** Sources:
+- https://dl.acm.org/doi/pdf/10.1145/1462166.1462167
+- https://www.lua.org/pil/9.1.html
+- https://blog.orhun.dev/zig-bits-04/ (regarder regul pour voir si il m a rep)
+- https://github.com/mitchellh/libxev/issues/92 (regul ...)
+- ChatGPT et GH Copilot
+- https://github.com/lewissbaker/cppcoro
+- https://ericniebler.com/2020/11/08/structured-concurrency/
+- https://en.wikipedia.org/wiki/Fiber_(computer_science)
+- https://github.com/rsepassi/zigcoro
+- https://github.com/mitchellh/libxev
+- https://github.com/libuv/libuv
+- https://github.com/libuv/libuv/blob/v1.x/docs/src/guide/basics.rst
+- https://docs.libuv.org/en/v1.x/guide/basics.html (ptetre le meme que celui au dessus)
+- https://github.com/dotnet/runtimelab/issues/2398
+- https://kristoff.it/blog/zig-colorblind-async-await/
+- https://tigerbeetle.com/blog/a-friendly-abstraction-over-iouring-and-kqueue/
+- https://docs.libuv.org/en/v1.x/design.html#the-i-o-loop
+- https://docs.libuv.org/en/v1.x/guide/threads.html
+- https://softwareengineering.stackexchange.com/questions/254140/is-there-a-difference-between-fibers-coroutines-and-green-threads-and-if-that-i
+- https://github.com/ziglang/zig/issues/6025
+- https://www.reddit.com/r/Zig/comments/177e4cb/what_are_you_doing_for_async/
+- https://github.com/catdevnull/awesome-zig?tab=readme-ov-file#network
+- https://stackoverflow.com/questions/41891989/what-is-the-difference-between-asymmetric-and-symmetric-coroutines
+- https://www.baeldung.com/java-threading-models#:~:text=The%20big%20difference%20between%20green,executing%20at%20any%20given%20time.
+- https://stackoverflow.com/questions/28977302/how-do-stackless-coroutines-differ-from-stackful-coroutines
+

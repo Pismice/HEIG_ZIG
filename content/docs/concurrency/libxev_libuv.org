@@ -1,3 +1,7 @@
+#+title: Event loops (libxev/libuv)
+#+weight: 60
+#+hugo_cascade_type: docs
+
 *** libxev/libuv
 [[https://github.com/mitchellh/libxev][Libxev]] is a Zig library that provides an event loop for non-blocking IO. The project state is "alpha-ish" to cite them from their README. 
 
@@ -14,7 +18,7 @@ In order to use [[https://libuv.org/][libuv]], which a C library in your project
   #+end_src
   
   After that we are going to reproduce the basic exemple in C provided by the [[https://docs.libuv.org/en/v1.x/guide/basics.html][libuv documentation]] in Zig, so here is the C code:
-  #+begin_src c
+#+begin_src c
   #include <stdio.h>
   #include <uv.h>
   

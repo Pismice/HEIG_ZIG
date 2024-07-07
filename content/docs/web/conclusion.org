@@ -2,8 +2,35 @@
 #+weight: 100
 #+hugo_cascade_type: docs
 
+Before we take any conclusion we are going to take a look at the pure performances of those solutions with a benchmark very highly inspired by the author of the Zap framework but tuned to suit my needs that you can find [[https://github.com/Pismice/wrk-graph-benchmarks][here]].
+
+I thus decided to compare the performances of all the solutions using this tool. All of those servers simply return a "Hello" message when the "/" endpoint is called.
+#+CAPTION: Requests per second for different frameworks
+#+NAME:   fig:SED-HR4049
+[[/images/all_zig_solutions.png]]
+{{< callout type="warning" >}}
+  I used the "dev" branch of the tokamak framework, which is not the one I used on its chapter and is not officialy out yet !
+{{< /callout >}}
+
+Note that benchmarks like that are not ground truth, they might be misleading for multiple reasons:
+- They dont represent real life situations, just a simple "Hello World" message
+- The OS might decide to give different ressources at different times, which might lead to small imprecisions
+- Depends on what you are doing at the sime time on the machine
+- The person writing the benchmarks might have miss some optimizations possible for some frameworks
+
+The first thing we notice is how bad the standard library server is. I used the best performing implementations I found from my chapter on this std solution. Even though it is multi threaded the implementation as said in the corresonding chapter is not made to be performant. So no suprise here, use std.http.Server only when doing a simple test but not a real workd application.
+
+For the remaining three they almost all are in the same range of performances. There is thing that is a bit disturbing is that Tokamak and Jetzig both use http.zig under the hood but still have relatively consequent differences. This is probably the case because Jetzig is heavily batteries included and does a lot of thing under hood, so even when wanting a simple "hello world" a lot fo work is done which might the reason for this difference. Note that in real world applications the gap might be closing for those two solutions.
+
+TODO je ne comprends pas comment tokamak peut avoir autant l avantange sur zap, je suis donc en trian de lui parler sur discord pour tenter de comprendre
+
+
+As we can see performance wise no solution truly stands out. Except the standard library which we are not even going to consider further.
+
+The choice of your framework is thus probably going to be made on an other criteria: user experience. Tokamak is probably going to be the one who has a slight disadvantage here since it is the least popular and the least documented. Going with Tokamak might be a big risk since it is only maintend by 1 person and as a reminder today it is still on Zig version 0.11.0 while the latest official release is 0.13.0. 
+
+For the two remaining they are both well documented and have a good amount of users but there approach is really different. Zap has a lot of basic examples available on Github and is the most poplular solution with 2000 stars compared to 333 stars for Jetzig making it the most battle test one. Zap is also already used in production by the author of the framework. Jetzig on the contrary is a more recent solution, more batteries included meaning you will have way less boilerplate. 
+
+It is completly a personal opinion but I felt overall like the Jetzig community was the most helping and welcoming one. They even let me become one of the contributor by fixing a small error I found in the codebase (completly unbiased opinion ^^). Their [[https://www.jetzig.dev/][website]] also is a nice showcase and a must for attracting and gaining new users.
+
 Zap is the way to go if it is needed to make a minimal REST API. Other than that it quickly becomes a nightmare, there are a lot of boilerplates and the code is very hard to produce and understand. Even though the performance is quite good, you can achieve almost the same things using languages like Go or Rust with a lot less effort for almost the same performances.
-
-TODO: I can not make a complete conclusion yet since I havent explored all the solutions.
-TODO: Take the benchmarks used for zap and add tokamak and jetzig and zig std (already done zap and zig std)
-
