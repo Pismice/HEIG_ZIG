@@ -1,4 +1,0 @@
-**** Technology choices
-***** WEB server
-***** Database
-***** Frontend

@@ -3,3 +3,5 @@
 #+hugo_cascade_type: docs
 
 TODO
+
+To see a good concrete example where you set IO to non-blocking and then use epoll to wait for IO completion, http.zig is a [[https://github.com/karlseguin/http.zig/blob/0b716e27d2e361c5b12983576cadbf922e012dd1/src/worker.zig#L164][good example]].

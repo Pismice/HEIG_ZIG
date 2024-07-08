@@ -1,0 +1,7 @@
+#+title: Project: Gym tracking application
+#+weight: 101
+#+hugo_cascade_type: docs
+#+math: true
+
+*** Motivations
+
