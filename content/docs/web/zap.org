@@ -193,7 +193,7 @@ The benchmarks compare 2 different metrics:
 [[/images/req_per_sec_graph.png]]
 #+CAPTION: Requests per second for different frameworks
 #+NAME:   fig:SED-HR4049
-[[/req_per_sec_graph.png]]
+[[/HEIG_ZIG/images/req_per_sec_graph.png]]
 
 #+CAPTION: Transfers per second for different frameworks
 #+NAME:   fig:SED-HR4049
