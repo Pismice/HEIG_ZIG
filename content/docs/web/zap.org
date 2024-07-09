@@ -44,7 +44,7 @@ Since Zap is just a wrapper around [[https://facil.io/][facil.io]], they have ve
 
 #+CAPTION: Transfers per second for different frameworks
 #+NAME:   fig:SED-HR4049
-[[/images/facilio.png]]
+[[/HEIG_ZIG/images/facilio.png]]
 Note that I did add a few other random web servers in order to get the order of magnitude right.
 
 **** Basic example
@@ -190,14 +190,11 @@ The benchmarks compare 2 different metrics:
 
 #+CAPTION: Requests per second for different frameworks
 #+NAME:   fig:SED-HR4049
-[[/images/req_per_sec_graph.png]]
-#+CAPTION: Requests per second for different frameworks
-#+NAME:   fig:SED-HR4049
 [[/HEIG_ZIG/images/req_per_sec_graph.png]]
 
 #+CAPTION: Transfers per second for different frameworks
 #+NAME:   fig:SED-HR4049
-[[/images/xfer_per_sec_graph.png]]
+[[/HEIG_ZIG/images/xfer_per_sec_graph.png]]
 
 Those benchmakrs are in my opinion well made because they assure a good thread equity between the different frameworks by providing 4 threads for the server and 4 thread for the wrk client for all the frameworks.
 #+begin_src shell
