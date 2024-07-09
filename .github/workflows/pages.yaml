@@ -57,11 +57,11 @@ jobs:
         run: |
           hugo \
             --gc --minify \
-            --baseURL "${{ steps.pages.outputs.base_url }}/HEIG_ZIG"          
+            --baseURL "${{ steps.pages.outputs.base_url }}/"          
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./public
+          path: ./HEIG_ZIG/public
 
   # Deployment job
   deploy:
