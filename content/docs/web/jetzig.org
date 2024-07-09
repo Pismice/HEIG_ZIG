@@ -31,7 +31,8 @@ You can use this command to see all the available commands:
 The CLI can do far more than simply generate a new project, it can generate all the different components of a Jetzig project, such as views, layouts and middlewares.
 
 **** Project structure
-Since the framework is quite opinionated because of the fact that it is heavily batteries included, you are going to have a strict complex project structure to comply with.
+The framework being very opinionated, it forces the user to comply to a strict project structure that looks like this.
+
 {{< filetree/container >}}
   {{< filetree/folder name="public" >}}
     {{< filetree/file name="favicon.ico" >}}
@@ -234,4 +235,4 @@ To leverage the middleware just uncomment this line in the =main.zig= file.
 Other than that you can just use HTMX as you would normally do.
 
 **** Conclusion
-Jetzig is a very complete and begginer friendly web framework, the CLI guides by creating whatever you need and puting it in the right place, making all the Jetzig projects follow the same structure. The framework is currently under heavy deployment and plan to add even more features like database integration into the project. The templating language allow you to develop your frontend and backend in the same language, which is a great advantage for small projects. The only downside is that there are a lot of features and not all of them are deeply documented yet, note that all the the generated code is heavily commented so you can try to understand what is happening by reading the source code. Having such an opiniated framework can also be annyoing sometimes, for example you have to have 1 file per endpoint plus a whole folder containing all the different possible views for each endpoint, this can be problematic if you write a lot of small endpoints, having to have at least 2 files and 1 folder for each of them can be a bit annoying.
+Jetzig is a very complete and begginer friendly web framework, the CLI guides by creating whatever you need and puting it in the right place, making all the Jetzig projects follow the same structure. The framework is currently under heavy development and plan to add even more features like database integration into the project. The templating language allows you to develop your frontend and backend in the same language, which is a great advantage for small projects. The only downside is that there are a lot of features and not all of them are deeply documented yet, note that all the the generated code is heavily commented so you can try to understand what is happening by reading the source code. Having such an opiniated framework can also be annyoing sometimes, for example you have to have 1 file per endpoint plus a whole folder containing all the different possible views for each endpoint, this can be problematic if you write a lot of small endpoints, having to have at least 2 files and 1 folder for each of them can be a bit annoying.

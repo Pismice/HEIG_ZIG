@@ -59,12 +59,12 @@ Or get the needed information from the command line
   lscpu
 #+end_src
 
-I then decided to 7 different implementations:
+I then developed to 7 different implementations:
 - The implementation from the exact code above
 - 2 monothreaded implementations, one with the accept in the main thread and the other with the accept in the spawned thread
-- 4 multi-threaded implementations, 2 with the accept in the main thread and the other 2 with the accept in the spawned thread with different allocated number threads.
+- 4 multi-threaded implementations, 2 with the accept in the main thread and the other 2 with the accept in the spawned thread with different allocated number of threads.
 
-All the variations except the first one are based on this one, I just comment/uncomment a few lines to change the implementation.
+All the variations except the first one are based on this one code, I just comment/uncomment a few lines to change the implementation.
 #+begin_src zig
   const std = @import("std");
   
@@ -185,11 +185,13 @@ All the variations except the first one are based on this one, I just comment/un
   }
 #+end_src
 
+I then tested with [[https://github.com/wg/wrk][wrk]] how many requests per second each implementation could handle, which is the main performance metrics of an HTTP server. Here are the results:
+
 #+CAPTION: Requests per second for different frameworks
 #+NAME:   fig:SED-HR4049
 [[/HEIG_ZIG/images/std.png]]
 
-The first main conclusion we can take from this benchmark are that the std.http.Server can be made more performant by multithreading it without big code changes. 
+The first main conclusion we can take from this benchmark is that the std.http.Server can be made more performant by multithreading it without big code changes. We can see that the =std-monothread-accept= implementation is around 5k requests per second, and just by spawning threads we can reach teh 15k requests per second.
 
 The second conclusion is that it could be slightly better to open a few threads, 6 or 12 in our case and have all of those threads waiting on the =server.accept()= instead of having only the main thread waiting and then dispatching to a newly spawned thread.
 

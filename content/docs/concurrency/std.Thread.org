@@ -23,7 +23,7 @@ Spawning OS thread in Zig is quite simple, since it is built-in in the standard 
 #+end_src
 Note that the std.Thread also offer few other useful functions like `std.Thread.getCpuCount()` to get the number of CPU cores available on the machine.
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
-std.debug.print("Total CPU cores = {!}\n", .{std.Thread.getCpuCount()});
+  std.debug.print("Total CPU cores = {!}\n", .{std.Thread.getCpuCount()});
 #+end_src
 
 **** Thread pool
@@ -59,7 +59,7 @@ The advantage of doing multi-threading in Zig is that you don't have to worry ab
 
 In C if you are using Windows for exemple, since **pthreads** it is not natively supported you would have to use a third-party implementation by adding a compilation flag like so:
 #+begin_src c
-gcc program.c -o program -pthread
+  gcc program.c -o program -pthread
 #+end_src
 
 Or worse, you would have to use a completly different library ending up with a lot of pre-processor directives to check if you are using Windows or not which is going to lead to messy code:

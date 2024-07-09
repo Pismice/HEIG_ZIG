@@ -6,11 +6,10 @@
 [[https://github.com/cztomsik/tokamak/tree/main][This server-side web framework]] has been created on April 2024 by [[https://github.com/cztomsik][cztomsik]]. It currently ammounst 238 stars on GitHub, has 4 contributors, 0 release and is currently still in early development stage. Despite that, the author is using it in a project that is to be soon in production.
 
 One of the core concepts of Tokamak is to heavily leverage dependecy injection to make the development of web applications easier. As far as I know it is the only web framework in Zig that does that.
-has the main characteristic of working a lot with dependency injection which we are going to tackle the concept futher in this post.
 
-If you have trouble understanding what Tokamak is but you are more familiar with the Java world, know that thhe author claim that Tokamak is to http.zig what Spring it to Servlets in the Java world. Basically an abstraction layer on top of basics utilises like handling requests by adding things like Dependency Injection.
+If you have trouble understanding what Tokamak is but you are more familiar with the Java world, know that the author claims that Tokamak is to http.zig what Spring it to Servlets in the Java world. Basically, it is an abstraction layer on top of basics utilises like handling requests by adding things like Dependency Injection.
 
-**** Dependency Injection
+**** Dependency Injection (DI)
 To illustrate what DI is and why it is uses in Tokamak, let's have a look at an exemple given to me by the author itself.
 
 When writing a WEB application you might need multiple objects (dependencies) in various handlers. Those dependencies often being databases, loggers, etc. The most intuitive way to do it would be to pass each needed dependency as a parameter to each handler.
@@ -25,9 +24,9 @@ When writing a WEB application you might need multiple objects (dependencies) in
   web.get("/complex", complex(req, rep, db, logger, ...)) // This can get out of hand quickly
 #+end_src
 
-This solution might look cool at first, but one of the main reason I did not write it in Zig is because it is simply impossible to express that in the language because Zig does not support closures.
+This solution might look cool at first, but one of the main reason I or anyone did not write it in Zig is because it is simply impossible to express that in the language because Zig does not support closures. Except if you implement it yourself, like this [[https://zig.news/andrewgossage/implementing-closures-and-monads-in-zig-23kf][blog]] explains but that is not the point.
 
-An other basic and straight up solution would be to use global variables and just use them in the handlers. It work great but it is not a good practice to have global variables in your code. This makes the code coupled and harder to test and maintain.
+An other basic and forwrad solution would be to use global variables and just use them in the handlers. It work great but it is not a good practice to have global variables in your code. This makes the code coupled and harder to test and maintain.
 #+begin_src js
   // Our dependencies
   var logger = newLogger();
@@ -164,7 +163,7 @@ It is also easy to set cookies.
 All the examples above are compatible only with 0.11.0. Since at the time of writing this 0.13.0 is already out and the author is working on a new breaking version of the framework, I will not dig any deeper for the moment. But I plan to remake this documentation when the new version is out and 0.13.0 compliant.
 
 **** Conclusion
-From an user experience point of view everything is very understandable and easy to grasp compared to a micro-framework like Zap. The documentation minimal but still explores all of the main features of what it has to offer. The project is very young and small and mainly made by a single person. The author has been very responsive and useful to answer a lot of my questions so I thank him very much for that.
+From an user experience point of view everything is very understandable and easy to grasp compared to a micro-framework like Zap. The documentation is minimal but still explores all of the main features of what it has to offer. The project is very young and small and mainly made by a single person. The author has been very responsive and useful to answer a lot of my questions so I thank him very much for that.
 
 Performance wise, the framework is not the fastest out there. The main reason is because it uses =std.http= under the hood which is the blocking and slow official library. The author claims to change that to use [[https://github.com/karlseguin/http.zig][http.zig]] in the next update which should make the framework a lot faster.
 

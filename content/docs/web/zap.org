@@ -3,11 +3,12 @@
 #+hugo_cascade_type: docs
 
 **** Description
-[[https://github.com/zigzap/zap][Zap]] is a micro web framework that is mainly uses to write REST APIs.
+[[https://github.com/zigzap/zap][Zap]] is a micro web framework that is mainly used to write REST APIs.
 
-Zap isn't really a fully Zig project, it just wraps and leverages the power of [[https://facil.io][facil.io]]. By that I want to emphasize 2 things:
-- All the heavy lifting is done in C, so we can't give much of the performances merits to Zig on this
-- From the programmer point of view it seems to you like your project is 100% Zig, so you have no C overhead (except linking libc)
+Zap isn't really a fully Zig project, it just wraps and leverages the power of [[https://facil.io][facil.io]], which implies two things:
+
+- All the heavy lifting is done in C, so we can't give much of the performances merits to Zig on this apart from not adding heavy overhead.
+- From the programmer point of view it seems like your project is 100% Zig, so you have no C overhead, except having to link libc.
 
 Note that the exemple of code below is taken from the exemples from the Zap GitHub repository in order to best explain the basics of this web framework.
 
@@ -45,7 +46,7 @@ Since Zap is just a wrapper around [[https://facil.io/][facil.io]], they have ve
 #+CAPTION: Transfers per second for different frameworks
 #+NAME:   fig:SED-HR4049
 [[/HEIG_ZIG/images/facilio.png]]
-Note that I did add a few other random web servers in order to get the order of magnitude right.
+Note that I did add a few other web servers in order to get the comparison more meaningful.
 
 **** Basic example
 Getting a very simple Zap server up and running is quite straightforward. Example taken from one of the [[https://github.com/zigzap/zap/blob/master/examples/hello/hello.zig][examples]].
@@ -86,8 +87,8 @@ Getting a very simple Zap server up and running is quite straightforward. Exampl
 #+end_src
 
 **** Cookies and routes
-In this example heavily inspired from the [[][cookies.zig example]], [[https://github.com/zigzap/zap/blob/master/examples/http_params/http_params.zig][http_params.zig example]] and the [[][routes.zig example]] from the Zap repository, we can see how to set cookie with an eventual query parameter in one route and get the value of this same cookie in an other route.
-With this code with have some of the most basic features that a WEB API should contain.
+In this example, heavily inspired from the [[][cookies.zig example]], [[https://github.com/zigzap/zap/blob/master/examples/http_params/http_params.zig][http_params.zig example]] and the [[][routes.zig example]] from the Zap repository, we can see how to set cookie with an eventual query parameter in one route and get the value of this same cookie in an other route.
+This code has some of the most basic features that a WEB API should contain.
 #+begin_src zig
   const std = @import("std");
   const zap = @import("zap");
@@ -196,7 +197,7 @@ The benchmarks compare 2 different metrics:
 #+NAME:   fig:SED-HR4049
 [[/HEIG_ZIG/images/xfer_per_sec_graph.png]]
 
-Those benchmakrs are in my opinion well made because they assure a good thread equity between the different frameworks by providing 4 threads for the server and 4 thread for the wrk client for all the frameworks.
+Those benchmakrs are in my opinion well made because they assure a good thread equity between the different frameworks. By using [[https://man7.org/linux/man-pages/man1/taskset.1.html][tasket] we can set processes affinities which will increase reproductility by reducing the number of context switching and by imporving cache performances. This also assures a better load balancing between the differnt tasks.
 #+begin_src shell
   TSK_SRV="taskset -c 0,1,2,3"
   TSK_LOAD="taskset -c 4,5,6,7"
@@ -207,12 +208,12 @@ They also write all the outputs to =/dev/null= in order to avoid any IO bottlene
   $TSK_SRV zig build run /dev/null &
 #+end_src
 
-Aswell as having all the optimizations activated for all of the used frameworks and having the community optimizing and correcting them aswell, which makes it a fair comparison.
+As well as having all the optimizations activated for all of the used frameworks and having the community optimizing and correcting them aswell, which makes it a fair comparison.
 #+begin_src shell
   cd wrk/rust/bythebook && cargo build --release # we can see the release flag to optimize the compiled code
 #+end_src
 
-I am not going to explore the results of the benchmarks further in this chapter because it will be done in the =Conclusion= of the =WEB= chapter.
+I am not going to explore the results of the benchmarks further in this chapter because it will be done in the [[file:./conclusion][conclusion of the web chapter]].
 
 **** Templates
 Zap also comes with a buil-int templating system that is [[https://mustache.github.io/][Mustache]]. It is a very popular templating language that is used in a lot of other languages. We can find the [[https://mustache.github.io/mustache.5.html][documentation here]].
@@ -267,11 +268,11 @@ Hello {{name}}, this has been processed with Mustache on my Zap server :)
 **** Conclusion
 Zap is a very intersting project that is not used in production as far I know by anyone except by the author of the framework itself. So I couldn't find any repository of a project uszing zap anywhere, I tried asking on the official Discord but I didn't get any answer.
 
-Even though it should be working for almost all your use cases, it still is a microframework which means that there are not a lot of batteries included and if you need advanced features, you might have to those yourself.
+Even though it should be working for almost all your use cases, it still is a microframework which means that there are not a lot of batteries included and if you need advanced features, you might have to implement those yourself.
 
 Since Zig is a low level language and that the framework is very basic you are going to have a lot of boilerplate and small things like memory to manage manually. Those are things than can easily be avoided by using other languages like Java, Go and Node. You might end up writing a lot more code for things that could have been done easily with other solutions.
 
-It is also important to note that this is a young project with not a lot of contributors and a very small community. So if you are going to use Zap you might have to figure out things on your own or write on the [[https://discord.gg/gcZm8f8K][project discord]]. You might aswell find codes or documentations that are oudated.
+It is also important to note that this is a young project with not a lot of contributors and a very small community. So if you are going to use Zap you might have to figure out things on your own or write on the [[https://discord.gg/gcZm8f8K][zap discord]]. You might aswell find codes or documentations that are oudated.
 
 The fact that it comes with a lot of examples and that the author is very active is also a good sign and makes it easy for the user to take up the project and start coding, without it I personnaly highly doubt that I would have been able to code at least half of the examples without losing tons of hours reading the source code.
 

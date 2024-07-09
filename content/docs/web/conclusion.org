@@ -9,13 +9,13 @@ I thus decided to compare the performances of all the solutions using this tool.
 #+NAME:   fig:SED-HR4049
 [[/HEIG_ZIG/images/all_zig_solutions.png]]
 {{< callout type="warning" >}}
-  I used the "dev" branch of the tokamak framework, which is not the one I used on its chapter and is not officialy out yet !
+  I used the "dev" branch of the tokamak framework, which is not the one I used on its chapter and is not officialy out yet, but since it will be out soon it might be wiser to use this most recent one !
 {{< /callout >}}
 
 Note that benchmarks like that are not ground truth, they might be misleading for multiple reasons:
 - They dont represent real life situations, just a simple "Hello World" message
 - The OS might decide to give different ressources at different times, which might lead to small imprecisions
-- Depends on what you are doing at the sime time on the machine
+- Depends on what you are doing at the same time on the machine
 - The person writing the benchmarks might have miss some optimizations possible for some frameworks
 
 The first thing we notice is how bad the standard library server is. I used the best performing implementations I found from my chapter on this std solution. Even though it is multi threaded the implementation as said in the corresonding chapter is not made to be performant. So no suprise here, use std.http.Server only when doing a simple test but not a real workd application.
