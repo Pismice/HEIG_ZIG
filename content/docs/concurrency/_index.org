@@ -1,5 +1,5 @@
 #+title: Concurrency
-#+weight: 15
+#+weight: 80
 #+hugo_cascade_type: docs
 #+math: true
 

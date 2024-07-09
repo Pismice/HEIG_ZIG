@@ -2,7 +2,7 @@
 #+weight: 6
 
 ** Zig package manager
-Since 0.11, Zig has now an official built-in package manager named.
+Since 0.11, Zig has now an official built-in package manager that uses files with the =.zig.zon= extension.
 
 There is no global repository like [[https://crates.io][crates.io]](Rust) or [[https://npm.js.com][npmjs]](Node.js) for Zig packages. Instead, Zig packages are distributed as git repositories.
 

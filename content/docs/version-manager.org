@@ -2,7 +2,7 @@
 #+weight: 5
 
 ** Zig version manager
-Using ZIG before 1.0 might require you to often switch between master and the last official release.
+Using ZIG before 1.0 might require you to often switch between master and the last official release. Almost approximately every 3 months a new version is released.
 
 One solution would be to install both (or more) versions of ZIG and switch the PATH environment variable to the version you want to use.
 
