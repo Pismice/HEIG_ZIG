@@ -6,12 +6,13 @@
 [[https://github.com/rsepassi/zigcoro][This solution]] uses stackful asymmetric coroutines.
 This library is made to provide similar functionalities to async/await "old" model, so that if/when the official async/await solution is coming back, it will be easy to switch your project from using zigcoro to the official async/await. Under the hood this library uses the [[https://github.com/mitchellh/libxev][libxev]] library that we talked about earlier in order to have an event loop.
 
-But that is not the only features that zigcoro provide, it also provides chanels.
-Chanels are notably well known in Go, they are used to communicate between coroutines, they are a way pass data between them, it therefore is a good way to synchronize them.
+But that is not the only features that zigcoro provides, it also provides chanels.
+Chanels are notably well known in Go, they are used to communicate between coroutines, they are a way pass data to between coroutines.
 
-We are going to do the same thing in Zig in order to communicate between threads without basics thread synchronization primivites like mutexes or semaphores.
+**** Example
+Here I made a simple example where I simply use chanels to communicate between asynchronous funtions.
+I used an analogy to help understand better the code. A client wants its burder order to come to his house, for that the we create the road between the restaurant and the house =road_between_restaurant_and_house=, the delivery man then knows he has to do his job and that he will transmit the order through that road. The client then waits and listens for his order to arrive. Once the delivery man finished the job the order can be consumed by the =hungry_client=.
 
-First we are going to run all of them in a single-threaded environment, so that we can familiarize with the syntax.
 #+begin_src zig
   const std = @import("std");
   const libcoro = @import("libcoro");
@@ -26,7 +27,7 @@ First we are going to run all of them in a single-threaded environment, so that 
       var exec = libcoro.Executor.init();
       libcoro.initEnv(.{ .stack_allocator = allocator, .executor = &exec });
   
-      // Creation of a Type that represents a channel that can passe floats
+      // Creation of a Type that represents a channel that can passe Burger Orders
       const BurgeOrderChanel = libcoro.Channel(BurgerOrder, .{});
   
       // Creation of a channel that can pass Burger Orders
@@ -37,11 +38,6 @@ First we are going to run all of them in a single-threaded environment, so that 
   
       const hungry_client = try libcoro.xasync(recvr, .{&road_between_restaurant_and_house}, null);
       defer hungry_client.deinit();
-  
-      while (exec.tick()) {
-          // While there are deliveries to do, they will be made
-          // After that point, the delivery man does not take any more orders
-      }
   
       libcoro.xawait(delivery_man); // Delivery man finished his job
       const order = libcoro.xawait(hungry_client); // Hungry client received his order
@@ -58,7 +54,7 @@ First we are going to run all of them in a single-threaded environment, so that 
   }
 #+end_src
 
-Note that chanels are made for inter coroutine communication only. I tried to use them for inter thread communication but it can not work as states in this [[https://github.com/rsepassi/zigcoro/issues/22][issue]].
+Note that chanels are made for inter coroutine communication only. I tried to use them for inter thread communication but it can not work as stated in this [[https://github.com/rsepassi/zigcoro/issues/22][issue]].
 
 Zigcoro is only maintained by 2 people, even though they still update frequently for the new zig versions, the library has not evolved for a while and there are some PR that are just hanging there for a while.
 

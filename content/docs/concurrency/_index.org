@@ -1,24 +1,21 @@
 #+title: Concurrency
-#+weight: 30
+#+weight: 15
 #+hugo_cascade_type: docs
 #+math: true
 
 ** Introduction
 The objectives of this chapter is to go in depth about the different ways to do concurrency in ZIG.
 
-We are first going to explore a few definitions and concepts that are going to be useful to understand the rest of the chapter.
-
-Then we are going to explore the different ways we could achieve concurrency in Zig.
-
+We are first going to explore a few definitions and concepts that are going to be useful to understand the rest of the chapter. Then we are going to explore the different ways we could achieve concurrency in Zig.
 By the end you should be able to see the pros and cons of each solution and choose the one that fits your needs to develop your next Zig projects.
 
 ** Definitions
-Before diving into the different ways to do concurrency in ZIG, let's first define some terms that are useful to understand the basics of concurrency (not related to Zig). Some terms we are going to explain here might not even be needed in the next sections, but might help you clarify your concurency concepts.
+Before diving into the different ways to do concurrency in ZIG, let's first define some terms that are useful to understand the basics of concurrency that are not necessarly related to Zig. By the end of reading the definitions you should have a better understanding about the implementations we are going to see later.
 
-It is important to note that the borders between some definitions are really blur and it is possible that you read a slightly different definition in another source.
+It is important to note that the boundaries between some definitions are really blur and it is possible that you read a slightly different definition from an other source.
 
 *** Coroutine
-Courtines enable the management of concurrent tasks like callbacks do (which make them not concurrent by nature but they are a tool to achieve concurrency). Their great power lies in their ability to write concurent task like you would write sequential code. They achieve this by yielding control between them. They are used for cooperative multitasking, since the control flow is managed by themselves and not the OS. You might see them in a lot of languages like Python, Lua, Kotlin, ... with keywords like **yield**, **resume**, **suspend**, ...
+Courtines enable the management of concurrent tasks like callbacks do (which make them not concurrent by nature but they are a tool to achieve concurrency). Their great power lies in their ability to write concurent tasks like you would write sequential code. They achieve this by yielding control between them. They are used for cooperative multitasking, since the control flow is managed by themselves and not the OS. You might see them in a lot of languages like [[https://docs.python.org/3/library/asyncio-task.html][Python]], [[https://www.lua.org/pil/9.1.html][Lua]], [[https://kotlinlang.org/docs/coroutines-overview.html][Kotlin]] with keywords like **yield**, **resume** and **suspend**.
 
 Coroutines can be either stackful or stackless, we are not gonna dive deep into this concept since most of the time you are going to use stackful coroutines since they allow you to suspend from within a nested stackframe (the only strength of stackless coroutines: efficiency)
 
@@ -30,7 +27,13 @@ The only way to transfer the control flow is by explicitly passing control **to 
 **** Asymmetric coroutines (called asymmetric because the control-transfer can go both ways)
 - They have two control-transfer mechanisms:
 1. invoking another coroutine which is going to be the subcoroutine of the calling coroutine
-2. suspending itself and giving control back to the caller
+2. suspending itself and giving control back to the caller, meaning that the coroutine does not have to specifiy to which coroutine it is going to give the control back.
+
+#+CAPTION: Asymmetric coroutines
+#+NAME:   fig:SED-HR4049
+[[/HEIG_ZIG/images/coroutines.png]]
+
+You can get more infromations about those 2 last concepts by reading this [[https://stackoverflow.com/questions/41891989/what-is-the-difference-between-asymmetric-and-symmetric-coroutines][StackOverflow thread]].
 
 *** Green threads (userland threads)
 Green threads, also known as userland threads are managed by a runtime or VM (userspace either way) instead of the OS scheduler (kernel space) that manages standard kernel threads. 
@@ -45,7 +48,7 @@ Be careful when using green threads not to use blocking functions, because block
 *** Preemptive multitasking
 In preemptive multitasking it is the underlying architecture (not us, but the OS or the runtime for exemple) that is in charge of choosing which threads to execute and when. This implies that our threads can be stopped (preempted) at any time, even if it is in the middle of a task. 
 
-This method gives the advantage of not having to worry about a thread being starved, since the underlying architecture is going to make sure that everyone gets enough CPU time. As we can see in the 2 graphs for preemptive and cooperative multitasking, the preemptive multitasking might context switch our tasks too much, which can lead to a lot of overhead.
+This method gives the advantage of not having to worry about a thread being starved, since the underlying architecture is going to make sure that everyone gets enough CPU time. As we can see in the 2 graphs for preemptive and cooperative multitasking, the preemptive multitasking might context switch our tasks too much, which can lead to a lot of undersiable overhead.
 
 There is an interesting thing that is happening in this graph, at the end we see that task 1 is only doing a very small job, which cost a context switch for almost no job, but the scheduler does not know that a task remains only a small job until done and can context switch it.
 #+CAPTION: Preemptive multitasking
@@ -63,7 +66,7 @@ In cooperative multitasking, we can yield the control back whenever we want, whi
 [[/images/coop.svg]]
 
 *** Kernel threads
-Multithreading, it is the most basic and history way to do concurrency, it works by running the work on multiple threads that are going to be exectued in parallel (if the CPU can), each thread runs independently of the others. Unlike asynchronous event-driven programming, threads typically block until their assigned task completes.
+Multithreading, it is the most basic and historical way to do concurrency, it works by running the work on multiple threads that are going to be exectued in parallel (if the CPU can), each thread runs independently of the others. Unlike asynchronous event-driven programming, threads typically block until their assigned task completes.
 
 Threads are managed by the OS scheduler which is going to decide when to execute which thread.
 
@@ -74,7 +77,7 @@ However, scalability can become a concern when managing numerous threads. The ov
 To avoid this overhead, thread pools are often used, which manage a set of threads that can be reused for multiple tasks. This approach reduces the overhead of creating and destroying threads for each task, making it more efficient and scalable.
 
 *** Event-driven programming
-Event-driven programming, is basically an event loop that listen for "events". This architecture. Under the hood this works by having an event loop that is going to poll for events and check regulary if an event has been emitted. Those events can be for exemple interupts or signals.
+Event-driven programming, is basically an event loop that listen for "events". Under the hood this works by having an event loop that is going to poll for events and check regulary if an event has been emitted. Those events can be for exemple interupts or signals.
 
 *** Asynchronous programming (non-blocking IO)
 Asynchronous IO can be achieved by opening non-blocking sockets and the by using one of those 2 methods:

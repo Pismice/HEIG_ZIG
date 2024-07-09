@@ -27,7 +27,7 @@ std.debug.print("Total CPU cores = {!}\n", .{std.Thread.getCpuCount()});
 #+end_src
 
 **** Thread pool
-You could also use a thread pool in order to have a few threads to multiple jobs and not 1 thread = 1 job
+You could also use a thread pool in order to have a few threads to multiple jobs and not a thread per job.
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
   pub fn main() !void {
       var gpa = std.heap.GeneralPurposeAllocator(.{}){};
@@ -55,9 +55,9 @@ You could also use a thread pool in order to have a few threads to multiple jobs
 **** Implementation in the std
 Under the hood the threads are either pthread ([[https://ziglang.org/documentation/master/std/#std.Thread.use_pthreads][if we are under linux AND linking libc]]) or it is simpy going to use native OS threads (syscalls) wrapped by a Zig implementation. 
 
-The advantage of doing multi-threading in Zig is that you don't have to worry about what is the target system going to be, since **std.Thread** implementation automatically chooses the native OS threads for the system your are compiling for (except if you want to enforce the use of pthreads). 
+The advantage of doing multi-threading in Zig is that you don't have to worry about what the target system is going to be, since **std.Thread** implementation automatically chooses the native OS threads for the system your are compiling for, except if you want to enforce the use of pthreads by linking the libc. 
 
-In C if you are using Windows for exemple, since **pthreads** it is not natively supported you would have to use a third-party implementation by adding a compilation tag like so:
+In C if you are using Windows for exemple, since **pthreads** it is not natively supported you would have to use a third-party implementation by adding a compilation flag like so:
 #+begin_src c
 gcc program.c -o program -pthread
 #+end_src
@@ -171,7 +171,7 @@ Or you could write your own wrapper kind of like the way Zig does (this is not g
 ***** Zig pthreads vs LinuxThreadImpl vs C pthreads
 When compiling on Linux, by default your threads are going to use the [[https://github.com/ziglang/zig/blob/28476a5ee94d311319941b54e9da66210690ce70/lib/std/Thread.zig#L1042][LinuxThreadImpl]]. Which under the hood simply is a wrapper around some syscalls in order to manage threads (the code does closely the same thing as the pthread code).
 
-You might have notice that when you are linking libc, Zig is going to use pthreads instead of the LinuxThreadImpl. This is because pthreads are more performant at the moment and since you are already linking libc it is better to take advantage of that and ue pt hreads.
+You might have notice that when you are linking libc, Zig is going to use pthreads instead of the LinuxThreadImpl. This is because pthreads are more performant at the moment and since you are already linking libc it is better to take advantage of that and ue pthreads.
 
 In order to verify that we are going to benchmarks 3 different implementations: one in Zig using LinuxThreadImpl, one in Zig using pthreads and one in C using pthreads.
 
@@ -199,12 +199,14 @@ Note that it is hard to benchmark thread implementations and you can easily end 
   fn goTo() void {}
 #+end_src
 
-If we run this code with hyperfine (100 runs) once while linking libc (using pthreads),once in vanilla mode (using LinuxThreadImpl) and a list time using pthreads with C, we can sometimes see that there is indeed a slight performance difference between the them:
+If we run this code with hyperfine (100 runs) once while linking libc (using pthreads),once in vanilla mode (using LinuxThreadImpl) and a list time using pthreads with C, we can see that they overlap in the measure variablity, so we can conclude that the performances probably will not change between the different implementations:
 - Zig pthreads = 274.4 ms += 4.7 ms
 - LinuxThreadImpl = 276.7s ms += 33.9 ms
 - C pthreads =  272.7 ms += 34.0 ms
 
-Those test have been run multiple times on different days and the results can vary a bit, but all the implementations can beat each others from time to time, since it is heavily dependent on the OS scheduler and not themselves.
+I tried having 100'000 threads instead of 10'000 but I ran out of memory.
+
+Those test have been run multiple times on different days and the results can vary a bit, but all the implementations can beat each others from time to time, since it is heavily dependent on the OS scheduler and not the thread implementations themselves.
 
 The difference is so small that even when only spawning and destroying threads we barely see it. In a real world application where this would very unlikely be the bottleneck, which thread implementation you are going to use is very likely to not change anything the way your program perform.
 
@@ -293,7 +295,7 @@ And the equivalent C code:
 **** Leaky abstraction
 There are 2 things you can tweak when using *std.Thread*: the stack size and the allocator.
 
-The allocator you pass is only going to be needed only if you use the [[https://ziglang.org/documentation/master/std/#std.Thread.WasiThreadImpl][WasiThreadImpl]] (which is the default implementation for WebAssembly).
+The allocator you pass is only going to be needed if you use the [[https://ziglang.org/documentation/master/std/#std.Thread.WasiThreadImpl][WasiThreadImpl]] (which is the default implementation for WebAssembly). The reasons for that is that it needs the allocator to dynamically allocate the eventuals metadata that are going to be used by the thread. Here is the [[https://github.com/ziglang/zig/blob/1824bee579fffad3f17b639ebb1a94fd890ad68d/lib/std/Thread.zig#L918][code where you can see that]].
 #+begin_src zig
   fn spawn(config: std.Thread.SpawnConfig, comptime f: anytype, args: anytype) SpawnError!WasiThreadImpl {
     if (config.allocator == null) {
@@ -311,7 +313,7 @@ You wont't have to free it anyway since it is only used to be copied like we can
   allocator.free(self.thread.memory);
 #+end_src
 
-However, configuring the stack size is going to be used for every implementation of the threads. This is the default stack size:
+However, configuring the stack size is going to be used for every implementation of the threads. This is the [[https://github.com/ziglang/zig/blob/1824bee579fffad3f17b639ebb1a94fd890ad68d/lib/std/Thread.zig#L298][default stack size]]:
 #+begin_src zig
   /// Size in bytes of the Thread's stack
   stack_size: usize = 16 * 1024 * 1024

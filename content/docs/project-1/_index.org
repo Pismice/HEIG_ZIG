@@ -24,7 +24,7 @@ The overall architecture of the game will be the following, here we have an exam
 
 #+CAPTION: Requests per second for different frameworks
 #+NAME:   fig:SED-HR4049
-[[/images/architecture.svg]]
+[[/HEIG_ZIG/images/architecture.svg]]
 
 Since I will be using authentication and that some data might me sensible it is important to use HTTPS, since [[https://github.com/ziglang/zig/issues/17446][Zig does not support TLS]] I am going to use a reverse proxy like Nginx to handle the HTTPS.
 Since the NGINX and HTTP server are both going to be on the same machine, the security risks are minimal when both communicate in a non-encrypted manner.
@@ -32,7 +32,7 @@ Since the NGINX and HTTP server are both going to be on the same machine, the se
 Having that reverse proxy is mostly useful for security reasons and have no particular link with Zig so I will only do it if I have enough time.
 #+CAPTION: Requests per second for different frameworks
 #+NAME:   fig:SED-HR4049
-[[/images/https.svg]]
+[[/HEIG_ZIG/images/https.svg]]
 
 **** Frontend
 For the client application there is minimum one requirment being that the client has to be able to send and recevie HTTP requests. If I am using anything Zig related this should not be an issue since there is an [[https://ziglang.org/documentation/master/std/#std.http.Client][HTTP client]] in the standard library.
