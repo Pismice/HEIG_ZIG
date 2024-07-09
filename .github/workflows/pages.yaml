@@ -61,7 +61,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./HEIG_ZIG/public
+          path: ./public
 
   # Deployment job
   deploy:
