@@ -6,6 +6,12 @@ module:
 title: "Heig Zig documentation"
 languageCode: "en-us"
 
+params:
+  theme:
+    # light | dark | system
+    default: light
+    displayToggle: false
+
 menu:
   main:
     - name: Documentation
