@@ -3,21 +3,16 @@ Urgent:
 - [ ] MVP
 
 N importe quand:
-- [ ] Changer le _index.org qui fait qu on arrive sur Utils
 - [ ] Epoll (ptetre lier ca a BD ?)
-- [ ] error.CeQueJeVeux
-- [*] Corriger le feedback web et concu
+- [X] Corriger le feedback web et concu
 - [ ] tout relier et mettre Dans mes conclusion mettre des liens vers ma doc
-- [ ] Essayer export pdf avec les nouveaux ***
-- [ ] Noter tous les documents checkes et pas checks
-- [ ] Page accueil Hextra, avec gh, presentation, images, ...
 - [ ] Verifier que tous les premieres scripts sont exectuables
 - [ ] Un script pour lancer les serveurs se serait pas mal
 - [ ] https://zig.news/minosian/deciphering-many-item-types-the-skeleton-19i
-- [ ] Faire joli Readme
+- [ ] https://imfing.github.io/hextra/docs/guide/
 
 Fin: 
-	- [ ] sources zotero
+- [ ] sources zotero
 - [ ] Changer les titres, les images et les liens
 
 Peut etre:
@@ -30,7 +25,8 @@ Questions:
 - Feedback bien dans l'ensemble ? J avais l impression conclusion un peu maigre. Structure bien aussi psq surtout remarques legeres.
 - Moyen que l expert regarde le site plutot que le document PDF pour la doc ?
 - Jdois faire quoi en + du rapport ? Une affiche et cest tout ?
-
+- Je peux reprendre tel quel vos modif ? pas de soucis de droit d auteur
+- Est ce que je peux encore renvoyer ?
 
 Remarques sur feedback:
 - Preemptimve multitasking: "useful" le dernier bout de taf peut etre useful pour moi pareil pour "is short lived" cest pas forcement vrai, ca peut etre une groooose tache
@@ -42,3 +38,7 @@ Remarques sur feedback:
 - est ce que mon lien pour prouver que allocator pour Wasi est suffisant ?
 - stack_size: "standard zig stack" cest bien ca
 - conclusion : "leaky ??" ??
+
+- std.http : "exact" ?
+- std.http : "TODO peut etre mettre un schema" du coup ?
+- zap: cest mieux comment jai decrit taskset ?

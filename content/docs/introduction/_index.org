@@ -1,5 +1,6 @@
 #+title: Introduction
 #+weight: 1
+#+hugo_cascade_type: docs
 
 Nowadays, [[https://www.reddit.com/r/C_Programming/comments/nqkn93/what_do_people_think_of_the_c_replacements_are/][multiple languages]] have emerged to compete with the well-established C language.
 In fact, C is widely used in many places, learned by a lot of engineers, and used for many purposes.

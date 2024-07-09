@@ -1,5 +1,12 @@
-#+title: Utils
-#+weight: 5
+#+title: Home
+#+weight: 0
 #+hugo_cascade_type: docs
 #+math: true
 
+This is a guide made by 2 university students to explore in depth the Zig programming language. 
+
+Start reading this document by going to the [[file:./introduction][Introduction]] page. 
+
+#+CAPTION: School logo
+#+NAME:   fig:SED-HR4049
+[[/HEIG_ZIG/images/heig.png]]
