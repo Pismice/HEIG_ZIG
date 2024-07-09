@@ -1,7 +1,6 @@
 #+title: Linux Kernel Module
 #+weight: 15
 
-* Linux Kernel module
 In Linux two worlds exist, the user space and the kernel space.
 But why?
 

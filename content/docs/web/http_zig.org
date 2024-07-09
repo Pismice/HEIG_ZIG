@@ -58,8 +58,7 @@ There are obviously many ways to do it, but you can see here that just to handle
       try server.listen();
   }
   
-  fn parseCookie(req: *httpz.Request, key: []const u8) ![]const u8 {
-      var buf: [128]u8 = undefined;
+  fn parseCookie(req: *httpz.Request, buffer: []u8, key: []const u8) ![]const u8 {
       var index: usize = 0;
       var w_index: usize = 0;
       var next_word_is_value: bool = false;
@@ -71,18 +70,16 @@ There are obviously many ways to do it, but you can see here that just to handle
       }) {
           const current_char = cookies[index];
           if (current_char == '=') {
-              if (std.mem.eql(u8, key, buf[0..key.len])) {
+              if (std.mem.eql(u8, key, buffer[0..key.len])) {
                   next_word_is_value = true;
-                  std.debug.print("Key found = {s}\n", .{buf[0..key.len]});
+                  std.debug.print("Key found = {s}\n", .{buffer[0..key.len]});
               }
               w_index = 0;
           } else if (current_char == ';') {
               // End of value
               if (next_word_is_value) {
-                  std.debug.print("Value found = {s}\n", .{buf[0..w_index]});
-                  const ret = try allocator.alloc(u8, w_index);
-                  @memcpy(ret, buf[0..w_index]);
-                  return ret;
+                  std.debug.print("Value found = {s}\n", .{buffer[0..w_index]});
+                  return buffer[0..w_index];
               }
               w_index = 0;
           } else if (current_char == ' ') {
@@ -90,23 +87,23 @@ There are obviously many ways to do it, but you can see here that just to handle
               continue;
           } else {
               // Word is building
-              buf[w_index] = current_char;
+              buffer[w_index] = current_char;
               w_index += 1;
           }
       }
   
       if (next_word_is_value) {
-          std.debug.print("Value found = {s}\n", .{buf[0..w_index]});
-          const ret = try allocator.alloc(u8, w_index);
-          @memcpy(ret, buf[0..w_index]);
-          return ret;
+          std.debug.print("Value found = {s}\n", .{buffer[0..w_index]});
+          return buffer[0..w_index];
       }
   
       return error.CookieNotFound;
   }
   
   fn hello(req: *httpz.Request, res: *httpz.Response) !void {
-      const value = try parseCookie(req, "cookiename");
+      var cookieBuffer: [128]u8 = undefined;
+  
+      const value = try parseCookie(req, &cookieBuffer, "cookiename");
   
       std.debug.print("cookiename: {s}\n", .{value});
   
@@ -119,5 +116,7 @@ There are obviously many ways to do it, but you can see here that just to handle
 
 **** Conclusion
 httpz is a low level HTTP server written fully in Zig. It is an alternative to the currently slow std.http.Server. It uses non-blocking IO by using either epoll or kqueue and make it work on multiple workers. It is easy to use and has a lot of examples to get started with it. 
+
 At least two main new zig frameworks are written on top of it, so it is safe to say that it is a good choice for a low level HTTP server in Zig since it probably is the most battle tested one.
+
 The main issues you are going to encounter when working with this framework is having to build by yourself some features like I did here with cookies.

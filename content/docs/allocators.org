@@ -3,7 +3,6 @@
 
 #+bibliography: bibliography.bib
 
-* Allocator
 The Zig language doesn't hide the memory management, the mantra of Zig is to have no hidden control flow.
 Like the C language, Zig has manual memory management however, Zig will offer the programmer different allocators that allow him to handle exactly how to use his memory.
 That's why Zig doesn't have a runtime and it can be used without the ~libc~ runtime.
@@ -358,4 +357,3 @@ Adding the ~libC~ in the project will add more dependencies.
 Allocators are a great feature of Zig, they allow the programmer to have full control over the memory management while still having some nice tools to work with: like detecting memory leaks for exemple. The Zig allocators are not as restrictive as Rust's borrow checker, but they still come with great tools. On the other hand they are nice abstraction over C like heap allocations systems.
 
 {{< references >}}
->>>>>>> main:content/docs/allocators.org

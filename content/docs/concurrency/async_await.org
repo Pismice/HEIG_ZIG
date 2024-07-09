@@ -20,7 +20,7 @@ You can see [[https://ziglang.org/download/0.12.0/release-notes.html#AsyncAwait-
 By adding async/await you introduce a new problem. Tracking the execution flow of the program becomes much harder and inpredictable and this job is done by the compiler, providing a sequential looking code to the user. With function coloring introduced every async code has to be called in an async function, which may lead to situations where you have to refactor a lot of your code to be async just for a few functions. This is very nicely sumed up by this [[https://x.com/ryanrwinchester/status/1702730128520830994][image from Ryan Winchester]]
 #+CAPTION: Function coloring
 #+NAME:   fig:SED-HR4049
-[[/images/fcolor.png]]
+[[/HEIG_ZIG/images/fcolor.png]]
 
 Here is an exemple in JavaScript where you have to have an =async= main function because it is calling an other async function, if you remove the =async= keyword from the main function it is not going to work anymore.
 

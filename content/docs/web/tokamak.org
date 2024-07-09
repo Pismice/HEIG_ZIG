@@ -168,6 +168,6 @@ From an user experience point of view everything is very understandable and easy
 
 Performance wise, the framework is not the fastest out there. The main reason is because it uses =std.http= under the hood which is the blocking and slow official library. The author claims to change that to use [[https://github.com/karlseguin/http.zig][http.zig]] in the next update which should make the framework a lot faster.
 
-The [[https://github.com/cztomsik/tokamak/tree/main][main branch] has not been updated for a long time now and is only compatible to old Zig versions, so I personnaly do not recommend downgrading your Zig version to work with this Tokamak versino because soon a new breaking releases with lot of changes will be out, by then I will update this documentation.
+The [[https://github.com/cztomsik/tokamak/tree/main][main branch]] has not been updated for a long time now and is only compatible to old Zig versions, so I personnaly do not recommend downgrading your Zig version to work with this Tokamak versino because soon a new breaking releases with lot of changes will be out, by then I will update this documentation.
 
 To summarize, this framework is great but for the moment I recommend waiting for the next release which is going to come with updated documentations as well.

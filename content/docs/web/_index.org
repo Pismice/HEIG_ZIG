@@ -7,7 +7,7 @@
 In this section we are going to explore the different ways of doing WEB servers in Zig.
 
 ** Introduction
-Making website is a common task for many developers. This is a very vast subject, but in this doc we are going to focus on backend services. We are going to go through the different ways of doing web servers in Zig, compare them with alternatives in other languages and see how they perform against them.
+Making website is a common task for many developers. This is a very vast subject, but in this documentation we are going to focus on backend services. We are going to go through the different ways of doing web servers in Zig, compare them with alternatives in other languages and see how they perform against each other.
 
 Sources:
 https://www.reddit.com/r/reactjs/comments/16blsh3/how_do_i_use_react_with_an_express_application/

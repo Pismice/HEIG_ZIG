@@ -2,7 +2,6 @@
 #+weight: 11
 #+bibliography: bibliography.bib
 
-* Comptime
 Zig has a concept called ~comptime~, it's stands for "compile-time".
 Comptime is used to evaluate an expression at compile time and not at runtime.
 In comparison with C, Zig comptime has the purpose of replacing marco with a more explicit syntax.

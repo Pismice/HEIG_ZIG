@@ -1,0 +1,32 @@
+#+title: API Specification
+#+weight: 1
+#+hugo_cascade_type: docs
+#+math: true
+
+The client is going to interact with the game by sendin HTTP requests to the server. Those requests are going to be returned with a JSON response. All the possible actions a player can do are going to be done through the API. He can get informations about the state of the game like the ranking of the best players or do actions like building units and attacking another player.
+
+Here is a list of all the possible HTTP requests a player can do.
+
+TODO j hesite si je suis les standards ou si je fais comme je le sens
+
+
+
+GET /villages/{id}
+Ca renvoie aussi les infos des buildings ?
+
+POST /upgrade{}
+Passer en param l id du building
+ou
+POST /building/...
+
+POST /attack/{}
+creer un event bataille
+Parametre de l ID de l attaque, meme si pas POST traditionel
+
+Obtenir le classement:
+GET /players?sortby=gold&order=desc
+ou
+GET /ranking
+
+GET /attackableplayers
+

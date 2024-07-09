@@ -6,8 +6,6 @@
 
 #+HTML_MATHJAX: align: left indent: 5em tagside: left
 
-* Build system
-
 ** Build modes
 Zig build modes are way easier for beginners to graps compared to [[https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html][C]]
 

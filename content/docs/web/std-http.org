@@ -187,7 +187,7 @@ All the variations except the first one are based on this one, I just comment/un
 
 #+CAPTION: Requests per second for different frameworks
 #+NAME:   fig:SED-HR4049
-[[/images/std.png]]
+[[/HEIG_ZIG/images/std.png]]
 
 The first main conclusion we can take from this benchmark are that the std.http.Server can be made more performant by multithreading it without big code changes. 
 

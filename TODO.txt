@@ -1,0 +1,31 @@
+Urgent:
+- [ ] Images sam
+- [ ] Finir la plannif
+- [ ] MVP
+- [ ] Epoll (ptetre lier ca a BD ?)
+- [ ] Changer le _index.org qui fait qu on arrive sur Utils
+
+N importe quand:
+- [ ] error.CeQueJeVeux
+- [ ] Corriger le feedback web et concu
+- [ ] tout relier et mettre Dans mes conclusion mettre des liens vers ma doc
+- [ ] Essayer export pdf avec les nouveaux ***
+- [ ] Noter tous les documents checkes et pas checks
+- [ ] Page accueil Hextra, avec gh, presentation, images, ...
+- [ ] Verifier que tous les premieres scripts sont exectuables
+- [ ] Un script pour lancer les serveurs se serait pas mal
+- [ ] https://zig.news/minosian/deciphering-many-item-types-the-skeleton-19i
+
+Fin: 
+- [ ] sources zotero
+
+Peut etre:
+- [?] Websocket
+- [?] Zig and C TODO Add other languages that can use C code and make a graph with matplotlib
+- [?] CICD
+- [?] debug, binutils, breakpoints, debugger
+
+Questions:
+- Moyen que l expert regarde le site plutot que le document PDF pour la doc ?
+
+

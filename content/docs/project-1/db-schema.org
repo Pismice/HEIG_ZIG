@@ -1,0 +1,9 @@
+#+title: Database schema
+#+weight: 3
+#+hugo_cascade_type: docs
+#+math: true
+
+At the time of writing, the database is not made yet and may not end up looking exactly like this, but this is going to help get a clear vision of the different entities of my project and how to handle them.
+#+CAPTION: Transfers per second for different frameworks
+#+NAME:   fig:SED-HR4049
+[[/HEIG_ZIG/images/schema.png]]

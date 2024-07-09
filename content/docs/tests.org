@@ -1,4 +1,0 @@
-#+title: Tests
-#+weight: 8
-
-** Testing code

@@ -6,6 +6,10 @@
 [[https://www.jetzig.dev/][Jetzig]] is a very complete and opinionated web framework. It offers all the basics of a web framework, such as routing, middleware and cookies. It also offers a [[https://github.com/jetzig-framework/zmpl][templating language written in Zig]]. The project aims to be 100% Zig and not use any C code. It is also relatively fast because it uses [[https://github.com/karlseguin/http.zig][http.zig]] as its HTTP server.
 
 **** CLI
+:PROPERTIES:
+:CUSTOM_ID: cli
+:END:
+
 Jetzig project structure are quite complex and opinionated, that is why it comes with a CLI to generate a new project.
 
 To install the CLI I recommend directly cloning the repository instead of downloading the zip file so that you avoid downloading an outdated version of the CLI, indeed updates are frequent as they hve to keep up with Zig and http.zig.

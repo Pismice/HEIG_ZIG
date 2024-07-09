@@ -1,38 +1,39 @@
 #+title: Introduction
 #+weight: 1
 
-* Introduction
-
 Nowadays, [[https://www.reddit.com/r/C_Programming/comments/nqkn93/what_do_people_think_of_the_c_replacements_are/][multiple languages]] have emerged to compete with the well-established C language.
 In fact, C is widely used in many places, learned by a lot of engineers, and used for many purposes.
+
 C is a powerful tool, /but with great power comes great responsibility/, in fact, memory leaks can easily occur by mistake.
-
 That's why new languages come to find a better way to handle errors and memory.
-The Rust language relies strongly on its borrow checker to ensure safe memory but it comes at a cost: increased code complexity, that can slow down it's adoption.
 
-In another case, the Zig language has a purpose to replace the C language.
+Like the [[https://www.rust-lang.org/][Rust language]] which relies strongly on its borrow checker to ensure safe memory but it comes at a cost: increased code complexity, that can slow down it's adoption.
+
 Zig wants to simplify the programming development experience with no hidden control flow and no macro to avoid complex mistakes.
-In contrary to rust, in Zig the memory is managed explicitly, you have to manually allocate and deallocate memory, just as in C.
-Zig offers different allocators that have different purposes, but some can detect memory leaks ([[file:./allocators.org::#General purpose allocator][General purpose allocator]]).
+In contrary to rust, in Zig the memory is managed explicitly, you have to manually allocate and deallocate memory, just like you would do in C.
+For that purpose Zig offers the concept of *allocators* that allow the user to dictate how he wants data to be allocated. There are different allocators for different use cases. Like the [[file:./allocators.org::#General purpose allocator][General purpose allocator]] that can detect memory leaks.
 
 In the sections below, certain aspects of this programming language will be explored in greater depth.
 
-Note that this documentation is generated from emacs with org-mode and that you can find the Github repository [[https://pismice.github.io/HEIG_ZIG/][here]].
+Note that this documentation is generated from emacs with org-mode and that you can find the Github repository [[https://pismice.github.io/HEIG_ZIG/][here]], this might be useful if you want to execute some snippets of code directly from the documentation.
 
 ** What this documentation IS
-This documentation is being worked on by 2 students from the HEIG-VD, in the context of a course for one and a Bachelor Thesis for the other.
-The goal of this documentation is to explore the Zig language in-depth, by first learning a few basics of the language we judge interesting/useful, and then by exploring more advanced topics.
 
-This work is mainly aimed at engineers who already have experiences in C but might consider using Zig as a replacement/alternative. If you are a complete beginner, you might still learn a lot by reading this, but we highly encourage you to look at other ressources aimed at beginners.
+This documentation is being worked on by 2 students from the HEIG-VD, in the context of a Master degree course for one and a Bachelor Thesis for the other.
+The goal of this documentation is to explore the Zig language in-depth, by first learning a few basics of the language we judge interesting or useful, and then by exploring some more advanced topics.
 
-One of the advantages this project offers compare to other guides/documentations is that here we are going to learn the language with [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] because *one snippet of code is worth 1000 words*.
+This work is mainly aimed at engineers who already have experiences in C but might consider using Zig as a replacement or alternative. If you are a complete beginner, you might still learn a lot by reading this, but we highly encourage you to look at other ressources aimed at beginners.
 
-The other advantage is that we are not only going to cover some basic parts of the language but also explore some advanced topics and making analyzes.
+One of the advantages this project offers compare to other guides and documentations is that here we are going to learn the language with [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] because *one snippet of code is worth 1000 words*.
+
+The other advantage is that we are not only going to cover some basic parts of the language but also explore some advanced topics and making complex analyzes that go beyond the basics of the language.
 
 The advanced topics covered are mostly structured as follows:
-1. Explaining the concept and see what is done in other languages (mostly C)
-2. Look at the different ways to do it in Zig
-3. Analisyses, benchmarks and conclusions 
+1. Explaining the concept and see what is done in other languages, basically the state of the art in the domain.
+2. Look at the different ways to do it in Zig.
+3. Finally making analyses, benchmarks and conclusions .
+
+Those advanced topics will more likely be at the end of this guide. The topics at the top are the most basics that have almost no complexity but are still useful to know or understand. Note that there is no clear line between the basic subjects and the advanced ones.
 
 Note that we wrote this documentation with the help of AI assistants like ChatGPT and GH Copilot.
 These tools were used only to improve the syntax and spelling of texts.
@@ -42,13 +43,15 @@ This is *not* a guide to learn Zig as first-language, this documentation wants t
 
 To understand what is described in this documentation, you should first read up on the basics of the Zig language, in particular, its guide, which contains a wealth of information.
 - [[https://zig.guide][Zig guide]]
-- [[https://ziglang.org/documentation/0.11.0][Zig documentation]]
+- [[https://ziglang.org/documentation/master/][Zig documentation]]
 
 ** How to use this documentation
 
+There is no special order in which you should read this documentation, you can start with the part that interests you the most and completly neglects others if you do not find them interesting.
+
 This documentation is built to guide the reader through different examples.
 Those examples have been created using literate programming, in fact, the documentation is built on Emacs with the org mode.
-You can follow the examples and execute them directly in [[https://www.gnu.org/software/emacs/][Emacs]].
+You can follow the examples and execute some of them directly in [[https://www.gnu.org/software/emacs/][Emacs]].
 
 The easiest way to do so it:
 1. Install the configuration created for that (see the section below)
@@ -61,9 +64,9 @@ But Zig is in constant evolution we *may* have to use other versions at some poi
 ** Emacs configuration
 To read this documentation interactively, you can use Emacs.
 For that, you need to have the Emacs version =29.2= or =29.3= installed to use some plugins that will be installed later.
-You can find the installation instructions [[https://www.gnu.org/software/emacs/download.html][HERE]], the instructions will depend on your system.
+You can find the installation instructions [[https://www.gnu.org/software/emacs/download.html][here]], the instructions will depend on your system.
 
-For example, if you using Fedora, you can install Emacs trought it package manager:
+For example, if you are using Fedora, you can install Emacs trought it package manager:
 #+begin_src shell
   sudo dnf install emacs
 #+end_src
@@ -178,3 +181,12 @@ But you need the specify the directory path of the ~zigIterativeProgramming.el~ 
   (load-file (expand-file-name "zigIterativeProgramming.el" file_dir)))
 #+end_src
 
+** Enjoy the documentation
+We wish you a good reading and hope that you will learn a lot from this documentation.
+
+If you have any questions or suggestions, feel free to contact us by opening an issue on our [[https://github.com/Pismice/HEIG_ZIG][Github project]].
+
+#+CAPTION: Zero the Ziguana
+#+NAME:   fig:SED-HR4049
+[[/HEIG_ZIG/images/ziggy.png]]
+[[https://erikexplores.substack.com/p/what-makes-the-zig-programming-language][Zero the Ziguana picture taken from here]]

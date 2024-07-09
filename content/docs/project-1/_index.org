@@ -15,16 +15,27 @@ The components I am going to need are the following:
 
 Multiple solutions are possible for each of those components, I am going to discuss in the next chapters what I choose and why.
 
-*** Specifications
+*** Architecture
+:PROPERTIES:
+:CUSTOM_ID: architecture
+:END:
+
 The overall architecture of the game will be the following, here we have an example of a typical use case of a user wanting to build an archer for his army.
+
 #+CAPTION: Requests per second for different frameworks
 #+NAME:   fig:SED-HR4049
 [[/images/architecture.svg]]
 
-My goal is to have as much Zig as possible and eventually a bit of C so that I can test the Zig-C interoperability.
+Since I will be using authentication and that some data might me sensible it is important to use HTTPS, since [[https://github.com/ziglang/zig/issues/17446][Zig does not support TLS]] I am going to use a reverse proxy like Nginx to handle the HTTPS.
+Since the NGINX and HTTP server are both going to be on the same machine, the security risks are minimal when both communicate in a non-encrypted manner.
+
+Having that reverse proxy is mostly useful for security reasons and have no particular link with Zig so I will only do it if I have enough time.
+#+CAPTION: Requests per second for different frameworks
+#+NAME:   fig:SED-HR4049
+[[/images/https.svg]]
 
 **** Frontend
-For the client application there is minimum one requirment being that the client has to be able to send and recevie HTTP requests. If I am using anything Zig related this should not be an issue since there is an [[https://ziglang.org/documentation/master/std/#std.http.Client]][HTTP client] in the standard library.
+For the client application there is minimum one requirment being that the client has to be able to send and recevie HTTP requests. If I am using anything Zig related this should not be an issue since there is an [[https://ziglang.org/documentation/master/std/#std.http.Client][HTTP client]] in the standard library.
 But a frontend in Zig is not a very common approach, but still I found some possibilities.
 
 Note that my game will not need any 3D, it is a strategic, simulation, management game. So every actions can be done by just sending a simple order (POST request) and any information needed can be retrieved using a GET request.
@@ -49,10 +60,39 @@ I thought about WebAssembly, but it will not be a possiblity since WebAssembly c
 ***** Templating engine
 An popular solution for building web frontends is to use a templating engine, most of the Zig web frameworks I explored have one. But the problem with that solution is that I would have to change the architecture of my project, because of sending JSON responses I would send the whole HTML pages with the data in it. For me this is not a good solution as it put too much load on my server and will not allow me in the future to have a mobile application for example because my API will be returning full HTML pages instead of just the JSON data.
 
-***** Classic web frontend
+***** Solution: Classic web frontend
 This is the most classic way of doing web applications, but even with this approach there are multiple solutions. I could use a frontend framework like React, Angular, Vue.js, Svelte, etc. Or simply use HTML+JS. Since I have almost no experience with any except a bit with Vue.js I will go with this solution. Note that here it really depends on the developer's preferences.
 
 **** Backend
+In my [[https://pismice.github.io/HEIG_ZIG/docs/web/][WEB documentation]] part I discussed about a lot of different solutions for the backend, but I will only explore to me relevant here, if you want to see the other alternatives for making HTTP servers feel free to reed it.
 
+For this project as a first cireteria I want my server to be performant, meaning that it should be able to handle a lot of requests per second. Since I will be doing a massively multipler game I need to be able to handle all the requests from all the possible players.
+
+The second criteria is that I want to have as less batteries included as possible, the reason for that is that I am mainly here to learn Zig and doing things like I had to [[][handle cookies in httpz]] is what I like. This way I can truly understand in the process how a web server works and mainly how to make it work with Zig. This is important because I do not want to just learn a framework but rather learn the language.
+
+The third criteria is that I need good support, I either need to have some kind of way of communication with the community or a good documentation. It is going to be very important since I am neither a WEB expert nor a Zig expert.
+
+Other than that everything else are just bonuses, but note that having a templating engine is not a criteria at all since I will only be serving JSON data to a client that is then going to handle those data by himself.
+
+***** Zap
+[[file:../web/zap][Zap]] is a wrapper around the C library facil.io, it is the most popular choice to make WEB servers in Zig. The reason I am not going to go with it is that the community is not really helpful and this can be a major issue that could cause me being stuck on some isses for a long time. I also personnaly find that there is too much boilerplate even compared to other low level frameworks like [[file:../web/http_zig][HTTPZ]] but this is a personal opinion and it might depends of your use case.
+
+***** Jetzig
+[[file:../web/jetzig][Jetzig]] is a great 100% Zig web framework, since everything is in Zig and there are no weird C wrappers for which seeing the implementation is very complex, it is very easy to navigate the codebase. The discord server is also very helpful and the documentation is very good. The only two minor issues I have with this framework is that it might not be as [[file:../web/conclusion][performant]] as the other solutions, even though it should not truly be a problem since I probably won't have millions of players 🙃. The second issue is that it might be a bit too batteries included for me, I am not a big fan of needing a [[file:../web/jetzig/#cli][CLI]] to create new endpoints, middlewares and so on. I also find the way the project is structured in so many little files a bit confusing to me. 
+
+***** Solution: HTTPZ
+[[file:../web/http_zig][HTTPZ]] the WEB server under Jetzig and Tokamak is the solution I am going to go with because it meets all my criterias. The [[file:../web/conclusion][performances]] are top notch, it is low level enough so that I can freely structure my project as needed and learn Zig along the way, the author of the framework himself answers my questions on Discord and the documentation is very complete.
 
 **** Database
+The database is needed in my project in order to persist the data and not have it live in the memory of the server. This is useful because as the project grows I might need to have multiple servers and sharing data across them might not be the easiest task, so having a centralized database is a good solution. Having a database is also useful to avoid losing all the data after a server restart.
+
+I only have 2 simple criterias for the database. The first is that I need it to be as easy as possible to integrate in my project, and the second is that I would prefer a SQL database since I am already familiar with SQL queries.
+
+***** Solution: SQLite
+Since it is only a file and does net require tons of installation or running on my machine I decided to go with SQLITE. In Zig there are ways to integrate SQLITE in our project.
+
+The SQLite database could also be run on the same machine as the server if we only have one server, allowing low latency between the database and the WEB server. Thus making [[#architecture][requets 2 and 3]] faster.
+
+The first is to simply use the [[https://www.sqlite.org/cintro.html][C SQLite library]], this is the solution I am going to go with in order to test the Zig-C interoperability in a big project.
+
+However if I happen to encounter issues I could always fall back to an other community appreciated solution which is a [[https://github.com/vrischmann/zig-sqlite][Zig wrapper]] around the C library.

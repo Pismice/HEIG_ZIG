@@ -1,7 +1,6 @@
 #+title: Scripting
 #+weight: 14
 
-* Scripting
 ** What is scripting ?
 [[https://en.wikipedia.org/wiki/Scripting_language]["In computing, a script is a relatively short and simple set of instructions that typically automate an otherwise manual process."]]. Thus, increasing the productivity of a worklfow.
 
@@ -20,7 +19,7 @@ In this exemple we have a few workspaces named: =1=, =2=, =3=, =9:other= and =10
 
 #+CAPTION: i3-example
 #+NAME:   fig:SED-HR4049
-[[/images/i3.png]]
+[[/HEIG_ZIG/images/i3.png]]
 
 We can interact with *i3* using the =i3-msg= command.
 

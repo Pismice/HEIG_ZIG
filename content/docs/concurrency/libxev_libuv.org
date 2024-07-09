@@ -2,7 +2,7 @@
 #+weight: 60
 #+hugo_cascade_type: docs
 
-*** libxev/libuv
+*** libxev
 [[https://github.com/mitchellh/libxev][Libxev]] is a Zig library that provides an event loop for non-blocking IO. The project state is "alpha-ish" to cite them from their README. 
 
 The mains reasons behind the creation of this library 2 years ago were: using =io_uring= under the hood, and writing an event loop like libuv but in Zig. 
@@ -11,6 +11,7 @@ The first reason is not really relevant anymore, because since then libuv has im
 
 For the second reason while being commendable and nice to use since it is native Zig, is not really a massive argument for someone who just want to have an event loop, because libuv is already a very good library that is used by a lot of people and is very stable. The only problem of libuv is that it is written in C, so you might have to do a bit of gymnastics in order to use it.
 
+*** libuv
 In order to use [[https://libuv.org/][libuv]], which a C library in your project we are going to have to link the libc and add the =-uv= compilation option in the =build.zig= file like so:
 #+begin_src zig
   exe.linkLibC();
@@ -50,6 +51,9 @@ And the equivalent Zig code:
       _ = c.uv_loop_close(loop);
   }
 #+end_src
+
+*** Conclusion
+Both use the same technology under the hood, being poller like kqueue, epoll, etc. So there is no big differences between the two in term of semantics.
 
 As we can see with those exemples, it is so easy to work with a C library, so using libxev truly is not a good solution, since we can use libuv seemlessely. Moreover, libuv is a very stable library that is used by a lot of people and is very well maintained. 
 

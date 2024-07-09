@@ -1,7 +1,6 @@
 #+title: Zig and C
 #+weight: 12
 
-** Zig and C
 *** Introduction
 The interoperability between Zig and C is one of the most important feature of Zig. But why ?
 
@@ -260,14 +259,12 @@ Then in order to compare the 2 languages I wrote 4 programs:
 #+end_src
 *Result:* ~50sec
 
-TODO Add other languages that can use C code and make a graph with matplotlib
-
 ***** Conclusion
 First thing that we notice immediately is how much faster the Zig code is compared to the Python code. This is not surprising since Zig is a compiled language and Python is an interpreted language.
 
-The second interesting thing is that the 2 Zig codes dont vary that much (if they even do) compared to the 2 python codes which have a 5x ratio. This is interesting because it shows that the overhead of calling a C function from Zig is not that big (in fact it is even not existent since all the compiler does is translating the C code to Zig code at compilation time).
+The second interesting thing is that the two Zig codes dont vary that much (if they even do) compared to the two python codes which have a 5x ratio. This is interesting because it shows that the overhead of calling a C function from Zig is not that big (in fact it is even not existent since all the compiler does is translating the C code to Zig code at compilation time).
 
-Calling C code from Python implies an overhead that can become quite big depending on the situations. There is a [[https://pythonspeed.com/articles/python-extension-performance/][great article]] if you want to dig deeper into the reasons why, but to summarize it comes down to 2 factors: the function call overhead and the (de)serialization overhead. In order to reduce as much as possible those overheads try to call as little times as possible C function and avoid returning or passing large number of data.
+Calling C code from Python implies an overhead that can become quite big depending on the situations. There is a [[https://pythonspeed.com/articles/python-extension-performance/][great article]] if you want to dig deeper into the reasons why, but to summarize it comes down to two factors: the function call overhead and the (de)serialization overhead. In order to reduce as much as possible those overheads try to call as little times as possible C function and avoid returning or passing large number of data.
 
 We can conclude that calling C code from Zig is really seemless, because at runtime ... everything is Zig code.
 

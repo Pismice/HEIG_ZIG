@@ -7,7 +7,7 @@ Before we take any conclusion we are going to take a look at the pure performanc
 I thus decided to compare the performances of all the solutions using this tool. All of those servers simply return a "Hello" message when the "/" endpoint is called.
 #+CAPTION: Requests per second for different frameworks
 #+NAME:   fig:SED-HR4049
-[[/images/all_zig_solutions.png]]
+[[/HEIG_ZIG/images/all_zig_solutions.png]]
 {{< callout type="warning" >}}
   I used the "dev" branch of the tokamak framework, which is not the one I used on its chapter and is not officialy out yet !
 {{< /callout >}}

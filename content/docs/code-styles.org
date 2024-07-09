@@ -2,7 +2,6 @@
 #+weight: 4
 #+bibliography: bibliography.bib
 
-** Code styles
 All of the above affirmations are taken from the [[https://ziglang.org/documentation/master/#Style-Guide][Zig Style Guide]] itself.
 
 Here we just point out what we consider the most important.
