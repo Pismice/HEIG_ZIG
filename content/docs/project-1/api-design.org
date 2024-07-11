@@ -7,9 +7,6 @@ The client is going to interact with the game by sendin HTTP requests to the ser
 
 Here is a list of all the possible HTTP requests a player can do.
 
-TODO j hesite si je suis les standards ou si je fais comme je le sens
-
-
 
 GET /villages/{id}
 Ca renvoie aussi les infos des buildings ?

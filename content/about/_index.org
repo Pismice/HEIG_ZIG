@@ -6,7 +6,3 @@ This site has been generate with [[https://gohugo.io/][Hugo]]
 The themes used are:
 - [[https://github.com/imfing/hextra][hextra]]
 - [[https://github.com/joksas/hugo-simplecite][hugo-simplecite]]
-
-And all the bibliography is display here:
-{{< card link="/docs" title="Documentation" icon="document" >}}
-

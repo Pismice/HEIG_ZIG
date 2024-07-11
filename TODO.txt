@@ -1,44 +1,29 @@
 Urgent:
+- [*] Implémenter auth
 - [*] Finir la plannif
 - [ ] MVP
 
 N importe quand:
-- [ ] Epoll (ptetre lier ca a BD ?)
-- [X] Corriger le feedback web et concu
+- [ ] regarder la generation de nombre aleatoires
+- [ ] rendre cookies secure Secure; HttpOnly; SameSite=Strict
 - [ ] tout relier et mettre Dans mes conclusion mettre des liens vers ma doc
 - [ ] Verifier que tous les premieres scripts sont exectuables
 - [ ] Un script pour lancer les serveurs se serait pas mal
 - [ ] https://zig.news/minosian/deciphering-many-item-types-the-skeleton-19i
-- [ ] https://imfing.github.io/hextra/docs/guide/
+- [ ] Commenter + de code et expliquer les benchmarks
 
 Fin: 
 - [ ] sources zotero
-- [ ] Changer les titres, les images et les liens
+- [ ] Changer les titres, les images et les liens pour joli pdf ou latex
+- [ ] corriger fautes orthographe
 
 Peut etre:
+- [?] Epoll https://discord.com/channels/605571803288698900/1259840408545136700
 - [?] Websocket
 - [?] Zig and C TODO Add other languages that can use C code and make a graph with matplotlib
 - [?] CICD
 - [?] debug, binutils, breakpoints, debugger
+- [?] https://imfing.github.io/hextra/docs/guide/
 
 Questions:
-- Feedback bien dans l'ensemble ? J avais l impression conclusion un peu maigre. Structure bien aussi psq surtout remarques legeres.
-- Moyen que l expert regarde le site plutot que le document PDF pour la doc ?
-- Jdois faire quoi en + du rapport ? Une affiche et cest tout ?
-- Je peux reprendre tel quel vos modif ? pas de soucis de droit d auteur
-- Est ce que je peux encore renvoyer ?
-
-Remarques sur feedback:
-- Preemptimve multitasking: "useful" le dernier bout de taf peut etre useful pour moi pareil pour "is short lived" cest pas forcement vrai, ca peut etre une groooose tache
-- Kernel threads: "it seem a repetition"
-- Async/await: "officials" pour moi cest ok car cest les officiels
-- Async/await: "intro to libraries??"
-- Pas sur de mon graphe sur les coroutines
-- std.Thread: "you cannot conclude much"
-- est ce que mon lien pour prouver que allocator pour Wasi est suffisant ?
-- stack_size: "standard zig stack" cest bien ca
-- conclusion : "leaky ??" ??
-
-- std.http : "exact" ?
-- std.http : "TODO peut etre mettre un schema" du coup ?
-- zap: cest mieux comment jai decrit taskset ?
+- Est ce que cest bien avec l intro quand je clique sur le titre ou faudrait mettre intro en bas et tout les solutions encapsulees ?

@@ -1,0 +1,6 @@
+#+title: Conclusion
+#+weight: 100
+#+hugo_cascade_type: docs
+#+math: true
+
+The [[https://github.com/Pismice/Zig-Conquest][repository of the project]] is available on GitHub and open-source for now, might not be in the future for security reasons.

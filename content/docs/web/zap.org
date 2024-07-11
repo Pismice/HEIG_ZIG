@@ -41,12 +41,12 @@ And then it is going to call the following function every time the endpoint is c
 #+end_src
 
 **** facil.io
-Since Zap is just a wrapper around [[https://facil.io/][facil.io]], they have very similar performances. We can clearly see that with the benchmarks.
+Since Zap is just a wrapper around [[https://facil.io/][facil.io]], they have very similar performances. We can clearly see that with the benchmarks. We can also notice that zap seems slightly better than facil.io, but it is not the case in reality both are equivalent this is due to the randomness [[file:../conclusion][explained here]] that can come from benchmarks like this.
+Note that I did add a few other web servers in order to get the comparison more meaningful.
 
 #+CAPTION: Transfers per second for different frameworks
 #+NAME:   fig:SED-HR4049
 [[/HEIG_ZIG/images/facilio.png]]
-Note that I did add a few other web servers in order to get the comparison more meaningful.
 
 **** Basic example
 Getting a very simple Zap server up and running is quite straightforward. Example taken from one of the [[https://github.com/zigzap/zap/blob/master/examples/hello/hello.zig][examples]].
@@ -197,7 +197,7 @@ The benchmarks compare 2 different metrics:
 #+NAME:   fig:SED-HR4049
 [[/HEIG_ZIG/images/xfer_per_sec_graph.png]]
 
-Those benchmakrs are in my opinion well made because they assure a good thread equity between the different frameworks. By using [[https://man7.org/linux/man-pages/man1/taskset.1.html][tasket] we can set processes affinities which will increase reproductility by reducing the number of context switching and by imporving cache performances. This also assures a better load balancing between the differnt tasks.
+Those benchmakrs are in my opinion well made because they assure a good thread equity between the different frameworks. By using [[https://man7.org/linux/man-pages/man1/taskset.1.html][tasket]] we can set processes affinities which will increase reproductility by reducing the number of context switching and by imporving cache performances. This also assures a better load balancing between the differnt tasks. TODO eviter qu 1 enleve les resources a l autre
 #+begin_src shell
   TSK_SRV="taskset -c 0,1,2,3"
   TSK_LOAD="taskset -c 4,5,6,7"

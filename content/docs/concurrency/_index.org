@@ -50,7 +50,7 @@ In preemptive multitasking it is the underlying architecture (not us, but the OS
 
 This method gives the advantage of not having to worry about a thread being starved, since the underlying architecture is going to make sure that everyone gets enough CPU time. As we can see in the 2 graphs for preemptive and cooperative multitasking, the preemptive multitasking might context switch our tasks too much, which can lead to a lot of undersiable overhead.
 
-There is an interesting thing that is happening in this graph, at the end we see that task 1 is only doing a very small job, which cost a context switch for almost no job, but the scheduler does not know that a task remains only a small job until done and can context switch it.
+There is an interesting thing that is happening in this graph, at the end we see that task 1 is only doing a very small job, which cost a context switch for almost no useful job, but the scheduler does not know that a task remains only a small job until done and can context switch it.
 #+CAPTION: Preemptive multitasking
 #+NAME:   fig:SED-HR4049
 [[/images/premp.svg]]
@@ -72,7 +72,7 @@ Threads are managed by the OS scheduler which is going to decide when to execute
 
 Parallelism becomes achievable through multithreading (even though its not 100% guaranteed). Threads also offer robust isolation, with each thread possessing its own execution context, stack, and local variables, ensuring task independence and preventing interference.
 
-However, scalability can become a concern when managing numerous threads. The overhead of resource allocation by the operating system kernel for each thread may lead to scalability issues, particularly in high-demand environments. To mitigate this, thread pools are often employed to minimize the overhead of thread creation and destruction, thus optimizing performance and resource utilization.
+However, scalability can become a concern when managing numerous threads. The overhead of resource allocation by the operating system kernel for each thread may lead to scalability issues, particularly in high-demand environments. This is the case because creating and destroying threads has a non-negligible cost, which can become a bottleneck when dealing with a large number of tasks.
 
 To avoid this overhead, thread pools are often used, which manage a set of threads that can be reused for multiple tasks. This approach reduces the overhead of creating and destroying threads for each task, making it more efficient and scalable.
 
@@ -92,3 +92,6 @@ You might think that threads can do that aswell and spawn a thread each time the
 A popular library that is used for asynchronous programming is libuv, the giant behind nodejs.
 
 Under the hood libuv is basically a single threaded [[https://docs.libuv.org/en/v1.x/design.html#the-i-o-loop][event-loop]] which is going to perform all IOs on non-blocking sockets that are polled by pollers like epoll, kqueue, ...
+
+*** Zig solutions
+We are now going to explore in the different chapters few different ways to achieve concurrency in Zig. We are going to see the pros and cons of each solution and when to use them.

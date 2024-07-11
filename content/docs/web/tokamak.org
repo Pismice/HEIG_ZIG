@@ -90,12 +90,13 @@ A basic Tokamak application is really is to get up and running really fast.
   const tk = @import("tokamak");
   
   pub fn main() !void {
+      const allocator = std.heap.page_allocator;
       _ = try tk.Server.run(allocator, handler, .{ .port = 8080 });
   }
   
   fn handler() ![]const u8 {
       return "Wow tokamak is so easy!";
-}
+  }
 #+end_src
 
 A lot of the work relies on dependency injection to make the work easier. Like here with the =*tk.Request= and the =std.mem.Alloctor= injectors.

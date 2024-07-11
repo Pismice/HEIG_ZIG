@@ -10,7 +10,7 @@ To do that I am going make my own implementation. I will ask the user its =usern
 Three different endpoints will be at disposal.
 
 *** POST /auth/register
-Will take the =username= and =password= as parameters. The server will then receive the request, verify that the =username= does not exist already, hash the =password= and store both in a new player entry. It will also generate a random =token= that will also be stored in the database and will act as a session token to authentificate the future requests of the user without asking its password and username again. The session token will be stored as a cookie. Only one session token will be allowed per user. This session token will be sent back to the user as a cookie if the operation is successful.
+Will take the =username= and =password= as parameters. The server will then receive the request, hash the =password= and store it with the =username= in a new player entry. It will also generate a random =session_id= that will also be stored in the database and will act as a session token to authentificate the future requests of the user without asking its password and username again. The session token will be stored as a cookie. Only one session token will be allowed per user. This session token will be sent back to the user as a cookie if the operation is successful.
 
 *** POST /auth/login
 If the user lost his cookie or connect on a new device, he will provide its =username= and =password=. The server will then check if the hash of the password correspond to the one stored in the database and if it is the case replace in the database the old session token by a new one. The new session token will be sent back to the user as a cookie if the operation is successful.

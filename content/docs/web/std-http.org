@@ -44,24 +44,24 @@ A very basic implementation that simply sends a string over HTTP to the client.
 Since the implementation is blocking and said to be not performant, I tried by myself to make the standard library server as performant as possible by multi-threading it.
 
 In order to maximise the performances I tweak 2 main parameters:
-- The number of threads
-- What job should be given to the thread
+- The number of threads.
+- What job should be given to the thread.
 
 For the number of threads it is going to be heavily dependant on your system, notably how many cores you have at disposal and how much tasks your CPU is handling aside from the server.
 
-As a reminder you can use this Zig code to get the number of cores
+As a reminder you can use this Zig code to get the number of cores.
 #+begin_src zig
   std.Thread.getCpuCount()
 #+end_src
 
-Or get the needed information from the command line
+Or get the needed information from the command line.
 #+begin_src shell
   lscpu
 #+end_src
 
 I then developed to 7 different implementations:
-- The implementation from the exact code above
-- 2 monothreaded implementations, one with the accept in the main thread and the other with the accept in the spawned thread
+- The implementation from the code above.
+- 2 monothreaded implementations, one with the accept in the main thread and the other with the accept in the spawned thread.
 - 4 multi-threaded implementations, 2 with the accept in the main thread and the other 2 with the accept in the spawned thread with different allocated number of threads.
 
 All the variations except the first one are based on this one code, I just comment/uncomment a few lines to change the implementation.
@@ -194,8 +194,6 @@ I then tested with [[https://github.com/wg/wrk][wrk]] how many requests per seco
 The first main conclusion we can take from this benchmark is that the std.http.Server can be made more performant by multithreading it without big code changes. We can see that the =std-monothread-accept= implementation is around 5k requests per second, and just by spawning threads we can reach teh 15k requests per second.
 
 The second conclusion is that it could be slightly better to open a few threads, 6 or 12 in our case and have all of those threads waiting on the =server.accept()= instead of having only the main thread waiting and then dispatching to a newly spawned thread.
-
-TODO Peut etre mettre un schema qui expliquerait mieux ca, mais je pense que c'est assez clair comme ca.
 
 Note that in real world situations the multi-threaded versions are going to be even performant compared to the monothreaded ones, because all the work like accessing a database and treating the request is going to be done inside the spawned threads and not in the main thread.
 

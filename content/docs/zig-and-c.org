@@ -146,7 +146,7 @@ Then simply switch from calling the source file to the header file.
 *** How to call a Zig function from C
 You can continue your C project without using Clang or GCC but by using Zig with all its toolchain.
 
-In order to have a c file (main.c) as the entry point of your project using the zig build tool you have to modify the following lines to your build.zig file:
+In order to have a C file (main.c) as the entry point of your project using the zig build tool you have to modify the following lines to your build.zig file:
 #+begin_src zig
   const exe = b.addExecutable(.{
       .name = "c_project",

@@ -204,7 +204,11 @@ If we run this code with hyperfine (100 runs) once while linking libc (using pth
 - LinuxThreadImpl = 276.7s ms += 33.9 ms
 - C pthreads =  272.7 ms += 34.0 ms
 
-I tried having 100'000 threads instead of 10'000 but I ran out of memory.
+#+CAPTION: Threads benchmark
+#+NAME:   fig:SED-HR4049
+[[/HEIG_ZIG/images/threads_impl.png]]
+
+I tried having 100'000 threads instead of 10'000 in order to get a bigger N but I ran out of memory.
 
 Those test have been run multiple times on different days and the results can vary a bit, but all the implementations can beat each others from time to time, since it is heavily dependent on the OS scheduler and not the thread implementations themselves.
 
@@ -320,6 +324,7 @@ However, configuring the stack size is going to be used for every implementation
 #+end_src
 So if you need to modify it in order to store more local variables, pass more arguments, ... in order to avoid a stack overflow.
 Don't put that value too hight either, because you might not have enough space to create a lot of threads after that. 
+Note that there are currently [[https://github.com/ziglang/zig/issues/157][talks]] about making the stack size known at compilation time and make it only uses what is needs, making the stack size very small compared to that default.
 
 If you want to fine grained your thread further (eg. thread priority) you might need to use the C pthread library, which allow for a ton of possiblites of tuning. Note that when using **std.Thread** you are going to have almost everything set to the default of your implementation. For exemple the only thing that is tuned when using the **PosixThreadImpl** is the guard size.
 
@@ -342,7 +347,7 @@ Which corresponds to
 **** Conclusion
 Zig threads are really useful since they have a very user-friendly abstraction with not a lot of functionalites that are almost never used anyway. This abstraction is also very useful for what we saw earlier, you don't have to worry about the target system, Zig is going to choose the right implementation for you.
 
-But this leaky abstraction comes at a cost, you can not fine-tune your threads as much as you would like to.
+But this [[https://en.wikipedia.org/wiki/Leaky_abstraction][leaky abstraction]] comes at a cost, you can not fine-tune your threads as much as you would like to.
 
 If you need specific thread functionalities, like the ones we talked about, you can still do that in Zig by wrapping the C pthread library for exemple or directly use the OS native threads you want.
 

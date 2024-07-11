@@ -2,7 +2,12 @@
 #+weight: 2
 #+hugo_cascade_type: docs
 
-*** Officials, not supported anymore async/await
+*** Zig async/await language feature
+
+{{< callout type="warning" >}}
+  This feature is not supported anymore since 0.11.0.
+{{< /callout >}}
+
 This method uses suspensible stackless coroutines, this solution does not necessarly mean that you are going to have multiple threads or parallelism.
 
 We are not going to dive deeper into this solution because it has been deprecated since 0.11 and is not coming back soon.
@@ -46,7 +51,7 @@ Here is an exemple in JavaScript where you have to have an =async= main function
 
 Zig solves this problem by not needing to put an =async= keyworkd when our function is asynchronous, instead the compiler can know at compile time if a function is async or not if it contains an =await= keyword.
 
-In Zig 2 exact same codes can behave in a blocking or non-blocking way depending only on this simple declaration:
+In Zig, the exact same code can behave in a blocking or non-blocking way depending only on this simple declaration:
 #+begin_src zig
   pub const io_mode = .evented;
 #+end_src
