@@ -7,23 +7,59 @@ The client is going to interact with the game by sendin HTTP requests to the ser
 
 Here is a list of all the possible HTTP requests a player can do.
 
+TODO I STILL DONT KNOW HOW TO PASS DATA WITH POST REQUESTS (query, body, ...)
 
-GET /villages/{id}
-Ca renvoie aussi les infos des buildings ?
+GET /village/{}
+Send to the player the state of his village
+- name
+- gold (peut etre faire une requete que pour gold pour eviter de trop charger le serveur ?)
+- x_position
+- y_position
+- wall_levels
+- level =Which is the level of the town center, since there is only one per Village both the Village and the Town Center have the same level=
+- space_capacity =Available space for new Buildings in the Village=
+- buildings =GET /building/=
 
-POST /upgrade{}
-Passer en param l id du building
-ou
-POST /building/...
+POST /build/{building_name}/{village_id}
 
-POST /attack/{}
-creer un event bataille
-Parametre de l ID de l attaque, meme si pas POST traditionel
+POST /upgrade_building/{id}
+Upgrade a building corresponding to the id, only the owner of the building can upgrade it.
+The server check if the user has enough gold and if it is possible to upgrade the building.
+Return if the upgrade of the building has been started or not
 
-Obtenir le classement:
-GET /players?sortby=gold&order=desc
-ou
-GET /ranking
+POST /buy_units/{nb_archers}/{nb_cavalery}/{nb_infantry}
+Buy units for the player, the server check if the player has enough gold and if it the case instantly produces them and assign them to the garnison army.
 
-GET /attackableplayers
+GET /ranking/{}
+Send to the player the ranking of the best players by gold possession
 
+GET /attackable_villages/{}
+Send to the player all the villages he can attack including thoses informations about the villages:- name
+- player_name
+- gold
+- x_position
+- y_position
+- wall_levels
+- level =Which is the level of the town center, since there is only one per Village both the Village and the Town Center have the same level=
+
+POST /attack/{village_id}/{army_id}
+Start the process of an attack.
+
+GET /armies/{}
+Send to the player the state of all his armies, corresponding to GET /army/ but for all the armies of the player
+
+OPTIONAL: GET /building/{id}
+Send to the player the state of a building corresponding to the id, only the owner of the building can get access to this ressource
+- id
+- level
+- space_taken
+- productivity # Only if it is a production building like a Gold Mine
+- upgrade_cost
+
+OPTIONAL: GET /army/{id}
+Send to the player the state of his army corresponding to the id, only the owner of the army can get access to this ressource
+- id
+- nb_archers
+- nb_cavalery
+- nb_infantry
+- is_moving # True if the army is outside the village and False if it is in the village

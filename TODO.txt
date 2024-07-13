@@ -1,16 +1,20 @@
 Urgent:
-- [*] Implémenter auth
-- [*] Finir la plannif
-- [ ] MVP
+- [ ] Changer le db schema, un village peut avoir plusieurs Army
+- [ ] Parler du fait que jai des infos en dur sur le serveur plutot que DB pour eviter des requetes inutiles (ex: gold pour ameliorer etc)
+- [ ] Rajouter au db schema si un building est en cours d upgrade ou pas (bool)
+- [ ] regarder la generation de nombre aleatoires, peut etre utiliser librairie C ?
+- [ ] Refactor pour pas avoir du SQL dans les handlers mais mettre ca dans des "classes"
+- [ ] bouger toutes les arena vers req.arena
+- [ ] https://github.com/karlseguin/http.zig?tab=readme-ov-file#testing
 
 N importe quand:
-- [ ] regarder la generation de nombre aleatoires
-- [ ] rendre cookies secure Secure; HttpOnly; SameSite=Strict
+- [ ] Tester avec GPA pour les memory leaks
 - [ ] tout relier et mettre Dans mes conclusion mettre des liens vers ma doc
 - [ ] Verifier que tous les premieres scripts sont exectuables
 - [ ] Un script pour lancer les serveurs se serait pas mal
 - [ ] https://zig.news/minosian/deciphering-many-item-types-the-skeleton-19i
 - [ ] Commenter + de code et expliquer les benchmarks
+- [ ] parler de zls dans les issues de mon rapport https://www.reddit.com/r/Zig/comments/12spzrh/question_about_zls/
 
 Fin: 
 - [ ] sources zotero
@@ -18,6 +22,9 @@ Fin:
 - [ ] corriger fautes orthographe
 
 Peut etre:
+- [?] essayer de mettre du comptime dans le projet
+- [?] utiliser std.http.client pour test l api ?
+- [?] rendre cookies secure Secure; HttpOnly; SameSite=Strict
 - [?] Epoll https://discord.com/channels/605571803288698900/1259840408545136700
 - [?] Websocket
 - [?] Zig and C TODO Add other languages that can use C code and make a graph with matplotlib

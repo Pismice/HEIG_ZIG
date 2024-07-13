@@ -2,6 +2,8 @@
 #+weight: 2
 #+hugo_cascade_type: docs
 
+With async/await comes non-blocking IO, which is an upgrade from having the working being handled by the thread in a context where the application is IO bound. This allows for better performances and scalability since you can have only one thread that can handle and wait for all the IO completions without having to do a lot of context switching for checking each IO operation, which means that instead of having threads just waiting and consuming CPU you do not wait anymore and come back later if IO is not ready. With non-blocking IO also comes the advantage of not having to heavily synchronise the threads. Nowadays being able to handle concurrency by doing non-blocking IO is truly a big advantage since most applications today are IO bound and not CPU bound, the best example of that are web servers.
+
 *** Zig async/await language feature
 
 {{< callout type="warning" >}}

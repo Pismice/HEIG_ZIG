@@ -199,6 +199,7 @@ Note that in real world situations the multi-threaded versions are going to be e
 
 *** Conclusion
 The standard library HTTP server is not made to be performant or either in production. Its main goal is to test the HTTP client.
-Right now there are [[https://github.com/ziglang/zig/issues?page=1&q=is%3Aissue+is%3Aopen+http+server][no plans]] to change the HTTP server implementation to make it better, but to do so I would guess that they would have to work on 2 mains points:
+Right now there are [[https://github.com/ziglang/zig/issues?page=1&q=is%3Aissue+is%3Aopen+http+server][no plans]] to change the HTTP server implementation to make it better, but to do so I would guess that they would have to work on those few points:
 - Using non-blocking IO, which is unlikely to happen before the =async/await= feature is implemented back in the language or a polling mechanism like epoll is used.
-- Upgrade from HTTP/1.1 to HTTP/2 or even HTTP/3, because the HTTP/1.1 implementation is limiting in terms of performances.
+- Helpers around request parsing, cookies, ... like [[https://github.com/karlseguin/http.zig][http.zig]] does.
+- Upgrade from HTTP/1.1 to HTTP/2 or even HTTP/3, because the HTTP/1.1 implementation is limiting in terms of performances. Even though all the other zig framework are 1.1 as well

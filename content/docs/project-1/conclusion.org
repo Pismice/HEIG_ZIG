@@ -4,3 +4,44 @@
 #+math: true
 
 The [[https://github.com/Pismice/Zig-Conquest][repository of the project]] is available on GitHub and open-source for now, might not be in the future for security reasons.
+
+* SQLite Zig wrapper
+Issues with chaining dynamic requests
+#+BEGIN_SRC zig
+  pub fn createBuilding(db: *sqlite.Db, comptime BuildingType: type, building: *BuildingType) !void {
+      // 1. Create the building "parent"
+      switch (BuildingType) {
+          Building.GoldMine => |_| {
+              const query =
+                  \\ INSERT INTO buildings(level,space_taken) VALUES(1,0);
+                  \\ INSERT INTO gold_mines(building_id,productivity) VALUES(last_insert_rowid(),?)
+              ;
+              const gm: *GoldMine = @ptrCast(building);
+              var stmt = try db.prepare(query);
+              defer stmt.deinit();
+              try stmt.exec(.{}, .{ .productivity = gm.productivity });
+          },
+          else => return error.UnkownBuildingType,
+      }
+  }
+#+END_SRC
+
+#+begin_src zig
+pub fn createBuilding(db: *sqlite.Db, comptime BuildingType: type, building: *BuildingType) !void {
+    // 1. Create the building "parent"
+
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
+    const allocator = arena.allocator();
+
+    // 2. Create the building "child"
+    switch (BuildingType) {
+        Building.GoldMine => |_| {
+            const gm: *GoldMine = @ptrCast(building);
+            const query = try std.fmt.allocPrint(allocator, "INSERT INTO buildings(level,space_taken) VALUES(1,0);INSERT INTO gold_mines(building_id,productivity) VALUES(last_insert_rowid(),{d})", .{gm.productivity});
+            try db.execMulti(query, .{});
+        },
+        else => return error.UnkownBuildingType,
+    }
+}
+#+end_src
