@@ -68,7 +68,10 @@ In my [[https://pismice.github.io/HEIG_ZIG/docs/web/][WEB documentation]] part I
 
 For this project as a first cireteria I want my server to be performant, meaning that it should be able to handle a lot of requests per second. Since I will be doing a massively multipler game I need to be able to handle all the requests from all the possible players.
 
-The second criteria is that I want to have as less batteries included as possible, the reason for that is that I am mainly here to learn Zig and doing things like I had to [[][handle cookies in httpz]] is what I like. This way I can truly understand in the process how a web server works and mainly how to make it work with Zig. This is important because I do not want to just learn a framework but rather learn the language.
+The second criteria is that I want to have as less batteries included as possible, the reason for that is that I am mainly here to learn Zig and doing things like I had to [[][handle cookies in httpz]] is what I like. This way I can truly understand in the process how a web server works and mainly how to make it work with Zig. This is important because I do not want to just learn a framework but rather learn the language. To sum up I prefer to write more application code rather than specific framework code that do not really translate into other projects
+#+CAPTION: High level vs low level web framework
+#+NAME:   fig:SED-HR4049
+[[/HEIG_ZIG/images/batteries.png]]
 
 The third criteria is that I need good support, I either need to have some kind of way of communication with the community or a good documentation. It is going to be very important since I am neither a WEB expert nor a Zig expert.
 

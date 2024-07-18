@@ -5,9 +5,24 @@
 **** C allocations
 For high performances and very few safety checks, you might want to use the [[https://ziglang.org/documentation/master/std/#std.heap.c_allocator][std.heap.c allocator]].
 
-Those allocations are not tracked by the Zig runtime, so you will have to use a tool like Valgrind to track memory leaks which can be done via the [[https://ziglang.org/documentation/master/std/#std.valgrind][appropriate valgrind wrappers in the std]].
+Those allocations are not tracked by the Zig runtime, so you will have to use a tool like Valgrind to track memory leaks which can be done via the [[https://ziglang.org/documentation/master/std/#std.valgrind][appropriate valgrind wrappers in the std]] or simply executing valgrind on the executable.
 
-TODO Show exemple where I run valgrind to detect =c_allocator= memory leaks.
+Running this excecutable code with [[https://valgrind.org/][Valgrind]] will give you a memory leak error.
+
+#+begin_src zig :imports '(std) :main 'yes :testsuite 'no
+  const allocator = std.heap.c_allocator;
+  const just_forgotten_variable = try allocator.create(usize);
+  // defer allocator.destroy(just_forgotten_variable);
+  std.debug.print("Hello, {}!\n", .{just_forgotten_variable.*});
+#+end_src
+
+#+begin_src text
+  ==121407== HEAP SUMMARY:
+  ==121407== in use at exit: 8 bytes in 1 blocks
+  ==121407== total heap usage: 1 allocs, 0 frees, 8 bytes allocated
+#+end_src
+
+This tool might be useful when you integrate C code in your Zig project and want to check memory leaks in the C code. Note that it can not detect leaks from other allocators like the [[https://ziglang.org/documentation/master/std/#std.heap.GeneralPurposeAllocator][GPA]].
 
 **** Zig allocations
 The General Purpose Allocator (GPA) is a general-purpose memory allocator that is used by the Zig standard library. Its advantages over the other implementations in the std it that it is designed for safety over performance.

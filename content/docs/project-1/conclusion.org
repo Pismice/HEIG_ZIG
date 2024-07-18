@@ -5,6 +5,9 @@
 
 The [[https://github.com/Pismice/Zig-Conquest][repository of the project]] is available on GitHub and open-source for now, might not be in the future for security reasons.
 
+TODO parler des avantages et inconvenients de zig pour ce projet
+TODO rentable de prendre zig pour perf alors que db bottleneck ou pas ? faire  un petit benchmark
+
 * SQLite Zig wrapper
 Issues with chaining dynamic requests
 #+BEGIN_SRC zig

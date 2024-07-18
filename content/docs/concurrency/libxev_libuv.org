@@ -1,7 +1,9 @@
-#+title: Event loops (libxev/libuv)
+#+title: Event loops
 #+weight: 60
 #+hugo_cascade_type: docs
 This is the paradigm at the core of JavaScript, where there is no thread but only an [[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Event_loop][event loop]]. This also very heavily used in UI, because you do actions only when some events happen like a click on a button.
+
+Events loops like the ones we are going to see often are abstractions on top of [[file:../epoll][pollers like we saw in the previous chapter]]. They tend to be multi-platform thus using either epoll, kqueue or any other depending on the host system.
 
 *** libxev
 [[https://github.com/mitchellh/libxev][Libxev]] is a Zig library that provides an event loop for non-blocking IO. The project state is "alpha-ish" to cite them from their README. 

@@ -60,6 +60,18 @@ When a function can return an error we have to either =try= or =catch= it.
   }
 #+end_src
 
+Sometime we want to treat the error depending on the type of the error, to do that we capture the error the =upgradeBuilgin()= function was initially returning and then we can use =if= or =switch= to handle our different cases. Here is an example taken from my [[file:../project-1/][project]].
+#+begin_src zig
+  building.upgradeBuilding(ctx.app.db) catch |err| {
+      if (err == error.NotEnoughRessources) {
+          try res.json(.{ .message = "Not enough ressources" }, .{});
+          return;
+      }
+      try res.json(.{ .message = "Unexcepted error occured while upgrading the building" }, .{});
+      return;
+  };
+#+end_src
+
 *** anyerror
 This is the global error set containing all the possible errors that can happen in the current compilation unit. It is the superset of all the errors.
 

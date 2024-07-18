@@ -1,36 +1,46 @@
-Urgent:
-- [ ] Changer le db schema, un village peut avoir plusieurs Army
-- [ ] Parler du fait que jai des infos en dur sur le serveur plutot que DB pour eviter des requetes inutiles (ex: gold pour ameliorer etc)
-- [ ] Rajouter au db schema si un building est en cours d upgrade ou pas (bool)
-- [ ] regarder la generation de nombre aleatoires, peut etre utiliser librairie C ?
-- [ ] Refactor pour pas avoir du SQL dans les handlers mais mettre ca dans des "classes"
-- [ ] bouger toutes les arena vers req.arena
-- [ ] https://github.com/karlseguin/http.zig?tab=readme-ov-file#testing
+Projet:
+- [ ] jai fait interfaces avec https://www.openmymind.net/Zig-Interfaces/ essayer interfaces avancees
+- [ ] faire retourner l armee au village
+- [ ] enlever les RawXXX
+- [ ] + traiter les erreurs et moins de try
+- [ ] + de cohesion avec les persist
+- [ ] securite verifier que les actions peuvent seulement etre faites par la bonne personne
+- [ ] test coverage
+- [*] Tester avec GPA pour les memory leaks (shutdown et sigint a mettre dans doc si ca marche)
 
-N importe quand:
-- [ ] Tester avec GPA pour les memory leaks
-- [ ] tout relier et mettre Dans mes conclusion mettre des liens vers ma doc
-- [ ] Verifier que tous les premieres scripts sont exectuables
-- [ ] Un script pour lancer les serveurs se serait pas mal
-- [ ] https://zig.news/minosian/deciphering-many-item-types-the-skeleton-19i
-- [ ] Commenter + de code et expliquer les benchmarks
-- [ ] parler de zls dans les issues de mon rapport https://www.reddit.com/r/Zig/comments/12spzrh/question_about_zls/
+Doc:
+- [ ] Ecrire doc du projet
+- [ ] Fil rouge pour partie concurence (comme dans le livre)
+- [*] Epoll https://discord.com/channels/605571803288698900/1259840408545136700
 
 Fin: 
+- [ ] TOUT relire (verifier que tous les premiers scripts sont executables
 - [ ] sources zotero
-- [ ] Changer les titres, les images et les liens pour joli pdf ou latex
+- [ ] faire un autre export ou autre branche ou je mets tout joli pour word ou latex avec les bonnes images, titres, liens etc
 - [ ] corriger fautes orthographe
+- [ ] Affiche
+- [ ] Resume publiable
 
 Peut etre:
+- [?] zig interop avec rust ?
+- [?] Un script pour lancer les serveurs se serait pas mal
+- [?] librairie pour chanels communication entre threads ?
+- [?] std io_uring
+- [?] benchmark vieux tokamak
 - [?] essayer de mettre du comptime dans le projet
-- [?] utiliser std.http.client pour test l api ?
-- [?] rendre cookies secure Secure; HttpOnly; SameSite=Strict
-- [?] Epoll https://discord.com/channels/605571803288698900/1259840408545136700
-- [?] Websocket
 - [?] Zig and C TODO Add other languages that can use C code and make a graph with matplotlib
-- [?] CICD
 - [?] debug, binutils, breakpoints, debugger
-- [?] https://imfing.github.io/hextra/docs/guide/
+- [?] genericite comparaison avec C
+
+Futur:
+- [!] rendre cookies secure Secure; HttpOnly; SameSite=Strict
+- [!] Websocket / SSE sur page acueil pour refresh
+- [!] frontend
+- [!] nginx
+- [!] cicd (cd)
+- [!] durant presentation pas faire que des slides, mais faire aussi des exemple pour aider la comprehension
+- [!] zig test en vert
 
 Questions:
-- Est ce que cest bien avec l intro quand je clique sur le titre ou faudrait mettre intro en bas et tout les solutions encapsulees ?
+- c'est quoi resume publiable ?
+- est ce que je peux rajouter qqch d interessant pour la concurence par exmple pour epoll ?

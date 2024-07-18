@@ -4,9 +4,9 @@
 
 **** Description
 [[https://github.com/karlseguin/http.zig][http.zig]] is a low level HTTP server written fully in Zig. It counts 425 stars on Github and has 12 contributors. It describes itself as an alternative to the currently slow [[https://ziglang.org/documentation/master/std/#std.http.Server][std.http.Server]], the standard library HTTP server we talk about in an other chapter aswell.
-By default it uses non-blocking IO by using either epoll or kqueue and make it work on multiple workers.
+By [[https://github.com/karlseguin/http.zig?tab=readme-ov-file#blocking-mode][default it uses non-blocking IO]] by using either [[file:../concurrency/epoll][epoll]] or kqueue and make it work on multiple workers. On Windows the IO is blocking so the library spawns a [[file:../concurrency/std.Thread][thread]] per request.
 
-It is uses under the hood by Jetzig and there are plans to have it under Tokamak aswell.
+This library is used under the hood by Jetzig and there are plans to have it under Tokamak aswell making it by far the most popular 100% Zig solution.
 
 **** Basic example
 Getting started with a basic httpz server is easy and straightforward.

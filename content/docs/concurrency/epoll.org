@@ -1,7 +1,77 @@
-#+title: Epoll
-#+weight: 90
+#+title: IO multiplexing
+#+weight: 59
 #+hugo_cascade_type: docs
 
-TODO
+IO multiplexing is a way for a program to handle multiple I/O operations at the same time. It is a way to avoid blocking calls. There are multiple ways to do IO multiplexing, the most popular are [[https://man7.org/linux/man-pages/man2/select.2.html][select]], [[https://man7.org/linux/man-pages/man2/poll.2.html][poll]], [[https://man7.org/linux/man-pages/man7/epoll.7.html][epoll]], [[https://man.freebsd.org/cgi/man.cgi?query=kqueue&sektion=2][kqueue]], and [[https://learn.microsoft.com/en-us/windows/win32/fileio/i-o-completion-ports][IOCP]]. In this article, we will focus on epoll since it is the most performant and complete solution on Linux.
 
-To see a good concrete example where you set IO to non-blocking and then use epoll to wait for IO completion, http.zig is a [[https://github.com/karlseguin/http.zig/blob/0b716e27d2e361c5b12983576cadbf922e012dd1/src/worker.zig#L164][good example]].
+*** epoll
+Epoll is a Linux-specific set of system calls, if you are on BSD or macOS you will need to use kqueue, and for windows it ise IOCP. Epolls also has popular alternatives on linux systems like select and poll, but epoll is the most efficient.
+
+Zig provides wrappers around the epoll system calls in either [[https://ziglang.org/documentation/master/std/#std.os.linux][std.os.linux]] or [[https://ziglang.org/documentation/master/std/#std.posix][std.posix]].
+
+
+
+#+begin_src zig
+  const std = @import("std");
+  const posix = std.posix;
+  const linux = std.os.linux;
+  
+  pub fn main() !void {
+      // Creates epoll instance and return the fd to that instance
+      const epoll_fd = linux.epoll_create();
+      std.debug.print("epoll_fd: {}\n", .{epoll_fd});
+  
+      // Server tocken TCP
+      var sock_flags: u32 = posix.SOCK.STREAM | posix.SOCK.CLOEXEC;
+      sock_flags |= posix.SOCK.NONBLOCK;
+      const server_socket = try posix.socket(posix.AF.INET, sock_flags, 0);
+      defer posix.close(server_socket);
+      var address = try std.net.Address.parseIp("127.0.0.1", 4343);
+      const socklen = address.getOsSockLen();
+      try posix.bind(server_socket, &address.any, socklen);
+      try posix.listen(server_socket, 1024);
+  
+      // The epoll_event structure specifies data that the kernel should save and return when the corresponding file descriptor becomes ready.
+      const event = linux.EPOLL.IN | linux.EPOLL.ET;
+      var ev = linux.epoll_event{ .events = event, .data = linux.epoll_data{ .u64 = 420 } };
+      var interest_event_list = [_]linux.epoll_event{ev};
+  
+      // Add the epoll_event to the interst list of the epoll instance
+      _ = try posix.epoll_ctl(@as(i32, @intCast(epoll_fd)), linux.EPOLL.CTL_ADD, server_socket, &ev);
+  
+      // Wait for the file descriptor to become ready
+      while (true) {
+          const nb_fd_ready = posix.epoll_wait(@intCast(epoll_fd), &interest_event_list, 1000);
+          std.debug.print("nb_fd_ready: {}\n", .{nb_fd_ready});
+          for (0..nb_fd_ready) |_| {
+              const client_socket = try posix.accept(server_socket, null, null, 0);
+              const hello = "bonjour";
+              _ = try posix.send(client_socket, hello, 0); // BLOCKING CALL
+              std.debug.print("client_socket: {}\n", .{client_socket});
+          }
+          //std.time.sleep(std.time.ns_per_s * 1); NOT NEEDED SINCE epoll_wait() is blocking
+      }
+  }
+#+end_src
+
+It works exactly as you would except if you worked with already in C for example. Sometimes the wrapper is nicely implemented and allows you to do things in a more Zig way, for examples errors tend to be returned as Zig errors and not an integer or errno.
+
+For example here is the implementation from the std of [[https://man7.org/linux/man-pages/man2/epoll_ctl.2.html][epoll_ctl]]. We can see it returns either nothing (=void=) meaning that the operation was successful, or an error, where in C it would have returned 0 for success and -1 for an error.
+#+begin_src zig
+  pub fn epoll_ctl(epfd: i32, op: u32, fd: i32, event: ?*linux.epoll_event) EpollCtlError!void {
+      const rc = system.epoll_ctl(epfd, op, fd, event);
+      switch (errno(rc)) {
+          .SUCCESS => return,
+          else => |err| return unexpectedErrno(err),
+  
+          .BADF => unreachable, // always a race condition if this happens
+          .EXIST => return error.FileDescriptorAlreadyPresentInSet,
+          .INVAL => unreachable,
+          .LOOP => return error.OperationCausesCircularLoop,
+          .NOENT => return error.FileDescriptorNotRegistered,
+          .NOMEM => return error.SystemResources,
+          .NOSPC => return error.UserResourceLimitReached,
+          .PERM => return error.FileDescriptorIncompatibleWithEpoll,
+      }
+  }
+#+end_src

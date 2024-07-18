@@ -2,14 +2,14 @@
 #+weight: 2
 #+hugo_cascade_type: docs
 
-With async/await comes non-blocking IO, which is an upgrade from having the working being handled by the thread in a context where the application is IO bound. This allows for better performances and scalability since you can have only one thread that can handle and wait for all the IO completions without having to do a lot of context switching for checking each IO operation, which means that instead of having threads just waiting and consuming CPU you do not wait anymore and come back later if IO is not ready. With non-blocking IO also comes the advantage of not having to heavily synchronise the threads. Nowadays being able to handle concurrency by doing non-blocking IO is truly a big advantage since most applications today are IO bound and not CPU bound, the best example of that are web servers.
-
-*** Zig async/await language feature
-
 {{< callout type="warning" >}}
   This feature is not supported anymore since 0.11.0.
 {{< /callout >}}
 
+*** async/await
+With [[https://zig.guide/async/introduction/][async/await]] comes non-blocking IO, which is an upgrade from having the working being handled by the thread in a context where the application is IO bound. This allows for better performances and scalability since you can have only one thread that can handle and wait for all the IO completions without having to do a lot of context switching for checking each IO operation, which means that instead of having threads just waiting and consuming CPU you do not wait anymore and come back later if IO is not ready. With non-blocking IO also comes the advantage of not having to heavily synchronise the threads. Nowadays being able to handle concurrency by doing non-blocking IO is truly a big advantage since most applications today are IO bound and not CPU bound, the best example of that are web servers.
+
+*** Implementation
 This method uses suspensible stackless coroutines, this solution does not necessarly mean that you are going to have multiple threads or parallelism.
 
 We are not going to dive deeper into this solution because it has been deprecated since 0.11 and is not coming back soon.
@@ -24,7 +24,7 @@ You can find a [[https://github.com/ziglang/zig/issues/6025][Github discussion]]
 You can see [[https://ziglang.org/download/0.12.0/release-notes.html#AsyncAwait-Feature-Status][here]] the main reasons why this solution is not implemented yet.
 
 **** Function coloring
-By adding async/await you introduce a new problem. Tracking the execution flow of the program becomes much harder and inpredictable and this job is done by the compiler, providing a sequential looking code to the user. With function coloring introduced every async code has to be called in an async function, which may lead to situations where you have to refactor a lot of your code to be async just for a few functions. This is very nicely sumed up by this [[https://x.com/ryanrwinchester/status/1702730128520830994][image from Ryan Winchester]]
+By adding async/await in other languages you introduce a new problem. Tracking the execution flow of the program becomes much harder and inpredictable and this job is done by the compiler, providing a sequential looking code to the user. With function coloring introduced every async code has to be called in an async function, which may lead to situations where you have to refactor a lot of your code to be async just for a few functions. This is very nicely sumed up by this [[https://x.com/ryanrwinchester/status/1702730128520830994][image from Ryan Winchester]]
 #+CAPTION: Function coloring
 #+NAME:   fig:SED-HR4049
 [[/HEIG_ZIG/images/fcolor.png]]
@@ -62,4 +62,60 @@ This allow to have the same code for both blocking and non-blocking IO programs,
 
 We are not going to dive deeper into function coloring and async/await for the moment so if you want to know more about it, I highly recommend this [[https://kristoff.it/blog/zig-colorblind-async-await/][short read]] made by a core member of the Zig Foundation.
 
+*** zigcoro
+[[https://github.com/rsepassi/zigcoro][Zigcoro]] uses stackful asymmetric coroutines.
+This library is made to provide similar functionalities to [[file:../async_await][async/await]] langage old model, so that if/when the official async/await solution is coming back, it will be easy to switch your project from using zigcoro to the official async/await. Under the hood this library uses the [[https://github.com/mitchellh/libxev][libxev]] library that we talked about earlier in order to have an event loop.
 
+But that is not the only features that zigcoro provides, it also provides chanels.
+Chanels are notably well known in Go, they are used to communicate between coroutines, they are a way pass data to between coroutines. You can find all the other features the library provide on their [[https://github.com/rsepassi/zigcoro?tab=readme-ov-file#async-io-api][github page]].
+
+**** Example
+Here I made a simple example where I simply use chanels to communicate between asynchronous funtions.
+I used an analogy to help understand better the code. A client wants its burder order to come to his house, for that the we create the road between the restaurant and the house =road_between_restaurant_and_house=, the delivery man then knows he has to do his job and that he will transmit the order through that road. The client then waits and listens for his order to arrive. Once the delivery man finished the job the order can be consumed by the =hungry_client=.
+
+#+begin_src zig
+  const std = @import("std");
+  const libcoro = @import("libcoro");
+  
+  const BurgerOrder = struct {
+      burger: u8,
+      fries: u8,
+  };
+  
+  pub fn main() !void {
+      const allocator = std.heap.page_allocator;
+      var exec = libcoro.Executor.init();
+      libcoro.initEnv(.{ .stack_allocator = allocator, .executor = &exec });
+  
+      // Creation of a Type that represents a channel that can passe Burger Orders
+      const BurgeOrderChanel = libcoro.Channel(BurgerOrder, .{});
+  
+      // Creation of a channel that can pass Burger Orders
+      var road_between_restaurant_and_house = BurgeOrderChanel.init(null);
+  
+      const delivery_man = try libcoro.xasync(sender, .{ &road_between_restaurant_and_house, BurgerOrder{ .burger = 2, .fries = 3 } }, null);
+      defer delivery_man.deinit();
+  
+      const hungry_client = try libcoro.xasync(recvr, .{&road_between_restaurant_and_house}, null);
+      defer hungry_client.deinit();
+  
+      libcoro.xawait(delivery_man); // Delivery man finished his job
+      const order = libcoro.xawait(hungry_client); // Hungry client received his order
+      std.debug.print("Burger = {} | Fries = {}", .{ order.burger, order.fries });
+  }
+  
+  fn sender(chan: anytype, order: BurgerOrder) void {
+      defer chan.close();
+      chan.send(order) catch unreachable;
+  }
+  
+  fn recvr(chan: anytype) BurgerOrder {
+      return chan.recv() orelse BurgerOrder{ .burger = 0, .fries = 0 }; // The delivery might fail to arrive
+  }
+#+end_src
+
+Note that chanels are made for inter coroutine communication only. I tried to use them for inter thread communication but it can not work as stated in this [[https://github.com/rsepassi/zigcoro/issues/22][issue]].
+
+Zigcoro is only maintained by 2 people, even though they still update frequently for the new zig versions, the library has not evolved for a while and there are some PR that are just hanging there for a while.
+
+The library can still be useful to leverage async/await powers before Zig makes it official with its own event loop as well and not [[https://github.com/mitchellh/libxev][libxev]].

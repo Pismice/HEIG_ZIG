@@ -1,4 +1,4 @@
-#+title: Zig and C
+#+title: C interoperability
 #+weight: 12
 
 *** Introduction
@@ -171,7 +171,7 @@ If you want to have more C files than just main.c you can add them like so:
 [[https://ziglang.org/documentation/master/#Variables][Zig documentation for those 2 keywords.]]
 
 *** How is it done under the hood
-When you do =@cImport(@cInclude("foo.h"))= in your zig code it runs [[https://ziglang.org/documentation/master/#C-Translation-CLI][translate-c]] and exposes the function and type definitions. The translated code is very unreadable to most programmers sotrying to modify it afterwards is not recommended. If you are intersted to see how the code is translated you can use the CLI tool **zig translate-c foo.c** on [[https://ziglang.org/documentation/master/#Translation-failures][almost]] any C file.
+When you do =@cImport(@cInclude("foo.h"))= in your zig code it runs [[https://ziglang.org/documentation/master/#C-Translation-CLI][translate-c]] and exposes the function and type definitions of the header files. The translated code is basically a wrapper around the C code you are using. If you are intersted to see how the code is translated you can use the CLI tool **zig translate-c foo.c** on [[https://ziglang.org/documentation/master/#Translation-failures][almost]] any C file.
 
 *** Util to translate C code to Zig
 zig translate-c is an util built in the zig toolchains that allows you to translate C code to Zig code.
@@ -262,11 +262,11 @@ Then in order to compare the 2 languages I wrote 4 programs:
 ***** Conclusion
 First thing that we notice immediately is how much faster the Zig code is compared to the Python code. This is not surprising since Zig is a compiled language and Python is an interpreted language.
 
-The second interesting thing is that the two Zig codes dont vary that much (if they even do) compared to the two python codes which have a 5x ratio. This is interesting because it shows that the overhead of calling a C function from Zig is not that big (in fact it is even not existent since all the compiler does is translating the C code to Zig code at compilation time).
+The second interesting thing is that the two Zig codes dont vary that much (if they even do) compared to the two python codes which have a 5x ratio. This is interesting because it shows that the overhead of calling a C function from Zig is not that big.
 
 Calling C code from Python implies an overhead that can become quite big depending on the situations. There is a [[https://pythonspeed.com/articles/python-extension-performance/][great article]] if you want to dig deeper into the reasons why, but to summarize it comes down to two factors: the function call overhead and the (de)serialization overhead. In order to reduce as much as possible those overheads try to call as little times as possible C function and avoid returning or passing large number of data.
 
-We can conclude that calling C code from Zig is really seemless, because at runtime ... everything is Zig code.
+We can conclude that calling C code from Zig is really seemless, because both respects the C ABI, making the interoperability very easy.
 
 Note that for some unkown reason yet my LSP becomes very slow when working in a Zig project with C files and sometimes crashes. I have to investigate this further. (ZLS 0.12.0 inside Neovim)
 

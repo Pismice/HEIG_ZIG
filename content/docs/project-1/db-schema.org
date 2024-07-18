@@ -3,7 +3,11 @@
 #+hugo_cascade_type: docs
 #+math: true
 
-At the time of writing, the database is not made yet and may not end up looking exactly like this, but this is going to help get a clear vision of the different entities of my project and how to handle them.
+I went for a quite simple design but that should easily be able to extend as I make the game more complete. The =Players= table store the *username* and the hashed *password* of the user as well as the *session_id* that is uses to [[file:./auth][authenticate]] the user. The =Villages= table is the core concept of the game, the players can have multiple villages (only one at the time of writing this) upgrade them, build units in them and protect their *gold*. In each village it is possible to construct a few =Buildings= as long as the *gold* and the *space_capacity* allows it. The building help the player become more powerful, for example a =Gold mine= is useful to generate gold with a [[file:./events-handling][polling method on the server side]].
+Every =Village= has a =garnison= army to defend the village all the time. The player can split this army into multiple other armies in order to attack other villages around him. When an attack launched a =Battle= therefore an =Event= as well is created. The battle is then set to happen in a certain ammount of time. The way is is handled is quite similar to the way I handle [[file:./events-handling][gold production]].
+
+Not all the values necessary to make the game work are stored on the database, for example the gold it takes to upgarde a building, the power of each units, etc. Those values are stored in the server code to avoid having to fetch them all the time even though they never change.
+
 #+CAPTION: Transfers per second for different frameworks
 #+NAME:   fig:SED-HR4049
 [[/HEIG_ZIG/images/schema.png]]

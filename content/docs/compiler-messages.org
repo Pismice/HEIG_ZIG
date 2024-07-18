@@ -1,7 +1,7 @@
 #+title: Unclear compiler messages
 #+weight: 10
 
-In a language that aims to report most of its issues at compilation time, it is important to have clear and concise error messages. However at the time we are writing this it is sadly not the case. Here are a few compiler messages that you might encounter that are very hard to understand.
+Overall the Zig compiler is very good at giving you clear and concise error messages. However, there are some cases where the error messages are not as clear as they could be. Here are a few examples of unclear compiler messages (at least for beginners) that you might encounter.
 
 *** Trying to print without the incorrect struct syntax
 We are going to start with the most basic one, everyone doing Zig did at least one time

@@ -2,6 +2,16 @@
 #+weight: 100
 #+hugo_cascade_type: docs
 
+** Dependencies
+First we are going to do a quick recapitulation of the dependencies of each solution since some of the solutions we explored used other ones we explored as well under the hood.
+- httpz is used by Jetzig and the next Tokamak release
+- The server from the std is used by the soon to be old version of Tokamak
+- facil.io is used by Zap
+Here I have a red arrow meaning that it will soon not be the case anymore to have [[file:../std-http][std.http.Server]] as a dependency for [[file:../tokamak][Tokamak]].
+[[/HEIG_ZIG/images/weball.svg]]
+
+** Conclusion
+
 Before we take any conclusion we are going to take a look at the pure performances of those solutions with a benchmark very highly inspired by the author of the Zap framework but tuned to suit my needs that you can find [[https://github.com/Pismice/wrk-graph-benchmarks][here]].
 
 I thus decided to compare the performances of all the solutions using this tool. All of those servers simply return a "Hello" message when the "/" endpoint is called.
@@ -9,7 +19,7 @@ I thus decided to compare the performances of all the solutions using this tool.
 #+NAME:   fig:SED-HR4049
 [[/HEIG_ZIG/images/all_zig_solutions.png]]
 {{< callout type="warning" >}}
-  I used the "dev" branch of the tokamak framework, which is not the one I used on its chapter and is not officialy out yet, but since it will be out soon it might be wiser to use this most recent one !
+  I used the "dev" branch of the tokamak framework, which is not the one I used on its chapter and is not officialy out yet, but since it will be out soon it might be wiser to use this most recent one ! The old tokamak version performances would have been around the same as zigstd (std.http.Server) performances.
 {{< /callout >}}
 
 Note that benchmarks like that are not ground truth, they might be misleading for multiple reasons:

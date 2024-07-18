@@ -18,3 +18,6 @@ If the user lost his cookie or connect on a new device, he will provide its =use
 *** POST /auth/logout
 The user will access this endpoint with no needed paramater as he is already authentified by the session token. The server will then delete the session token from the database and from the user's cookie.
 
+
+TODO montrer avec du code et expliquer cookies pas secure
+ rendre cookies secure Secure; HttpOnly; SameSite=Strict

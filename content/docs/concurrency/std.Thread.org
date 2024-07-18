@@ -1,12 +1,11 @@
-#+title: Threads from the std
-#+weight: 3
+#+title: Kernel threads
+#+weight: 1
 #+hugo_cascade_type: docs
 
 **** Basics
-Spawning OS thread in Zig is quite simple, since it is built-in in the standard library. Here is an example of how to spawn 2 threads that are going to print numbers from 0 to x in parallel:
+Spawning OS threads in Zig is quite simple, since it is built-in in the [[https://ziglang.org/documentation/master/std/#std.Thread][standard library]]. Here is an example of how to spawn 2 threads that are going to print numbers from 0 to x in parallel:
 #+begin_src zig :imports '(std) :main 'no :testsuite 'no
   pub fn main() !void {
-      //std.debug.print("Total CPU cores = {!}\n", .{std.Thread.getCpuCount()});
       const thread1 = try std.Thread.spawn(.{}, goTo, .{ 1, 5 });
       const thread2 = try std.Thread.spawn(.{}, goTo, .{ 2, 3 });
   
@@ -21,7 +20,7 @@ Spawning OS thread in Zig is quite simple, since it is built-in in the standard 
       }
   }
 #+end_src
-Note that the std.Thread also offer few other useful functions like `std.Thread.getCpuCount()` to get the number of CPU cores available on the machine.
+Note that the std.Thread also offer few other useful functions like [[https://ziglang.org/documentation/master/std/#std.Thread.getCpuCount][std.Thread.getCpuCount()]] to get the number of CPU cores available on the machine.
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
   std.debug.print("Total CPU cores = {!}\n", .{std.Thread.getCpuCount()});
 #+end_src
@@ -120,7 +119,7 @@ Or worse, you would have to use a completly different library ending up with a l
   }
 #+end_src
 
-Or you could write your own wrapper kind of like the way Zig does (this is not going to work on Windows, but you get the idea):
+Or you could write your own wrapper kind of like the way Zig does, note that is code is pseudo-code and is not executable:
 #+begin_src c
   #include <stdio.h>
   
