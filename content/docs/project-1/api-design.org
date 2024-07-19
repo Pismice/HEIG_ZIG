@@ -5,61 +5,64 @@
 
 The client is going to interact with the game by sendin HTTP requests to the server. Those requests are going to be returned with a JSON response. All the possible actions a player can do are going to be done through the API. He can get informations about the state of the game like the ranking of the best players or do actions like building units and attacking another player.
 
-Here is a list of all the possible HTTP requests a player can do.
+Here is a list of all the possible HTTP requests a player can do, not including the authentification specific routes.
 
-TODO I STILL DONT KNOW HOW TO PASS DATA WITH POST REQUESTS (query, body, ...)
+For all of these endpoints the user must have a valid =session_id= cookie, except GET /game/ranking which is a public ranking.
 
-GET /village/{}
-Send to the player the state of his village
-- name
-- gold (peut etre faire une requete que pour gold pour eviter de trop charger le serveur ?)
-- x_position
-- y_position
-- wall_levels
-- level =Which is the level of the town center, since there is only one per Village both the Village and the Town Center have the same level=
-- space_capacity =Available space for new Buildings in the Village=
-- buildings =GET /building/=
+*** GET /
+Take no parameter and return a welcome message containing the number of players registered.
 
-POST /build/{building_name}/{village_id}
+#+begin_src json
+  [
+      "Welcome to my game which currently has 2 players !"
+  ]
+#+end_src
 
-POST /upgrade_building/{id}
-Upgrade a building corresponding to the id, only the owner of the building can upgrade it.
-The server check if the user has enough gold and if it is possible to upgrade the building.
-Return if the upgrade of the building has been started or not
+*** GET /game/ranking
+Take no parameter and return all the players ranked by the amount of gold they have.
 
-POST /buy_units/{nb_archers}/{nb_cavalery}/{nb_infantry}
-Buy units for the player, the server check if the player has enough gold and if it the case instantly produces them and assign them to the garnison army.
+#+begin_src json
+[
+    [
+        {
+            "username": "user1",
+            "gold": 4110
+        },
+        {
+            "username": "user2",
+            "gold": 222
+        }
+    ]
+]
+#+end_src
 
-GET /ranking/{}
-Send to the player the ranking of the best players by gold possession
+*** GET /game/village
+Take no paramater and return the village informations of the connected player
+#+begin_src json
+[
+    {
+        "id": 31,
+        "name": "testoo",
+        "x_position": 50,
+        "y_position": 96,
+        "gold": 4110,
+        "level": 1,
+        "space_capacity": 5,
+        "player_id": 43,
+        "army_id": 21
+    }
+]
+#+end_src
 
-GET /attackable_villages/{}
-Send to the player all the villages he can attack including thoses informations about the villages:- name
-- player_name
-- gold
-- x_position
-- y_position
-- wall_levels
-- level =Which is the level of the town center, since there is only one per Village both the Village and the Town Center have the same level=
+*** POST /game/create_building
+#+begin_src json
+  {
+      "success": true
+  }
+#+end_src
 
-POST /attack/{village_id}/{army_id}
-Start the process of an attack.
+*** POST /game/upgrade_building
 
-GET /armies/{}
-Send to the player the state of all his armies, corresponding to GET /army/ but for all the armies of the player
+*** POST /game/buy_units
 
-OPTIONAL: GET /building/{id}
-Send to the player the state of a building corresponding to the id, only the owner of the building can get access to this ressource
-- id
-- level
-- space_taken
-- productivity # Only if it is a production building like a Gold Mine
-- upgrade_cost
-
-OPTIONAL: GET /army/{id}
-Send to the player the state of his army corresponding to the id, only the owner of the army can get access to this ressource
-- id
-- nb_archers
-- nb_cavalery
-- nb_infantry
-- is_moving # True if the army is outside the village and False if it is in the village
+*** POST /game/attack

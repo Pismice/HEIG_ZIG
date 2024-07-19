@@ -92,10 +92,12 @@ The database is needed in my project in order to persist the data and not have i
 I only have 2 simple criterias for the database. The first is that I need it to be as easy as possible to integrate in my project, and the second is that I would prefer a SQL database since I am already familiar with SQL queries.
 
 ***** Solution: SQLite
-Since it is only a file and does net require tons of installation or running on my machine I decided to go with SQLITE. In Zig there are ways to integrate SQLITE in our project.
+Since it is only a file and does net require tons of installation or running an other process on my machine I decided to go with SQLITE. 
 
 The SQLite database could also be run on the same machine as the server if we only have one server, allowing low latency between the database and the WEB server. Thus making [[#architecture][requets 2 and 3]] faster.
 
-The first is to simply use the [[https://www.sqlite.org/cintro.html][C SQLite library]], this is the solution I am going to go with in order to test the Zig-C interoperability in a big project.
+In Zig there are 2 main ways to integrate SQLITE in our project.
 
-However if I happen to encounter issues I could always fall back to an other community appreciated solution which is a [[https://github.com/vrischmann/zig-sqlite][Zig wrapper]] around the C library.
+The first is to simply use the [[https://www.sqlite.org/cintro.html][C SQLite library]], as we have seen already it is very easy to use a C library within a Zig project making it a very decent option
+
+However if I found a [[https://github.com/vrischmann/zig-sqlite][Zig wrapper]] around that same library that includes a few [[https://github.com/vrischmann/zig-sqlite?tab=readme-ov-file#features][other features]] like checking the paramaters of the query at compile time. It also has the advantage of giving the feeling that I am using a Zig library, thus not having to wrap my head around the such concepts as [[https://ziglang.org/documentation/master/#C-Pointers][C pointers]] or other C specific features. 

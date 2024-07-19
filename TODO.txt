@@ -6,15 +6,15 @@ Projet:
 - [ ] + de cohesion avec les persist
 - [ ] securite verifier que les actions peuvent seulement etre faites par la bonne personne
 - [ ] test coverage
+- [ ] avant de constuire un bulding verifier assez argent et or
+- [ ] get village qui retourne aussi les buildings
 - [*] Tester avec GPA pour les memory leaks (shutdown et sigint a mettre dans doc si ca marche)
 
 Doc:
 - [ ] Ecrire doc du projet
-- [ ] Fil rouge pour partie concurence (comme dans le livre)
-- [*] Epoll https://discord.com/channels/605571803288698900/1259840408545136700
+- [ ] TOUT relire (verifier que tous les premiers scripts sont executables)
 
 Fin: 
-- [ ] TOUT relire (verifier que tous les premiers scripts sont executables
 - [ ] sources zotero
 - [ ] faire un autre export ou autre branche ou je mets tout joli pour word ou latex avec les bonnes images, titres, liens etc
 - [ ] corriger fautes orthographe
@@ -42,5 +42,4 @@ Futur:
 - [!] zig test en vert
 
 Questions:
-- c'est quoi resume publiable ?
-- est ce que je peux rajouter qqch d interessant pour la concurence par exmple pour epoll ?
+- est ce que je peux rajouter qqch d interessant pour la concurence par exmple pour epoll, psq je trouve assez fade?

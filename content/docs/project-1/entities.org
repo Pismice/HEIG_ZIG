@@ -1,0 +1,5 @@
+#+title: Entities
+#+weight: 7
+#+hugo_cascade_type: docs
+#+math: true
+
