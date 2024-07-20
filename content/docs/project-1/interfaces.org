@@ -3,3 +3,172 @@
 #+hugo_cascade_type: docs
 #+math: true
 
+When dealing with a complex relational schemas you often end up with hierarchies of objects. For example a =Person= object mightbe either a =Student= or a =Teacher= object or even none of them. But they all share common charaterstics like a =name= and maybe a function that =increaseSalary()=. The basic way would be to duplicate all those informations in each class, but it is not a proper way to do it because for example you might want to view all of those =Student= and =Teacher= objects as =Person= objects. 
+Since Zig does not support inheritance, we are going to craft our own way to do it with the magic of pointers.
+
+Everything I am going to show you is based on this [[https://www.openmymind.net/Zig-Interfaces/][great article]]. So if you have any doubt about what I am doing here, you should check it out.
+
+In my project I have a few cases where it could be a good idea to implement those interfaces. Notably for my =events=.
+
+#+CAPTION: Events relationships
+#+NAME:   fig:SED-HR4049
+[[/HEIG_ZIG/images/events.png]]
+
+In my project there is a function where I poll for all the non-resolved =events= and check if they are overdue or not. Before implementing the interfaces I could not iterate over all the events and call a function on them that would resolve the event. What I had to do is poll all the =battles=, all the =ressources_transfers= and so on if I happen to have more =events= in the future. Which caused a lot of duplication.
+
+With this way of doing things I had to implement a =getAllXInOrder()= then iterate over all the X and call their own =resolve()= function and check a few other things like if the battle was already resolved or not.
+
+#+begin_src zig
+  const allBattles = try Battle.getAllBattlesInOrder(db, allocator);
+  for (allBattles) |*battle| {
+      // If the battle is over
+      if (battle.duration + battle.time_start < std.time.timestamp()) {
+          if (battle.resolved == false) {
+              // Resolve the battle
+              try battle.resolve(db, allocator);
+          }
+      } else {
+          break; // this battle is not over so the next ones wont be either
+      }
+  }
+#+end_src
+
+With the newly implemented interfaces I can simply get all the next events that are not resolved and call =executeEvent()= which is going to execute the specific function of the event under the hood.
+
+#+begin_src zig
+const events = try Event.getAllTheNextEvents(db, allocator);
+        for (events) |event| {
+            if (event.getRemainingTime()) {
+                try event.executeEvent(db, allocator);
+            } else {
+                break; // this event is not over so the next ones wont be either
+            }
+        }
+#+end_src
+
+How I have implemented this is by first having an =Event= struct that is going to be our parent "class". Which basically look something like this. Where I simply have a pointer =ptr= to the child object which might be a =Battle= or a =RessourcesTransfer= and an =executeEventFn= which also is a pointer to the specifi resolve function of either our =Battle= or =RessourcesTransfer=.
+
+The rest are just the functions that can be used for any =event=, like getting the ammount of time left with =getRemainingTime()=.
+
+#+begin_src zig
+  const Event = @This();
+  
+  id: usize,
+  time_start: i64, // nb of seconds between 1970 and the end of the event
+  duration: i64,
+  ptr: *anyopaque, // pointer to the child event (used for heritage)
+  executeEventFn: *const fn (ptr: *anyopaque, db: *sqlite.Db, allocator: std.mem.Allocator) anyerror!void,
+  
+  pub fn getRemainingTime(self: Event) !i64 {
+      // negative value means the event is over
+      return std.time.timestamp() - self.time_start;
+  }
+  
+  pub fn executeEvent(self: Event, db: *sqlite.Db, allocator: std.mem.Allocator) !void {
+      return self.executeEventFn(self.ptr, db, allocator);
+  }
+  
+  pub fn getAllTheNextEvents(db: *sqlite.Db, allocator: std.mem.Allocator) ![]Event {
+      // Helped by ChatGPT
+      const query =
+          \\ 
+          \\ WITH CTE AS (
+          \\     SELECT 
+          \\         event_ressources_transfer_id, 
+          \\         event_battle_id,
+          \\         COUNT(*) OVER() AS total_count
+          \\     FROM 
+          \\         events
+          \\     LEFT JOIN 
+          \\         battles 
+          \\     ON 
+          \\         battles.event_battle_id = events.id
+          \\     LEFT JOIN 
+          \\         ressources_transfers 
+          \\     ON 
+          \\         ressources_transfers.event_ressources_transfer_id = events.id
+          \\     WHERE 
+          \\         resolved = 0
+          \\     ORDER BY 
+          \\         (time_start + duration)
+          \\ )
+          \\ SELECT 
+          \\     event_ressources_transfer_id, 
+          \\     event_battle_id, 
+          \\     total_count
+          \\ FROM 
+          \\     CTE;
+      ;
+      var stmt = try db.prepare(query);
+      defer stmt.deinit();
+      const EventsIds = struct {
+          event_ressources_transfer_id: ?usize,
+          event_battle_id: ?usize,
+          total_count: usize,
+      };
+      const raw_interfaces_events = try stmt.all(EventsIds, allocator, .{}, .{});
+  
+      var totals: usize = 0;
+      for (raw_interfaces_events) |event| {
+          totals = event.total_count;
+          break;
+      }
+  
+      const events = try allocator.alloc(Event, totals);
+  
+      for (raw_interfaces_events, 0..totals) |unkown_event, i| {
+          if (unkown_event.event_battle_id) |battle_id| {
+              const b = try Battle.initBattleById(db, allocator, battle_id);
+              events[i] = b.event();
+          } else if (unkown_event.event_ressources_transfer_id) |ressources_transfer_id| {
+              const r = try ResourcesTransfer.initRessourcesTransferById(db, allocator, ressources_transfer_id);
+              events[i] = r.event();
+          } else {
+              return error.UnkownEventType;
+          }
+      }
+  
+      return events;
+  }
+#+end_src
+
+The child "objects" have two things to implement, a function that return an =Event= whit the pointers pointing to the child object himself. And the function it wants to override, which in our case is =executeEventFn()= that is going to resolve the event when time is due.
+
+#+begin_src zig
+  const RessourcesTransfer = @This();
+  
+  // Ressource transfer specific fields
+  giver_village_id: usize,
+  receiver_village_id: usize,
+  golds_given: u64,
+  
+  // Events general fields
+  event_ressources_transfer_id: usize,
+  time_start: i64,
+  duration: i64,
+  resolved: bool,
+  
+  // Create a point of view of Event for the Battle
+  pub fn event(self: *RessourcesTransfer) Event {
+      return Event{
+          .id = self.event_ressources_transfer_id,
+          .time_start = self.time_start,
+          .duration = self.duration,
+          .ptr = self,
+          .executeEventFn = executeEventFn,
+      };
+  }
+  
+  // Overrided function
+  pub fn executeEventFn(ptr: *anyopaque, db: *sqlite.Db, allocator: std.mem.Allocator) !void {
+      const self: *RessourcesTransfer = @ptrCast(@alignCast(ptr));
+      const target_village = try Village.initVillageById(db, allocator, self.receiver_village_id);
+      target_village.gold += self.golds_given;
+      try target_village.persist(db);
+      self.resolved = true;
+      try self.persist(db);
+      return;
+  }
+#+end_src
+
+This design pattern allowed me to have cleaner code and better separation of concerns. I can now iterate over all the events and call the =executeEvent()= function on them without having to worry about what kind of event it is. So even in Zig some kind of object oriented programming features are possible to handcraft.

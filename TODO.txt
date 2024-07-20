@@ -1,8 +1,6 @@
 Projet:
-- [ ] jai fait interfaces avec https://www.openmymind.net/Zig-Interfaces/ essayer interfaces avancees
 - [ ] faire retourner l armee au village
 - [ ] enlever les RawXXX
-- [ ] + traiter les erreurs et moins de try
 - [ ] + de cohesion avec les persist
 - [ ] securite verifier que les actions peuvent seulement etre faites par la bonne personne
 - [ ] test coverage
@@ -22,6 +20,7 @@ Fin:
 - [ ] Resume publiable
 
 Peut etre:
+- [?] + traiter les erreurs et moins de try
 - [?] zig interop avec rust ?
 - [?] Un script pour lancer les serveurs se serait pas mal
 - [?] librairie pour chanels communication entre threads ?
