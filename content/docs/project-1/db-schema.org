@@ -1,4 +1,4 @@
-#+title: Database schema
+#+title: Database
 #+weight: 3
 #+hugo_cascade_type: docs
 #+math: true
@@ -8,6 +8,82 @@ Every =Village= has a =garnison= army to defend the village all the time. The pl
 
 Not all the values necessary to make the game work are stored on the database, for example the gold it takes to upgarde a building, the power of each units, etc. Those values are stored in the server code to avoid having to fetch them all the time even though they never change.
 
-#+CAPTION: Transfers per second for different frameworks
+#+CAPTION: DB schema
 #+NAME:   fig:SED-HR4049
 [[/HEIG_ZIG/images/schema.png]]
+
+* SQLite Zig wrapper
+The library overwall was quite nice to use because of all the benefits I cited in the *Introduction* section of this project. But it still had a little drawback being the lack of support and clear documentations. I often found myself stuck with errors that are not very detailled.
+
+One of the main issues I had was with [[https://github.com/vrischmann/zig-sqlite/issues/162][chaining dynamic requests]].
+
+The following code is not working and returning an =SQLiteRangeError= error. This is because I tried to execute 2 queries inside one. Note that it is important here that the 2 queries are executed one after the other because of the =last_insert_rowid()= function that could not return the wanted id if something else has been done on the database at the same time.
+#+BEGIN_SRC zig
+  pub fn createBuilding(db: *sqlite.Db, comptime BuildingType: type, building: *BuildingType) !void {
+      // 1. Create the building "parent"
+      switch (BuildingType) {
+          Building.GoldMine => |_| {
+              const query =
+                  \\ INSERT INTO buildings(level,space_taken) VALUES(1,0);
+                  \\ INSERT INTO gold_mines(building_id,productivity) VALUES(last_insert_rowid(),?)
+              ;
+              const gm: *GoldMine = @ptrCast(building);
+              var stmt = try db.prepare(query);
+              defer stmt.deinit();
+              try stmt.exec(.{}, .{ .productivity = gm.productivity });
+          },
+          else => return error.UnkownBuildingType,
+      }
+  }
+#+END_SRC
+
+This can be fixed in two different ways, the first is to not use the library =?= wildcard but instead make my whole query without using those and then calling =execMulti=, note that =execMulti= can not take any =?= parameters.
+
+#+begin_src zig
+  pub fn createBuilding(db: *sqlite.Db, comptime BuildingType: type, building: *BuildingType) !void {
+      // 1. Create the building "parent"
+  
+      var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+      defer arena.deinit();
+      const allocator = arena.allocator();
+  
+      // 2. Create the building "child"
+      switch (BuildingType) {
+          Building.GoldMine => |_| {
+              const gm: *GoldMine = @ptrCast(building);
+              const query = try std.fmt.allocPrint(allocator, "INSERT INTO buildings(level,space_taken) VALUES(1,0);INSERT INTO gold_mines(building_id,productivity) VALUES(last_insert_rowid(),{d})", .{gm.productivity});
+              try db.execMulti(query, .{});
+          },
+          else => return error.UnkownBuildingType,
+      }
+  }
+#+end_src
+
+The second and in my opinion best way to do it in order to get both the advantages of executing requests together and also having the possibility to use =?= parameter is to use a =savepoint=. The example below is not from the same code but it still illustrates the point well.
+
+#+begin_src zig
+  pub fn createAttackingArmy(self: *Village, db: *sqlite.Db, allocator: std.mem.Allocator, attackInfos: Troops) !*Army {
+      // Verify that he has enough units in his village
+      const source_village_army = try self.getArmy(db, allocator);
+      if (source_village_army.nb_ranged < attackInfos.nb_ranged or source_village_army.nb_infantry < attackInfos.nb_infantry or source_village_army.nb_cavalry < attackInfos.nb_cavalry) {
+          return error.NotEnoughUnitsInTheVillage;
+      }
+  
+      var c1 = try db.savepoint("c1");
+      // Else we remove the units from the village and create the attacking army
+      try c1.db.execDynamic("UPDATE armies SET nb_ranged = nb_ranged - ?,nb_cavalry = nb_cavalry - ?,nb_infantry = nb_infantry - ? WHERE id = ?;", .{}, .{ attackInfos.nb_ranged, attackInfos.nb_cavalry, attackInfos.nb_infantry, self.army_id });
+      // And create new army
+      try c1.db.execDynamic("INSERT INTO armies (nb_ranged, nb_cavalry, nb_infantry, player_id) VALUES (?, ?, ?, ?);", .{}, .{ attackInfos.nb_ranged, attackInfos.nb_cavalry, attackInfos.nb_infantry, self.player_id });
+      c1.commit();
+  
+      const created_army: *Army = try allocator.create(Army);
+      created_army.* = .{
+          .id = @intCast(c1.db.getLastInsertRowID()),
+          .nb_ranged = attackInfos.nb_ranged,
+          .nb_cavalry = attackInfos.nb_cavalry,
+          .nb_infantry = attackInfos.nb_infantry,
+          .player_id = self.player_id,
+      };
+      return created_army;
+  }
+#+end_src

@@ -3,3 +3,52 @@
 #+hugo_cascade_type: docs
 #+math: true
 
+Since the function that starts the server and make it listen for incoming requests is blocking, I had to find a way to gracefully shutdown the server because I want to check for things like memory leaks, running time and everything else that might be necessary to gracefully shutdown the server.
+
+#+begin_src zig
+    defer iNeedThisToExecute; // will not be executed when the process is killed
+    try server.listen(); // Blocking call
+#+end_src
+
+In order to do that I implemented [[https://faculty.cs.niu.edu/~hutchins/csci480/signals.htm][signals]], to catch the =SIGINT= signal that is sent when you press =CTRL+C= in the terminal. Because the default behavior is simply to kill the process. To do that I wrote a =sigaction= that is going to modify the behavior of the =SIGINT= signal.
+
+#+begin_src zig
+  var sa = std.posix.Sigaction{
+      .handler = .{
+          .handler = &signal_handler,
+      },
+      .mask = std.posix.empty_sigset,
+      .flags = 0,
+  };
+  try std.posix.sigaction(std.posix.SIG.INT, &sa, null);
+
+  // Start server
+  start_time = std.time.timestamp();
+
+  try server.listen(); // Blocking call
+#+end_src
+
+Now the default behavior of the =SIGINT= signal is going to be replaced by the =signal_handler= function.
+
+#+begin_src zig
+  // Working alternative to a defer in the main function
+  fn signal_handler(_: c_int) align(1) callconv(.C) void {
+      std.debug.print("Received SIGINT\n", .{});
+  
+      server.stop();
+      std.debug.print("Server stopped after {d} seconds\n", .{std.time.timestamp() - start_time});
+      server.deinit();
+  
+      //    const deinit_status = gpa.deinit();
+      //    if (deinit_status == .leak) {
+      //        std.debug.print("Memory leak detected\n", .{});
+      //    } else {
+      //        std.debug.print("Memory freed correctly\n", .{});
+      //    }
+      std.process.exit(0); // important in order to kill all the pollings threads
+  }
+#+end_src
+
+Note that here I commented all the memory leak detection because there currently are issues with the way the httpz framework handles the memory. I am currently in active discussions with the maintener of the framework to fix this issue. After that I should not have any memory leaks since most of the allocators I used are those provided by the framework.
+
+To silence the memory leaks and have better performances I use the =std.heap.page_allocator= for the moment.

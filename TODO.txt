@@ -1,25 +1,19 @@
-Projet:
-- [ ] faire retourner l armee au village
-- [ ] enlever les RawXXX
-- [ ] + de cohesion avec les persist
-- [ ] securite verifier que les actions peuvent seulement etre faites par la bonne personne
-- [ ] test coverage
-- [ ] avant de constuire un bulding verifier assez argent et or
-- [ ] get village qui retourne aussi les buildings
-- [*] Tester avec GPA pour les memory leaks (shutdown et sigint a mettre dans doc si ca marche)
-
 Doc:
-- [ ] Ecrire doc du projet
+- [ ] get village qui retourne aussi les buildings
+- [ ] finir api design
+- [?] CI
 - [ ] TOUT relire (verifier que tous les premiers scripts sont executables)
 
 Fin: 
+- [ ] rmettre db schema a jour
 - [ ] sources zotero
-- [ ] faire un autre export ou autre branche ou je mets tout joli pour word ou latex avec les bonnes images, titres, liens etc
 - [ ] corriger fautes orthographe
 - [ ] Affiche
 - [ ] Resume publiable
 
 Peut etre:
+- [?] securite verifier que les actions peuvent seulement etre faites par la bonne personne
+- [*] Tester avec GPA pour les memory leaks (shutdown et sigint a mettre dans doc si ca marche)
 - [?] + traiter les erreurs et moins de try
 - [?] zig interop avec rust ?
 - [?] Un script pour lancer les serveurs se serait pas mal
@@ -42,3 +36,6 @@ Futur:
 
 Questions:
 - est ce que je peux rajouter qqch d interessant pour la concurence par exmple pour epoll, psq je trouve assez fade?
+- voir pour zotero comment faire les liens
+- besoin d avoir "liste des codes, figures, ..." ?
+- voir ensemble la partie projet

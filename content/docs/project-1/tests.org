@@ -1,4 +1,4 @@
-#+title: Continus Integration (CI)
+#+title: Continuous Integration (CI)
 #+weight: 4
 #+hugo_cascade_type: docs
 #+math: true

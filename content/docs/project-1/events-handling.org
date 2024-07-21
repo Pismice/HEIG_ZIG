@@ -3,3 +3,75 @@
 #+hugo_cascade_type: docs
 #+math: true
 
+In my project there are a lot of =events= that happen when no player is connected or making any requests. Especially giving golds to the player each X ammount of time in order to give them the ammount of =gold= their =gold_mines= are producing, as well as treating the =events= like =battles= or =ressources_transfers= that are not resolved yet because of the travel time from one village to one other.
+
+So the server has to find a way to work even no request is submitted. That is where threads come in handy, I am going to spawn one thread for ressources polling and one thread for events polling. Those threads are not going to be constantly polling in order not to overload the database.
+
+So in my =main= function,  before listening to the requests, I am going to spawn those two threads that are going to be running in the background.
+
+#+begin_src zig
+    // Start workers
+    _ = try std.Thread.spawn(.{}, ressourceProductionPolling, .{&sqldb});
+    _ = try std.Thread.spawn(.{}, eventsPolling, .{&sqldb});
+#+end_src
+
+The ressource polling function is quite simple, it is going to update the ammount of =gold= the =players= have by directly hitting the DB.
+
+#+begin_src zig
+  fn ressourceProductionPolling(db: *sqlite.Db) !void {
+      while (true) {
+          //std.debug.print("Polling \n", .{});
+          const start = std.time.milliTimestamp();
+  
+          const query =
+              \\ UPDATE villages
+              \\ SET gold = gold + subquery.total_rod
+              \\ FROM (
+              \\     SELECT villages.id AS village_id, SUM(productivity) AS total_rod
+              \\     FROM gold_mines
+              \\     INNER JOIN buildings ON building_id = buildings.id
+              \\     INNER JOIN villages ON villages.id = buildings.village_id
+              \\     GROUP BY villages.id
+              \\ ) AS subquery
+              \\ WHERE villages.id = subquery.village_id;
+          ;
+          var stmt = try db.prepareDynamic(query);
+          defer stmt.deinit();
+          try stmt.exec(.{}, .{});
+  
+          const end = std.time.milliTimestamp();
+          const elapsed = end - start;
+          std.debug.print("Ressources polling took {d}ms\n", .{elapsed});
+  
+          std.time.sleep(60 * std.time.ns_per_s);
+      }
+  }
+#+end_src
+
+The thread polling for =events= is a bit more complex but you can get more details in the *Interfaces* section of this documentation.
+
+#+begin_src zig
+  fn eventsPolling(db: *sqlite.Db) !void {
+      while (true) {
+          const start = std.time.milliTimestamp();
+          var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+          defer arena.deinit();
+          const allocator = arena.allocator();
+  
+          const events = try Event.getAllTheNextEvents(db, allocator);
+          for (events) |event| {
+              if (try event.getRemainingTime() <= 0) {
+                  try event.executeEvent(db, allocator);
+              } else {
+                  break; // this event is not over so the next ones wont be either
+              }
+          }
+          const end = std.time.milliTimestamp();
+          const elapsed = end - start;
+          std.debug.print("Events polling took {d}ms\n", .{elapsed});
+          std.time.sleep(5 * std.time.ns_per_s);
+      }
+  }
+#+end_src
+
+We can then see that even with a simple HTTP server we can still leverage the easy Zig std implementation of threads to make our server behave in real time without having to wait for HTTP requests.
