@@ -39,3 +39,4 @@ Questions:
 - voir pour zotero comment faire les liens
 - besoin d avoir "liste des codes, figures, ..." ?
 - voir ensemble la partie projet
+- pas besoin d avoir la liste des codes sources ?

@@ -779,6 +779,4 @@ For the second implementation of the Zig code, we note that it has been implemen
 This merge is performed because there are several threads processing the data.
 However, it also uses the same hashmap as the one used in the first version.
 
-#+INCLUDE: "./zig-package-manager.org" :minlevel 2
-
 {{< references >}}

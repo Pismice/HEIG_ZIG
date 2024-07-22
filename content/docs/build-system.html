@@ -1,0 +1,2537 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2024-07-22 lun 16:25 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Build system</title>
+<meta name="author" content="tetratrux" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { }
+</style>
+<script>
+  window.MathJax = {
+    tex: {
+      ams: {
+        multlineWidth: '85%'
+      },
+      tags: 'ams',
+      tagSide: 'left',
+      tagIndent: '.8em'
+    },
+    chtml: {
+      scale: 1.0,
+      displayAlign: 'left',
+      displayIndent: '5em'
+    },
+    svg: {
+      scale: 1.0,
+      displayAlign: 'left',
+      displayIndent: '5em'
+    },
+    output: {
+      font: 'mathjax-modern',
+      displayOverflow: 'overflow'
+    }
+  };
+</script>
+
+<script
+  id="MathJax-script"
+  async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Build system</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org3b34e60">1. Build modes</a>
+<ul>
+<li><a href="#org890f1ca">1.1. Generate automatically documentation</a></li>
+<li><a href="#org8814a94">1.2. Strip output binary in Zig in Linux</a></li>
+<li><a href="#org7d51900">1.3. Separate debug symbols from ELF executable</a></li>
+</ul>
+</li>
+<li><a href="#org780eee0">2. Cross-compilation</a>
+<ul>
+<li><a href="#orgb73a4a1">2.1. Cross-compile with an embedded linux</a></li>
+</ul>
+</li>
+<li><a href="#org744228d">3. Performance comparaison &amp; SIMD</a>
+<ul>
+<li><a href="#orgd03b460">3.1. Vectors</a></li>
+<li><a href="#org821e3a1">3.2. Leibniz algorithm</a></li>
+<li><a href="#org6d4c870">3.3. Benchmark your x86\<sub>64</sub> CPU</a></li>
+<li><a href="#org5d00dca">3.4. ARM benchmark example</a></li>
+<li><a href="#orgada3a17">3.5. Different code examples benchmark</a></li>
+</ul>
+</li>
+<li><a href="#org1599c98">4. Programming language Benchmarks</a>
+<ul>
+<li><a href="#orgf23146e">4.1. Results</a></li>
+</ul>
+</li>
+<li><a href="#orgc89b3a6">5. 1BRC</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org3b34e60" class="outline-2">
+<h2 id="org3b34e60"><span class="section-number-2">1.</span> Build modes</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Zig build modes are way easier for beginners to graps compared to <a href="https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html">C</a>
+</p>
+
+<p>
+There are only 4 different build modes:
+</p>
+<ul class="org-ul">
+<li><code>Debug</code> (default)</li>
+<li><code>ReleaseFast</code></li>
+<li><code>ReleaseSafe</code></li>
+<li><code>ReleaseSmall</code></li>
+</ul>
+
+<p>
+You can check them in more details <a href="https://ziglang.org/documentation/master/#Build-Mode">here</a>
+</p>
+
+<p>
+There are also a few other options you can tweak like avx <a href="https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html">here</a>
+</p>
+</div>
+
+<div id="outline-container-org890f1ca" class="outline-3">
+<h3 id="org890f1ca"><span class="section-number-3">1.1.</span> Generate automatically documentation</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+In Zig there is an experimental feature, it's automatically generated documentation.
+It will scan all the public structures and functions and will create documentation.
+Moreover, the comments like <code>///</code> are used to give more information to types.
+</p>
+
+<p>
+This example is created with the help of the <code>build.zig</code> of the Zig language GitHub repository.
+This is used the same way as the Zig teams auto-generate the standard library documentation. See: <a href="https://github.com/ziglang/zig/blob/master/build.zig">build.zig</a>
+</p>
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #b4fa70;">pub</span> <span style="color: #b4fa70;">fn</span> <span style="color: #fce94f;">build</span>(<span style="color: #fcaf3e;">b</span>: *<span style="color: #8cc4ff;">std</span>.Build) <span style="color: #8cc4ff;">void</span> {
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">autodoc_test</span> = b.addTest(.{
+         .root_source_file = .{ .path = <span style="color: #e9b96e;">"src/main.zig"</span> },
+     });
+     <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">install_std_docs</span> = b.addInstallDirectory(.{
+         .source_dir = autodoc_test.getEmittedDocs(),
+         .install_dir = .prefix,
+         .install_subdir = <span style="color: #e9b96e;">"doc"</span>,
+     });
+
+     <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">doc_step</span> = b.step(<span style="color: #e9b96e;">"docs"</span>, <span style="color: #e9b96e;">"Generate documentation"</span>);
+     doc_step.dependOn(&amp;install_std_docs.step);
+     doc_step.makeFn = generateDocumentation;
+ }
+
+ <span style="color: #b4fa70;">fn</span> <span style="color: #fce94f;">generateDocumentation</span>(<span style="color: #fcaf3e;">self</span>: *<span style="color: #8cc4ff;">std</span>.build.Step, <span style="color: #fcaf3e;">progress</span>: *<span style="color: #8cc4ff;">std</span>.Progress.Node) !<span style="color: #8cc4ff;">void</span> {
+     _ = self;
+     _ = progress;
+     std.log.info(<span style="color: #e9b96e;">"The documentation has been generated"</span>, .{});
+ }
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8814a94" class="outline-3">
+<h3 id="org8814a94"><span class="section-number-3">1.2.</span> Strip output binary in Zig in Linux</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+<a href="http://flint.cs.yale.edu/cs422/doc/ELF_Format.pdf">ELF format</a>
+In an <code>ELF</code> executable there are various sections that hold program and control information.
+For example:
+</p>
+<ul class="org-ul">
+<li><code>.bss</code>: it holds uninitialized variables and data.</li>
+<li><code>.text</code>: it holds the instruction of the program</li>
+<li><code>.debug</code>: it holds unspecified information for debugging</li>
+</ul>
+
+<p>
+Removing the debug symbols will reduce his size, make it harder to reverse engineering, and improve speed performance.
+</p>
+
+<p>
+By default, Zig will produce an executable that has all the debug symbols.
+However, Zig has reproduced a drop-in replacement for the program GNU <code>objcopy</code>.
+</p>
+
+<p>
+To strip an output in the zig command line :
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">zig build-exe -fstrip src/main.zig
+</pre>
+</div>
+
+<p>
+To be sure that the output executable is stripped, the command <code>file</code> can be useful :
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">file main
+</pre>
+</div>
+<p>
+And the output : 
+</p>
+<pre class="example">
+main: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, stripped
+</pre>
+
+<p>
+With the Zig build system (<code>build.zig</code>) there is an option to strip an executable :
+</p>
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">target</span> = b.standardTargetOptions(.{});
+<span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">optimize</span> = b.standardOptimizeOption(.{});
+
+<span style="color: #b4fa70;">var</span> <span style="color: #fcaf3e;">exe</span> = b.addExecutable(.{
+    .name = <span style="color: #e9b96e;">"linkedlist"</span>,
+    .root_source_file = .{ .path = <span style="color: #e9b96e;">"src/main.zig"</span> },
+    .target = target,
+    .optimize = optimize,
+});
+
+exe.strip = <span style="color: #e9b2e3;">true</span>;
+</pre>
+</div>
+
+<p>
+If the option strip is set to false, we have :
+</p>
+<pre class="example">
+$file linkedlist
+linkedlist: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, with debug_info, not stripped
+</pre>
+
+<p>
+And with the option to <code>true</code> :
+</p>
+<pre class="example">
+$file linkedlist
+linkedlist: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, stripped
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org7d51900" class="outline-3">
+<h3 id="org7d51900"><span class="section-number-3">1.3.</span> Separate debug symbols from ELF executable</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+The chapter above shows how to remove all the symbols for the executable directly in the Zig build system.
+In this section, the interest is more about the Zig objcopy command.
+In fact, Zig has implemented his own <code>objcopy</code> utils to strip, and remove symbols like the objcopy from the bin utils (GNU utils).
+(<i>Note: for now, the Zig objcopy has fewer features</i>)
+</p>
+
+<p>
+The interest in having objcopy directly in Zig is there is no need to have multiple objcopy executables.
+Indeed, in a cross-compilation world, each binutil needs to be compatible with the CPU architecture target.
+So, it avoids using different toolchains and scripts to build on various targets.
+</p>
+
+<p>
+Here's how to invoke the help of the Zig build objcopy:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">zig objcopy --help
+</pre>
+</div>
+
+<p>
+The following example illustrates several applications of the objcopy command.
+First, remove the debug symbols of the executable.
+After that, keep only the debug symbols in a separate file.
+And finally, how to link the debug symbols file to an executable (that has no debug file).
+</p>
+
+<p>
+For this example, the output executable of the Zig build toolchain is named <code>main</code>.
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$<span style="color: #fcaf3e;">file</span> main
+main: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, with debug_info, not stripped
+</pre>
+</div>
+
+<p>
+The first step is to strip the debug file from the executable:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">zig objcopy --strip-debug main mainStripped
+</pre>
+</div>
+
+<p>
+The small flag alternative can also be used:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">zig objcopy -g main mainNoDebugInfo
+</pre>
+</div>
+
+<p>
+After this command, the new executable has no longer the debug info.
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">$<span style="color: #fcaf3e;">file</span> mainNoDebugInfo
+mainNoDebugInfo: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, not stripped
+</pre>
+</div>
+
+<p>
+The second step shows how to keep only the debug symbols in the <code>main.dbg</code> file:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">zig objcopy --only-keep-debug main main.dbg
+</pre>
+</div>
+
+<p>
+Finally, to recreate an executable with a link to a debug symbols file, the following command can be used:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">zig objcopy --add-gnu-debuglink=main.dbg mainNoDebugInfo mainWithDbgSymbols
+</pre>
+</div>
+
+<p>
+Now, the executable named <code>mainWithDbgSymbols</code> can be used, for example in GDB to debug it (GDB will know where its debug symbols file is located).
+</p>
+
+<p>
+Removing the debug symbol will create a smaller executable.
+Bellow shows the process with a mini-example:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">executable name</th>
+<th scope="col" class="org-left">size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">main</td>
+<td class="org-left">1.9M</td>
+</tr>
+
+<tr>
+<td class="org-left">main.dbg</td>
+<td class="org-left">1.2M</td>
+</tr>
+
+<tr>
+<td class="org-left">mainNoDebugInfo</td>
+<td class="org-left">690K</td>
+</tr>
+
+<tr>
+<td class="org-left">mainWithDbgSymbols</td>
+<td class="org-left">690K</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+The advantage of this method is that the executable can be sent to production without debug symbols (it's more difficult to reverse engineering the exe, and it has a smaller size).
+But when a bug is reported, it is always possible to debug it because all you have to do is link the debug symbol to the executable.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org780eee0" class="outline-2">
+<h2 id="org780eee0"><span class="section-number-2">2.</span> Cross-compilation</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-orgb73a4a1" class="outline-3">
+<h3 id="orgb73a4a1"><span class="section-number-3">2.1.</span> Cross-compile with an embedded linux</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+The <code>-target</code> flag of <code>zig build-exe</code> can select the target architecture for the cross-compilation.
+There are multiple target selections, see {{&lt; cite "CrossCompilationZig2024" &gt;}} to have the entire list of targets.
+</p>
+
+<p>
+Here's an example of a test that was performed, the aim being to run an executable produced by Zig (from a <code>x86_64</code>) for a -nanopi neo plus 2- which has an arm64 architecture and runs a Linux kernel.
+The information of the embedded target :
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">uname -a
+Linux csel 5.15.148 <span style="color: #73d216;">#</span><span style="color: #73d216;">2 SMP PREEMPT Mon Mar 4 21:21:00 UTC 2024 aarch64 GNU/Linux</span>
+</pre>
+</div>
+
+<p>
+Here's the command to cross-compile the executable (the executable is also stripped to have a smaller size):
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">zig build-exe src/main.zig -target aarch64-linux -fstrip
+</pre>
+</div>
+
+<p>
+The executable on the embedded target runs flawlessly, below is shown the output of the target:
+</p>
+<pre class="example" id="orgbfd1aa4">
+# ./main
+All your codebase are belong to us.
+Run `zig build test` to run the tests.
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org744228d" class="outline-2">
+<h2 id="org744228d"><span class="section-number-2">3.</span> Performance comparaison &amp; SIMD</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+The following chapters will explain different benchmark and code.
+</p>
+</div>
+
+<div id="outline-container-orgd03b460" class="outline-3">
+<h3 id="orgd03b460"><span class="section-number-3">3.1.</span> Vectors</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+A Zig vector is an array of child type: booleans, integers, floats or pointers. 
+It provides SIMD instructions for parallelizing operations where possible.
+</p>
+
+<p>
+As described in the standard documentation, the vectors smaller than the target machine's SIMD instruction will be compiled to a single SIMD instruction.
+In other hands, the vectors longer than the the target machine's SIMD will be compile to multiple SIMD instructions. {{&lt; cite "DocumentationZigProgramming" &gt;}}
+</p>
+
+<p>
+The Zig vector does not work in the same way as the C++ vector. {{&lt; cite "WelcomeZigGuide2024" &gt;}}
+</p>
+
+<p>
+We can use multiple opteration on Zig vectors: 
+</p>
+<ul class="org-ul">
+<li>Arithmetics</li>
+<li>Bitwise operation</li>
+<li>Comparaison operator</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">stdout</span> = std.io.getStdOut();
+<span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">size</span> = 4;
+<span style="color: #b4fa70;">fn</span> <span style="color: #fce94f;">print</span>(<span style="color: #b4fa70;">comptime</span> <span style="color: #fcaf3e;">T</span>: <span style="color: #8cc4ff;">type</span>, <span style="color: #fcaf3e;">name</span>: []<span style="color: #b4fa70;">const</span> <span style="color: #8cc4ff;">u8</span>, <span style="color: #fcaf3e;">vector</span>: <span style="color: #8cc4ff;">T</span>) !<span style="color: #8cc4ff;">void</span> {
+    <span style="color: #b4fa70;">try</span> stdout.writer().print(<span style="color: #e9b96e;">"{s}: "</span>, .{name});
+    <span style="color: #b4fa70;">for</span> (0..size) |index| {
+        <span style="color: #b4fa70;">try</span> <span style="color: #b4fa70;">switch</span> (T) {
+            <span style="color: #e090d7;">@Vector</span>(size, <span style="color: #8cc4ff;">bool</span>) =&gt; stdout.writer().print(<span style="color: #e9b96e;">"{}, "</span>, .{vector[index]}),
+            <span style="color: #e090d7;">@Vector</span>(size, <span style="color: #8cc4ff;">u8</span>) =&gt; stdout.writer().print(<span style="color: #e9b96e;">"{c}, "</span>, .{vector[index]}),
+            <span style="color: #b4fa70;">else</span> =&gt; stdout.writer().print(<span style="color: #e9b96e;">"{d}, "</span>, .{vector[index]}),
+        };
+    }
+    <span style="color: #b4fa70;">try</span> stdout.writer().print(<span style="color: #e9b96e;">"\n"</span>, .{});
+}
+
+<span style="color: #b4fa70;">pub</span> <span style="color: #b4fa70;">fn</span> <span style="color: #fce94f;">main</span>() !<span style="color: #8cc4ff;">void</span> {
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">a</span>: <span style="color: #e090d7;">@Vector</span>(size, <span style="color: #8cc4ff;">i32</span>) = .{ 1, 2, 3, 4 };
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">b</span>: <span style="color: #e090d7;">@Vector</span>(size, <span style="color: #8cc4ff;">i32</span>) = .{ 5, 6, 7, 8 };
+
+    <span style="color: #b4fa70;">try</span> stdout.writer().print(<span style="color: #e9b96e;">"Access to an item: {d}\n"</span>, .{a[2]});
+
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">c</span> = a + b;
+    <span style="color: #b4fa70;">try</span> print(<span style="color: #e090d7;">@TypeOf</span>(c), <span style="color: #e9b96e;">"c"</span>, c);
+
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">d</span> = a * b;
+    <span style="color: #b4fa70;">try</span> print(<span style="color: #e090d7;">@TypeOf</span>(d), <span style="color: #e9b96e;">"d"</span>, d);
+
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">e</span> = a &lt;&lt; b;
+    <span style="color: #b4fa70;">try</span> print(<span style="color: #e090d7;">@TypeOf</span>(e), <span style="color: #e9b96e;">"e"</span>, e);
+
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">f</span> = a == b;
+    <span style="color: #b4fa70;">try</span> print(<span style="color: #e090d7;">@TypeOf</span>(f), <span style="color: #e9b96e;">"f"</span>, f);
+}
+</pre>
+</div>
+
+<p>
+Zig support a vector size of:
+</p>
+\begin{equation}
+2^{32} - 1
+\end{equation}
+<p>
+But currently on the last Zig version, a long size (2<sup>20</sup>) can crash at compile-time. <a href="https://ziglang.org/documentation/0.12.0/#toc-Vectors">see documentation</a> {{&lt; cite "DocumentationZigProgramminga" &gt;}}
+</p>
+
+<p>
+There are utility functions to simplify the use of vectors:
+</p>
+<ol class="org-ol">
+<li><code>@splat</code>, this function will create a vector of a given size with the same value. <a href="https://ziglang.org/documentation/0.12.0/#splat"><code>@splat</code></a></li>
+<li><code>@Reduce</code>, this function will reduce the vector into a scalar. We can specify the operation.
+For intergers, every operation is available, for booleans plus there's <code>.And</code>, <code>.Or</code>, <code>.Xor</code>.
+And finally, for floating points they have also <code>.Min</code>, <code>.Max</code>, <code>.Add</code>, <code>.Mul</code>. {{&lt; cite "DocumentationZigProgramming" &gt;}} <a href="https://ziglang.org/documentation/0.12.0/#reduce"><code>@reduce</code></a></li>
+<li><code>@shuffle</code>, this function will construct a new vector by selecting the elements of two vectors (a and b) with a mask array.
+The function will iterate on each element, and select the value of the mask. With the mask value, it will select the element of the array a or b.
+If the number of the mask value is 0 or higher, it will select the index of the first vector (a).
+If the number of the mask value is -1 or less, it will select the index starting at -1 and decrementing. (read the example to be more clear) <a href="https://ziglang.org/documentation/0.12.0/#shuffle"><code>@shuffle</code></a></li>
+<li><code>@select</code>, this function will select from two vectors (a and b) based on a <code>pred</code> vector.
+If <code>pred[i]</code> is positif, the element will be <code>a[i]</code> otherwise <code>b[i]</code> <a href="https://ziglang.org/documentation/0.12.0/#select"><code>@select</code></a></li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">stdout</span> = std.io.getStdOut();
+<span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">size</span> = 4;
+<span style="color: #b4fa70;">fn</span> <span style="color: #fce94f;">print</span>(<span style="color: #b4fa70;">comptime</span> <span style="color: #fcaf3e;">T</span>: <span style="color: #8cc4ff;">type</span>, <span style="color: #fcaf3e;">name</span>: []<span style="color: #b4fa70;">const</span> <span style="color: #8cc4ff;">u8</span>, <span style="color: #fcaf3e;">vector</span>: <span style="color: #8cc4ff;">T</span>) !<span style="color: #8cc4ff;">void</span> {
+    <span style="color: #b4fa70;">try</span> stdout.writer().print(<span style="color: #e9b96e;">"{s}: "</span>, .{name});
+    <span style="color: #b4fa70;">for</span> (0..size) |index| {
+        <span style="color: #b4fa70;">try</span> <span style="color: #b4fa70;">switch</span> (T) {
+            <span style="color: #e090d7;">@Vector</span>(size, <span style="color: #8cc4ff;">bool</span>) =&gt; stdout.writer().print(<span style="color: #e9b96e;">"{}, "</span>, .{vector[index]}),
+            <span style="color: #e090d7;">@Vector</span>(size, <span style="color: #8cc4ff;">u8</span>) =&gt; stdout.writer().print(<span style="color: #e9b96e;">"{c}, "</span>, .{vector[index]}),
+            <span style="color: #b4fa70;">else</span> =&gt; stdout.writer().print(<span style="color: #e9b96e;">"{d}, "</span>, .{vector[index]}),
+        };
+    }
+    <span style="color: #b4fa70;">try</span> stdout.writer().print(<span style="color: #e9b96e;">"\n"</span>, .{});
+}
+
+<span style="color: #b4fa70;">pub</span> <span style="color: #b4fa70;">fn</span> <span style="color: #fce94f;">main</span>() !<span style="color: #8cc4ff;">void</span> {
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">a</span>: <span style="color: #e090d7;">@Vector</span>(size, <span style="color: #8cc4ff;">i32</span>) = <span style="color: #e090d7;">@splat</span>(3);
+    <span style="color: #b4fa70;">try</span> print(<span style="color: #e090d7;">@TypeOf</span>(a), <span style="color: #e9b96e;">"a"</span>, a);
+
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">b</span> = <span style="color: #e090d7;">@reduce</span>(.Add, a);
+    <span style="color: #b4fa70;">try</span> stdout.writer().print(<span style="color: #e9b96e;">"b: {d}\n"</span>, .{b});
+
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">mask</span>: <span style="color: #e090d7;">@Vector</span>(size, <span style="color: #8cc4ff;">i32</span>) = .{ 1, -2, -1, 0};
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">c</span>: <span style="color: #e090d7;">@Vector</span>(size, <span style="color: #8cc4ff;">u8</span>) = .{ <span style="color: #e9b96e;">'t'</span>, <span style="color: #e9b96e;">'t'</span>, <span style="color: #e9b96e;">'q'</span>, <span style="color: #e9b96e;">'q'</span>};
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">d</span>: <span style="color: #e090d7;">@Vector</span>(size, <span style="color: #8cc4ff;">u8</span>) = .{ <span style="color: #e9b96e;">'s'</span>, <span style="color: #e9b96e;">'e'</span>, <span style="color: #e9b96e;">'t'</span>, <span style="color: #e9b96e;">'a'</span>};
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">e</span> = <span style="color: #e090d7;">@shuffle</span>(<span style="color: #8cc4ff;">u8</span>, c, d, mask);
+    <span style="color: #b4fa70;">try</span> print(<span style="color: #e090d7;">@TypeOf</span>(e), <span style="color: #e9b96e;">"e"</span>, e);
+
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">pred</span>: <span style="color: #e090d7;">@Vector</span>(size, <span style="color: #8cc4ff;">bool</span>) = .{ <span style="color: #e9b2e3;">true</span>, <span style="color: #e9b2e3;">false</span>, <span style="color: #e9b2e3;">false</span>, <span style="color: #e9b2e3;">true</span>};
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">f</span>: <span style="color: #e090d7;">@Vector</span>(size, <span style="color: #8cc4ff;">u8</span>) = .{ <span style="color: #e9b96e;">'a'</span>, <span style="color: #e9b96e;">'a'</span>, <span style="color: #e9b96e;">'a'</span>, <span style="color: #e9b96e;">'a'</span>};
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">g</span>: <span style="color: #e090d7;">@Vector</span>(size, <span style="color: #8cc4ff;">u8</span>) = .{ <span style="color: #e9b96e;">'b'</span>, <span style="color: #e9b96e;">'b'</span>, <span style="color: #e9b96e;">'b'</span>, <span style="color: #e9b96e;">'b'</span>};
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">h</span> = <span style="color: #e090d7;">@select</span>(<span style="color: #8cc4ff;">u8</span>, pred, f, g);
+    <span style="color: #b4fa70;">try</span> print(<span style="color: #e090d7;">@TypeOf</span>(h), <span style="color: #e9b96e;">"h"</span>, h);
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org821e3a1" class="outline-3">
+<h3 id="org821e3a1"><span class="section-number-3">3.2.</span> Leibniz algorithm</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+This chapter shows the performance of Zig compared to other language, in particular with C.
+</p>
+
+<p>
+The <a href="https://github.com/niklas-heer/speed-comparison/tree/master">speed-comparaison</a> github repository {{&lt; cite "NiklasheerSpeedcomparisonRepo" &gt;}} has differents examples code that shows the <a href="https://en.wikipedia.org/wiki/Leibniz_formula_for_%CF%80">Leibniz algorithm</a> {{&lt; cite "LeibnizFormula2024" &gt;}} in action.
+This algorithm has puspose to compute the PI number with the following formula:
+</p>
+
+\begin{equation}
+\frac{\pi}{4} = 1 - \frac{1}{3} + \frac{1}{5} - \frac{1}{7} + \frac{1}{9} - \ldots = \sum_{k = 0}^{\infty} \frac{(-1)^k}{2k + 1}
+\end{equation}
+
+<p>
+Below, we can find example from the  <a href="https://github.com/niklas-heer/speed-comparison/tree/master">speed-comparaison</a> github repository.
+They have been modified so that they can be run in org mode.
+</p>
+
+<p>
+The C code shows the standard way to compute the Leibniz algorithm, at each iteration, PI will improve.
+The C compiler will optimize the C code to use SIMD instructions under the hood.
+The line: <code>x = -1.0 + 2.0 * (i &amp; 0x1);</code> is written in this way to enable the compiler to be optimised.
+The compiler can then use the <code>fmadd</code> instruction, which performs a multiplication and an addition in a single operation. {{&lt; cite "IntelIntrinsicsGuide" &gt;}} {{&lt; cite "ArmA64Instruction" &gt;}}
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #8cc4ff;">unsigned</span> <span style="color: #fcaf3e;">rounds</span> = 1000000000;
+<span style="color: #8cc4ff;">double</span> <span style="color: #fcaf3e;">pi</span> = 1.0;
+
+rounds += 2u; <span style="color: #73d216;">// </span><span style="color: #73d216;">do this outside the loop</span>
+
+<span style="color: #b4fa70;">for</span> (<span style="color: #8cc4ff;">unsigned</span> <span style="color: #fcaf3e;">i</span>=2u; i &lt; rounds; ++i)
+{
+    <span style="color: #8cc4ff;">double</span> <span style="color: #fcaf3e;">x</span> = -1.0 + 2.0 * (i &amp; 0x1); <span style="color: #73d216;">// </span><span style="color: #73d216;">allows vectorization</span>
+    pi += (x / (2u * i - 1u)); <span style="color: #73d216;">// </span><span style="color: #73d216;">double / unsigned = double</span>
+}
+
+<span style="color: #8cc4ff;">pi</span> *= 4;
+printf(<span style="color: #e9b96e;">"%.16f\n"</span>, pi); <span style="color: #73d216;">// </span><span style="color: #73d216;">print 16 decimal digits of pi</span>
+</pre>
+</div>
+
+
+<p>
+The code below shows the adaptation of the C code but for the Zig language.
+</p>
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #b4fa70;">var</span> <span style="color: #fcaf3e;">rounds</span>: <span style="color: #8cc4ff;">u64</span> = 1000000000;
+rounds += 2;
+
+<span style="color: #b4fa70;">var</span> <span style="color: #fcaf3e;">pi</span>: <span style="color: #8cc4ff;">f64</span> = 1.0;
+<span style="color: #b4fa70;">var</span> <span style="color: #fcaf3e;">i</span>: <span style="color: #8cc4ff;">usize</span> = 2;
+<span style="color: #b4fa70;">while</span> (i &lt; rounds) : (i += 1) {
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">isOdd</span>: <span style="color: #8cc4ff;">f64</span> = <span style="color: #e090d7;">@floatFromInt</span>(i &amp; 0x1);
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">x</span>: <span style="color: #8cc4ff;">f64</span> = -1.0 + 2.0 * isOdd;
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">den</span>: <span style="color: #8cc4ff;">f64</span> = <span style="color: #e090d7;">@floatFromInt</span>(2 * i - 1);
+    pi += (x / den);
+}
+pi *= 4;
+<span style="color: #b4fa70;">try</span> std.io.getStdOut().writer().print(<span style="color: #e9b96e;">"{}"</span>, .{pi});
+</pre>
+</div>
+
+<p>
+The Zig optimize code below will produce a similar output to the two other codes but it uses SIMD instruction to try to manually optimize the code.
+Now the number of iterations is divided by 4 because the calculations are parallelized by 4.
+Note: you can see that the length of the <code>vector</code> is 4. 
+At the end of the example, the code doesn't use vectors, it will only use for the last iterations.
+Indeed, the vectorization will only work for a number of rounds divisible by 4 (%4).
+</p>
+<div class="org-src-container">
+<pre class="src src-zig"><span style="color: #b4fa70;">var</span> <span style="color: #fcaf3e;">rounds</span>: <span style="color: #8cc4ff;">u64</span> = 1000000000;
+rounds += 2;
+<span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">unroll</span> = 4;
+
+<span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">x</span> = <span style="color: #e090d7;">@Vector</span>(4, <span style="color: #8cc4ff;">f64</span>){ -1.0, 1.0, -1.0, 1.0 };
+<span style="color: #b4fa70;">var</span> <span style="color: #fcaf3e;">den</span>: <span style="color: #e090d7;">@Vector</span>(4, <span style="color: #8cc4ff;">f64</span>) = <span style="color: #e090d7;">@splat</span>(0.0);
+<span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">inc</span>: <span style="color: #e090d7;">@Vector</span>(4, <span style="color: #8cc4ff;">f64</span>) = <span style="color: #e090d7;">@splat</span>(4.0);
+<span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">two</span>: <span style="color: #e090d7;">@Vector</span>(4, <span style="color: #8cc4ff;">f64</span>) = <span style="color: #e090d7;">@splat</span>(2.0);
+<span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">mone</span>: <span style="color: #e090d7;">@Vector</span>(4, <span style="color: #8cc4ff;">f64</span>) = <span style="color: #e090d7;">@splat</span>(-1.0);
+<span style="color: #b4fa70;">var</span> <span style="color: #fcaf3e;">ivec</span> = <span style="color: #e090d7;">@Vector</span>(4, <span style="color: #8cc4ff;">f64</span>){ 2.0, 3.0, 4.0, 5.0 };
+<span style="color: #b4fa70;">var</span> <span style="color: #fcaf3e;">pivec</span>: <span style="color: #e090d7;">@Vector</span>(4, <span style="color: #8cc4ff;">f64</span>) = <span style="color: #e090d7;">@splat</span>(0.0);
+
+<span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">vec_end</span>: <span style="color: #8cc4ff;">u64</span> = rounds - rounds % unroll;
+
+<span style="color: #b4fa70;">var</span> <span style="color: #fcaf3e;">i</span>: <span style="color: #8cc4ff;">u64</span> = 2;
+<span style="color: #b4fa70;">while</span> (i &lt; vec_end) : (i += unroll) {
+    den = mone + (two * ivec);
+    ivec = ivec + inc;
+    pivec = pivec + (x / den);
+}
+
+<span style="color: #b4fa70;">var</span> <span style="color: #fcaf3e;">_x</span>: <span style="color: #8cc4ff;">f64</span> = 1.0;
+<span style="color: #b4fa70;">var</span> <span style="color: #fcaf3e;">pi</span>: <span style="color: #8cc4ff;">f64</span> = 1.0;
+pi += <span style="color: #e090d7;">@reduce</span>(.Add, pivec);
+<span style="color: #b4fa70;">while</span> (i &lt; vec_end) : (i += 1) {
+    _x = -_x;
+    <span style="color: #b4fa70;">const</span> <span style="color: #fcaf3e;">i_2</span>: <span style="color: #8cc4ff;">f64</span> = <span style="color: #e090d7;">@floatFromInt</span>(i);
+    pi += (_x / 2 * i_2 - 1);
+}
+pi *= 4;
+
+<span style="color: #b4fa70;">try</span> std.io.getStdOut().writer().print(<span style="color: #e9b96e;">"{d:.16}\n"</span>, .{pi});
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6d4c870" class="outline-3">
+<h3 id="org6d4c870"><span class="section-number-3">3.3.</span> Benchmark your x86\<sub>64</sub> CPU</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+The code below shows the comamnds to compile the three examples explains upper.
+Moreover before to execute the code block, you need to tangle the examples with the shortcut <code>C-c C-v t</code>.
+</p>
+
+<p>
+The command to compile the C code (with gcc) is specific to an x86<sub>64</sub> architecture, if you want to follow the examples make sure to have a compatible CPU.
+Note: If emacs is unable to find the path to Zig during execution, the environment variable must be exported to the <code>.zshenv</code> file for a <code>zsh</code> shell.
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">gcc leibniz.c -o leibniz_c -O3 -s -flto -march=native -mtune=native -fomit-frame-pointer -fno-signed-zeros -fno-trapping-math -fassociative-math
+zig build-exe leibniz.zig -OReleaseFast -femit-bin=leibniz_zig -fstrip
+zig build-exe leibniz_simd.zig -OReleaseFast -femit-bin=leibniz_simd_zig -fstrip
+</pre>
+</div>
+
+<p>
+You will find the three executables in your directory.
+</p>
+
+<p>
+Now to benchmark your code you need a tool to run the analysis, it's called <a href="https://github.com/sharkdp/hyperfine">hyperfine</a> {{&lt; cite "peterHyperfine2023" &gt;}}.
+Il faut installer hyperfine pour faire le benchmark : <a href="https://github.com/sharkdp/hyperfine">https://github.com/sharkdp/hyperfine</a>
+</p>
+
+<p>
+To code bellow will run a benchmark with the <code>hyperfine</code> tool.
+To use this tool, you need to install it and have in your path.
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">hyperfine --warmup=3 <span style="color: #e9b96e;">'./leibniz_c'</span> <span style="color: #e9b96e;">'./leibniz_zig'</span> <span style="color: #e9b96e;">'./leibniz_simd_zig'</span> -i -N
+</pre>
+</div>
+
+<p>
+If you run the benchmark in your computer, you can see the result in the block upper.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5d00dca" class="outline-3">
+<h3 id="org5d00dca"><span class="section-number-3">3.4.</span> ARM benchmark example</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+We made the same benchmark but for an arm CPU, here are the compilers's options used.
+The target is a nanopi neo plus 2.
+</p>
+<div class="org-src-container">
+<pre class="src src-shell">aarch64-buildroot-linux-gnu-gcc leibniz.c -o leibniz_c -O3 -march=armv8-a -mtune=cortex-a53 -s -fno-signed-zeros -fno-trapping-math -fassociative-math
+zig build-exe leibniz_smid.zig -OReleaseFast -femit-bin=leibniz_zig_simd_aarch -target aarch64-native -mcpu cortex_a53 -fstrip
+zig build-exe leibniz.zig -OReleaseFast -femit-bin=leibniz_zig_aarch -target aarch64-native -mcpu cortex_a53 -fstrip
+</pre>
+</div>
+
+<p>
+On our arm target we cannot execute <code>hyperfine</code>, we measure 8 times the each program and we made statistics.
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Program</th>
+<th scope="col" class="org-right">Mean [s]</th>
+<th scope="col" class="org-right">Max [s]</th>
+<th scope="col" class="org-right">Min [s]</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><code>./leibniz_c</code></td>
+<td class="org-right">20.57</td>
+<td class="org-right">20.58</td>
+<td class="org-right">20.57</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>./leibniz_zig_aarch</code></td>
+<td class="org-right">19.95</td>
+<td class="org-right">19.96</td>
+<td class="org-right">19.95</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>./leibniz_zig_simd_aarch</code></td>
+<td class="org-right">14.43</td>
+<td class="org-right">14.44</td>
+<td class="org-right">14.43</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+We can find a difference in performance between the ARM and the x86 benchmarks.
+We can note that the set of instructions used between the two benchmarks is different, the optimisations may then differ.
+Moreover, the version of the compilator used is not the same for the C example:
+</p>
+<ul class="org-ul">
+<li>For x86: <code>gcc (GCC) 13.2.1 20240316 (Red Hat 13.2.1-7)</code></li>
+<li>For ARM: <code>aarch64-buildroot-linux-gnu-gcc.br_real (Buildroot 2022.08.3-dirty) 11.3.0</code></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orgada3a17" class="outline-3">
+<h3 id="orgada3a17"><span class="section-number-3">3.5.</span> Different code examples benchmark</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+Mes benchmarks sur mon ordi :
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Command</th>
+<th scope="col" class="org-left">Mean [ms]</th>
+<th scope="col" class="org-right">Min [ms]</th>
+<th scope="col" class="org-right">Max [ms]</th>
+<th scope="col" class="org-left">Relative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><code>./leibniz_zig</code></td>
+<td class="org-left">85.9 ± 0.4</td>
+<td class="org-right">85.0</td>
+<td class="org-right">87.0</td>
+<td class="org-left">2.02 ± 0.03</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>./leibniz_zig_simd</code></td>
+<td class="org-left">42.5 ± 0.5</td>
+<td class="org-right">41.6</td>
+<td class="org-right">43.7</td>
+<td class="org-left">1.00</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>./leibniz_c</code></td>
+<td class="org-left">43.3 ± 0.8</td>
+<td class="org-right">42.2</td>
+<td class="org-right">45.4</td>
+<td class="org-left">1.02 ± 0.02</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>./leibniz_rs</code></td>
+<td class="org-left">86.4 ± 1.5</td>
+<td class="org-right">85.2</td>
+<td class="org-right">94.3</td>
+<td class="org-left">2.03 ± 0.04</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>./leibniz_avx2</code></td>
+<td class="org-left">43.3 ± 0.5</td>
+<td class="org-right">42.1</td>
+<td class="org-right">44.3</td>
+<td class="org-left">1.02 ± 0.02</td>
+</tr>
+</tbody>
+</table>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Command</th>
+<th scope="col" class="org-left">Mean [ms]</th>
+<th scope="col" class="org-right">Min [ms]</th>
+<th scope="col" class="org-right">Max [ms]</th>
+<th scope="col" class="org-left">Relative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><code>./leibniz_zig</code></td>
+<td class="org-left">883.9 ± 9.5</td>
+<td class="org-right">864.1</td>
+<td class="org-right">896.0</td>
+<td class="org-left">1.99 ± 0.03</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>./leibniz_zig_simd</code></td>
+<td class="org-left">443.8 ± 5.2</td>
+<td class="org-right">437.2</td>
+<td class="org-right">452.0</td>
+<td class="org-left">1.00</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>./leibniz_c</code></td>
+<td class="org-left">481.5 ± 4.4</td>
+<td class="org-right">476.8</td>
+<td class="org-right">489.2</td>
+<td class="org-left">1.08 ± 0.02</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>./leibniz_rs</code></td>
+<td class="org-left">912.7 ± 9.7</td>
+<td class="org-right">897.1</td>
+<td class="org-right">925.1</td>
+<td class="org-left">2.06 ± 0.03</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>./leibniz_avx2</code></td>
+<td class="org-left">451.2 ± 6.3</td>
+<td class="org-right">443.8</td>
+<td class="org-right">465.7</td>
+<td class="org-left">1.02 ± 0.02</td>
+</tr>
+</tbody>
+</table>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Command</th>
+<th scope="col" class="org-left">Mean [s]</th>
+<th scope="col" class="org-right">Min [s]</th>
+<th scope="col" class="org-right">Max [s]</th>
+<th scope="col" class="org-left">Relative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><code>./leibniz_zig</code></td>
+<td class="org-left">8.889 ± 0.095</td>
+<td class="org-right">8.722</td>
+<td class="org-right">9.058</td>
+<td class="org-left">13.91 ± 0.33</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>./leibniz_zig_simd</code></td>
+<td class="org-left">4.386 ± 0.028</td>
+<td class="org-right">4.357</td>
+<td class="org-right">4.420</td>
+<td class="org-left">6.86 ± 0.15</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>./leibniz_c</code></td>
+<td class="org-left">0.665 ± 0.003</td>
+<td class="org-right">0.658</td>
+<td class="org-right">0.669</td>
+<td class="org-left">1.04 ± 0.02</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>./leibniz_rs</code></td>
+<td class="org-left">8.903 ± 0.053</td>
+<td class="org-right">8.855</td>
+<td class="org-right">8.973</td>
+<td class="org-left">13.93 ± 0.31</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>./leibniz_avx2</code></td>
+<td class="org-left">0.639 ± 0.013</td>
+<td class="org-right">0.618</td>
+<td class="org-right">0.657</td>
+<td class="org-left">1.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org1599c98" class="outline-2">
+<h2 id="org1599c98"><span class="section-number-2">4.</span> Programming language Benchmarks</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Another way of seeing the difference in performance between C and Zig is to use slightly more complex code.
+The <a href="https://github.com/hanabi1224/Programming-Language-Benchmarks">Programming Language Benchmark</a> {{&lt; cite "Hanabi1224ProgrammingLanguageBenchmarksAnother" &gt;}} git repository shows differents codes writing in different languages.
+Their website shows benchmarks made with their hardware <a href="https://programming-language-benchmarks.vercel.app/zig-vs-c">zig-vs-c</a>. {{&lt; cite "ZigVSBenchmarks" &gt;}}
+We then reproduced the benchmarks between the C and the Zig to see if there were any differences with our hardware.
+</p>
+
+<p>
+Here's our results:
+CPU INFO:[x86\<sub>64</sub>][8 cores] Intel(R) Core(TM) i7-8565U CPU @ 1.80GHz (Model 142)
+</p>
+
+<p>
+Here's what you need to know about file naming {{&lt; cite "Hanabi1224ProgrammingLanguageBenchmarksAnother" &gt;}}:
+</p>
+<blockquote>
+<ul class="org-ul">
+<li>*-m in a file name stands for multi-threading or multi-processing</li>
+<li>*-i in a file name stands for direct intrinsics usage. (Usage of SIMD intrinsics via libraries is not counted). It means that the SIMD instruction is directly use in the code. The instructions can be found in the <a href="https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html#ig_expand=2102">Intel Intrinsics Guide</a>.</li>
+<li>*(You may find time &lt; time(user) + time(sys) for some non-parallelized programs, the overhead is from GC or JIT compiler, which are allowed to take advantage of multi-cores as that's more close to real-world scenarios.)</li>
+</ul>
+</blockquote>
+
+<p>
+You can find in the repo how the examples are compiled <a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/tree/main/bench">here</a>.
+</p>
+
+<p>
+<b>knucleotide</b>
+</p>
+
+<p>
+Input: 2500000:
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">lang</th>
+<th scope="col" class="org-left">code</th>
+<th scope="col" class="org-left">time</th>
+<th scope="col" class="org-left">stddev</th>
+<th scope="col" class="org-left">peak-mem mem</th>
+<th scope="col" class="org-left">time(user)</th>
+<th scope="col" class="org-left">time(sys)</th>
+<th scope="col" class="org-left">compiler compiler/runtime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/knucleotide/1.c">1-m.c</a></td>
+<td class="org-left">185ms</td>
+<td class="org-left">8.3ms</td>
+<td class="org-left">23.6MB</td>
+<td class="org-left">623ms</td>
+<td class="org-left">13ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/knucleotide/1.c">1-m.c</a></td>
+<td class="org-left">308ms</td>
+<td class="org-left">19ms</td>
+<td class="org-left">27.5MB</td>
+<td class="org-left">2143ms</td>
+<td class="org-left">80ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">zig</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/knucleotide/1.zig">1.zig</a></td>
+<td class="org-left">856ms</td>
+<td class="org-left">6.0ms</td>
+<td class="org-left">19.9MB</td>
+<td class="org-left">907ms</td>
+<td class="org-left">10ms</td>
+<td class="org-left">zig 0.12.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Input: 250000:
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">lang</th>
+<th scope="col" class="org-left">code</th>
+<th scope="col" class="org-left">time</th>
+<th scope="col" class="org-left">stddev</th>
+<th scope="col" class="org-left">peak-mem mem</th>
+<th scope="col" class="org-left">time(user)</th>
+<th scope="col" class="org-left">time(sys)</th>
+<th scope="col" class="org-left">compiler compiler/runtime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/knucleotide/1.c">1-m.c</a></td>
+<td class="org-left">33ms</td>
+<td class="org-left">1.8ms</td>
+<td class="org-left">11.9MB</td>
+<td class="org-left">153ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/knucleotide/1.c">1-m.c</a></td>
+<td class="org-left">47ms</td>
+<td class="org-left">7.8ms</td>
+<td class="org-left">16.8MB</td>
+<td class="org-left">310ms</td>
+<td class="org-left">15ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">zig</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/knucleotide/1.zig">1.zig</a></td>
+<td class="org-left">90ms</td>
+<td class="org-left">2.1ms</td>
+<td class="org-left">7.6MB</td>
+<td class="org-left">90ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zig 0.12.0</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>
+<b>nbody</b>
+Input: 5000000
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">lang</th>
+<th scope="col" class="org-left">code</th>
+<th scope="col" class="org-left">time</th>
+<th scope="col" class="org-left">stddev</th>
+<th scope="col" class="org-left">peak-mem mem</th>
+<th scope="col" class="org-left">time(user)</th>
+<th scope="col" class="org-left">time(sys)</th>
+<th scope="col" class="org-left">compiler compiler/runtime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">zig</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.zig">2.zig</a></td>
+<td class="org-left">179ms</td>
+<td class="org-left">2.1ms</td>
+<td class="org-left">1.3MB</td>
+<td class="org-left">187ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zig 0.12.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/5.c">5.c</a></td>
+<td class="org-left">193ms</td>
+<td class="org-left">1.7ms</td>
+<td class="org-left">2.1MB</td>
+<td class="org-left">200ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/5.c">5.c</a></td>
+<td class="org-left">211ms</td>
+<td class="org-left">7.9ms</td>
+<td class="org-left">1.4MB</td>
+<td class="org-left">220ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zigcc 0.12.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/8-i.c">8-i.c</a></td>
+<td class="org-left">215ms</td>
+<td class="org-left">2.9ms</td>
+<td class="org-left">1.4MB</td>
+<td class="org-left">223ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zigcc 0.12.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/8-i.c">8-i.c</a></td>
+<td class="org-left">222ms</td>
+<td class="org-left">2.9ms</td>
+<td class="org-left">2.0MB</td>
+<td class="org-left">233ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/8-i.c">8-i.c</a></td>
+<td class="org-left">225ms</td>
+<td class="org-left">3.5ms</td>
+<td class="org-left">2.1MB</td>
+<td class="org-left">233ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.c">2.c</a></td>
+<td class="org-left">225ms</td>
+<td class="org-left">1.4ms</td>
+<td class="org-left">2.0MB</td>
+<td class="org-left">233ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.c">2.c</a></td>
+<td class="org-left">240ms</td>
+<td class="org-left">5.2ms</td>
+<td class="org-left">2.0MB</td>
+<td class="org-left">253ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/5.c">5.c</a></td>
+<td class="org-left">242ms</td>
+<td class="org-left">11ms</td>
+<td class="org-left">2.0MB</td>
+<td class="org-left">250ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.c">2.c</a></td>
+<td class="org-left">254ms</td>
+<td class="org-left">2.5ms</td>
+<td class="org-left">1.4MB</td>
+<td class="org-left">267ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zigcc 0.12.0</td>
+</tr>
+
+<tr>
+<td class="org-left">zig</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/1.zig">1.zig</a></td>
+<td class="org-left">265ms</td>
+<td class="org-left">7.1ms</td>
+<td class="org-left">1.3MB</td>
+<td class="org-left">280ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zig 0.12.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Input: 500000
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">lang</th>
+<th scope="col" class="org-left">code</th>
+<th scope="col" class="org-left">time</th>
+<th scope="col" class="org-left">stddev</th>
+<th scope="col" class="org-left">peak-mem mem</th>
+<th scope="col" class="org-left">time(user)</th>
+<th scope="col" class="org-left">time(sys)</th>
+<th scope="col" class="org-left">compiler compiler/runtime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">zig</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.zig">2.zig</a></td>
+<td class="org-left">18ms</td>
+<td class="org-left">0.2ms</td>
+<td class="org-left">1.3MB</td>
+<td class="org-left">10ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zig 0.12.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/5.c">5.c</a></td>
+<td class="org-left">21ms</td>
+<td class="org-left">0.3ms</td>
+<td class="org-left">2.0MB</td>
+<td class="org-left">13ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/8-i.c">8-i.c</a></td>
+<td class="org-left">21ms</td>
+<td class="org-left">0.3ms</td>
+<td class="org-left">1.5MB</td>
+<td class="org-left">17ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zigcc 0.12.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/5.c">5.c</a></td>
+<td class="org-left">21ms</td>
+<td class="org-left">0.9ms</td>
+<td class="org-left">1.4MB</td>
+<td class="org-left">13ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zigcc 0.12.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/8-i.c">8-i.c</a></td>
+<td class="org-left">22ms</td>
+<td class="org-left">1.4ms</td>
+<td class="org-left">2.3MB</td>
+<td class="org-left">17ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/8-i.c">8-i.c</a></td>
+<td class="org-left">25ms</td>
+<td class="org-left">0.2ms</td>
+<td class="org-left">2.1MB</td>
+<td class="org-left">20ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/5.c">5.c</a></td>
+<td class="org-left">25ms</td>
+<td class="org-left">1.2ms</td>
+<td class="org-left">2.3MB</td>
+<td class="org-left">20ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.c">2.c</a></td>
+<td class="org-left">25ms</td>
+<td class="org-left">0.4ms</td>
+<td class="org-left">2.1MB</td>
+<td class="org-left">20ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.c">2.c</a></td>
+<td class="org-left">25ms</td>
+<td class="org-left">1.0ms</td>
+<td class="org-left">2.0MB</td>
+<td class="org-left">20ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">zig</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/1.zig">1.zig</a></td>
+<td class="org-left">27ms</td>
+<td class="org-left">0.4ms</td>
+<td class="org-left">1.1MB</td>
+<td class="org-left">20ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zig 0.12.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/nbody/2.c">2.c</a></td>
+<td class="org-left">28ms</td>
+<td class="org-left">1.7ms</td>
+<td class="org-left">1.4MB</td>
+<td class="org-left">20ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zigcc 0.12.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+<b>spectral-norm</b>
+Input: 8000
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">lang</th>
+<th scope="col" class="org-left">code</th>
+<th scope="col" class="org-left">time</th>
+<th scope="col" class="org-left">stddev</th>
+<th scope="col" class="org-left">peak-mem mem</th>
+<th scope="col" class="org-left">time(user)</th>
+<th scope="col" class="org-left">time(sys)</th>
+<th scope="col" class="org-left">compiler compiler/runtime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">zig</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/2-m.zig">2-m.zig</a></td>
+<td class="org-left">340ms</td>
+<td class="org-left">1.5ms</td>
+<td class="org-left">1.6MB</td>
+<td class="org-left">2550ms</td>
+<td class="org-left">3ms</td>
+<td class="org-left">zig 0.12.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/6-im.c">6-im.c</a></td>
+<td class="org-left">547ms</td>
+<td class="org-left">11ms</td>
+<td class="org-left">4.6MB</td>
+<td class="org-left">4593ms</td>
+<td class="org-left">17ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/4.c">4-m.c</a></td>
+<td class="org-left">566ms</td>
+<td class="org-left">7.7ms</td>
+<td class="org-left">4.6MB</td>
+<td class="org-left">4780ms</td>
+<td class="org-left">13ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/6-im.c">6-im.c</a></td>
+<td class="org-left">568ms</td>
+<td class="org-left">14ms</td>
+<td class="org-left">2.1MB</td>
+<td class="org-left">4820ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/4.c">4-m.c</a></td>
+<td class="org-left">586ms</td>
+<td class="org-left">11ms</td>
+<td class="org-left">2.1MB</td>
+<td class="org-left">4980ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/5-im.c">5-im.c</a></td>
+<td class="org-left">727ms</td>
+<td class="org-left">4.5ms</td>
+<td class="org-left">2.1MB</td>
+<td class="org-left">6203ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/3.c">3-m.c</a></td>
+<td class="org-left">749ms</td>
+<td class="org-left">13ms</td>
+<td class="org-left">4.6MB</td>
+<td class="org-left">6327ms</td>
+<td class="org-left">7ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/5-im.c">5-im.c</a></td>
+<td class="org-left">799ms</td>
+<td class="org-left">11ms</td>
+<td class="org-left">4.6MB</td>
+<td class="org-left">6770ms</td>
+<td class="org-left">23ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/3.c">3-m.c</a></td>
+<td class="org-left">833ms</td>
+<td class="org-left">23ms</td>
+<td class="org-left">2.1MB</td>
+<td class="org-left">7070ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">zig</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/2.zig">2.zig</a></td>
+<td class="org-left">1168ms</td>
+<td class="org-left">3.1ms</td>
+<td class="org-left">1.5MB</td>
+<td class="org-left">1257ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zig 0.12.0</td>
+</tr>
+
+<tr>
+<td class="org-left">zig</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/1.zig">1.zig</a></td>
+<td class="org-left">2774ms</td>
+<td class="org-left">59ms</td>
+<td class="org-left">1.5MB</td>
+<td class="org-left">3010ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zig 0.12.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Input: 4000
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">lang</th>
+<th scope="col" class="org-left">code</th>
+<th scope="col" class="org-left">time</th>
+<th scope="col" class="org-left">stddev</th>
+<th scope="col" class="org-left">peak-mem mem</th>
+<th scope="col" class="org-left">time(user)</th>
+<th scope="col" class="org-left">time(sys)</th>
+<th scope="col" class="org-left">compiler compiler/runtime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">zig</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/2-m.zig">2-m.zig</a></td>
+<td class="org-left">89ms</td>
+<td class="org-left">1.6ms</td>
+<td class="org-left">1.6MB</td>
+<td class="org-left">493ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zig 0.12.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/6-im.c">6-im.c</a></td>
+<td class="org-left">157ms</td>
+<td class="org-left">11ms</td>
+<td class="org-left">4.9MB</td>
+<td class="org-left">1237ms</td>
+<td class="org-left">3ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/6-im.c">6-im.c</a></td>
+<td class="org-left">163ms</td>
+<td class="org-left">8.7ms</td>
+<td class="org-left">2.1MB</td>
+<td class="org-left">1327ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/4.c">4-m.c</a></td>
+<td class="org-left">164ms</td>
+<td class="org-left">4.2ms</td>
+<td class="org-left">4.8MB</td>
+<td class="org-left">1300ms</td>
+<td class="org-left">3ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/4.c">4-m.c</a></td>
+<td class="org-left">176ms</td>
+<td class="org-left">5.4ms</td>
+<td class="org-left">2.0MB</td>
+<td class="org-left">1420ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/5-im.c">5-im.c</a></td>
+<td class="org-left">205ms</td>
+<td class="org-left">17ms</td>
+<td class="org-left">2.0MB</td>
+<td class="org-left">1683ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/3.c">3-m.c</a></td>
+<td class="org-left">224ms</td>
+<td class="org-left">26ms</td>
+<td class="org-left">4.8MB</td>
+<td class="org-left">1797ms</td>
+<td class="org-left">10ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/5-im.c">5-im.c</a></td>
+<td class="org-left">226ms</td>
+<td class="org-left">2.9ms</td>
+<td class="org-left">4.9MB</td>
+<td class="org-left">1820ms</td>
+<td class="org-left">10ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">zig</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/2.zig">2.zig</a></td>
+<td class="org-left">292ms</td>
+<td class="org-left">1.1ms</td>
+<td class="org-left">1.4MB</td>
+<td class="org-left">310ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zig 0.12.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/3.c">3-m.c</a></td>
+<td class="org-left">488ms</td>
+<td class="org-left">33ms</td>
+<td class="org-left">2.1MB</td>
+<td class="org-left">3600ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">zig</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/1.zig">1.zig</a></td>
+<td class="org-left">720ms</td>
+<td class="org-left">11ms</td>
+<td class="org-left">1.3MB</td>
+<td class="org-left">773ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zig 0.12.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Input: 2000
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">lang</th>
+<th scope="col" class="org-left">code</th>
+<th scope="col" class="org-left">time</th>
+<th scope="col" class="org-left">stddev</th>
+<th scope="col" class="org-left">peak-mem mem</th>
+<th scope="col" class="org-left">time(user)</th>
+<th scope="col" class="org-left">time(sys)</th>
+<th scope="col" class="org-left">compiler compiler/runtime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">zig</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/2-m.zig">2-m.zig</a></td>
+<td class="org-left">28ms</td>
+<td class="org-left">0.6ms</td>
+<td class="org-left">1.4MB</td>
+<td class="org-left">47ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zig 0.12.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/6-im.c">6-im.c</a></td>
+<td class="org-left">54ms</td>
+<td class="org-left">12ms</td>
+<td class="org-left">4.6MB</td>
+<td class="org-left">363ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/3.c">3-m.c</a></td>
+<td class="org-left">61ms</td>
+<td class="org-left">4.1ms</td>
+<td class="org-left">4.6MB</td>
+<td class="org-left">427ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/4.c">4-m.c</a></td>
+<td class="org-left">65ms</td>
+<td class="org-left">3.5ms</td>
+<td class="org-left">4.9MB</td>
+<td class="org-left">433ms</td>
+<td class="org-left">7ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">zig</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/2.zig">2.zig</a></td>
+<td class="org-left">72ms</td>
+<td class="org-left">1.0ms</td>
+<td class="org-left">1.4MB</td>
+<td class="org-left">70ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zig 0.12.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/5-im.c">5-im.c</a></td>
+<td class="org-left">73ms</td>
+<td class="org-left">11ms</td>
+<td class="org-left">4.6MB</td>
+<td class="org-left">520ms</td>
+<td class="org-left">3ms</td>
+<td class="org-left">clang 17.0.6</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/6-im.c">6-im.c</a></td>
+<td class="org-left">78ms</td>
+<td class="org-left">9.4ms</td>
+<td class="org-left">2.0MB</td>
+<td class="org-left">577ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/3.c">3-m.c</a></td>
+<td class="org-left">78ms</td>
+<td class="org-left">10ms</td>
+<td class="org-left">2.1MB</td>
+<td class="org-left">600ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/4.c">4-m.c</a></td>
+<td class="org-left">80ms</td>
+<td class="org-left">12ms</td>
+<td class="org-left">2.1MB</td>
+<td class="org-left">590ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/5-im.c">5-im.c</a></td>
+<td class="org-left">81ms</td>
+<td class="org-left">13ms</td>
+<td class="org-left">2.3MB</td>
+<td class="org-left">620ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">gcc 13.2.0</td>
+</tr>
+
+<tr>
+<td class="org-left">zig</td>
+<td class="org-left"><a href="https://github.com/hanabi1224/Programming-Language-Benchmarks/blob/main/bench/algorithm/spectral-norm/1.zig">1.zig</a></td>
+<td class="org-left">192ms</td>
+<td class="org-left">3.6ms</td>
+<td class="org-left">1.3MB</td>
+<td class="org-left">203ms</td>
+<td class="org-left">0ms</td>
+<td class="org-left">zig 0.12.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+<div id="outline-container-orgf23146e" class="outline-3">
+<h3 id="orgf23146e"><span class="section-number-3">4.1.</span> Results</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+We can see that execution times vary greatly depending on the programming language, the implementation, the target, and finally, the compiler used.
+In addition, we found that Zig codes that use vectors perform better than those that do not.
+Zig codes that are not optimised tend to perform less well than C codes.
+</p>
+
+<p>
+On the other hand, we can see that Zig codes consume less memory than C codes. 
+For the comparison, to be fair, the allocator used in Zig is the libC allocator.
+And finally, we can see that the performances depend also on the input.
+</p>
+
+<p>
+We can't say that one language is faster than the other, as this will depend enormously on the context, the optimisations used, and the complexity of the code.
+We can make a hypothesis based on the measurements taken: if dynamic memory allocation is performed correctly, we can expect Zig code to generally consume less memory than C code.
+</p>
+
+<p>
+As a reminder, the results obtained are specific to the machine and operating system used.
+In addition, we can compare the differences in performance between the benchmarks obtained on a local machine and the machine used by the <a href="https://github.com/hanabi1224/Programming-Language-Benchmarks">Programming Language Benchmark</a> site.
+For their part, the  <a href="https://github.com/hanabi1224/Programming-Language-Benchmarks">Programming Language Benchmark</a> site uses a machine with the following information:
+</p>
+<ul class="org-ul">
+<li>CPU INFO:[x86<sub>64</sub>][4 cores] AMD EPYC 7763 64-Core Processor (Model 1)</li>
+<li>We should also note that compiler versions have changed, which can also add variability to the results
+<ol class="org-ol">
+<li>gcc 13.2.0</li>
+<li>clang 14.0.0-1ubuntu1.1</li>
+<li>zig 0.12.0-dev.2341+92211135f</li>
+<li>zigcc 0.12.0-dev.2341+92211135f</li>
+</ol></li>
+</ul>
+
+<p>
+For the knucleotide example, we obtain a comparable ranking in the two results.
+However, we notice that my x86 target is 85 ms slower for the version of Zig with an input of 2500000, but it consumes less memory (around 500KB).
+</p>
+
+<p>
+For the nbody example, we can note that on average, the performance obtained is better on my x86 target, but the memory used remains in the same order of magnitude.
+We also see that the <code>8-i.c</code> implementation is faster under AMD Epics for the <code>zigcc</code> compiler and for <code>gcc</code>.
+And that the <code>5.c</code> implementation with the <code>Clang</code> compiler is among the first in the x86 test, but is among the last for AMD.
+We note that the difference between version 14 and version 17 of clang can also affect the results.
+This is the only example where the zigcc compiler is used for benchmarking.
+We can see that the performance results obtained are similar to those we can get with gcc or clang.
+We can also observe that the same code compiled with zigcc uses less memory than the other compilers.
+Further tests would be needed to confirm this, as the nbody example does not allocate memory dynamically.
+</p>
+
+<p>
+In the last example, we notice a big difference between the result of the <code>2.zig</code> code for an input of 8000: it is second to last for performance on x86, while it is second best on AMD.
+Furthermore, we can see that the standard deviation may be higher for certain codes, but the results are different depending on the target.
+Finally, the <code>1.zig</code> code is the worst-performing code for both benchmarks.
+It runs 2x slower than the second-worst code
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc89b3a6" class="outline-2">
+<h2 id="orgc89b3a6"><span class="section-number-2">5.</span> 1BRC</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+The <i>one billion row challenge</i> is a challenge that involves calculating the min, max, and average of 1 billion rows of measurements (a 12 Gio file). {{&lt; cite "BillionRowChallenge" &gt;}}
+Everyone can submit a code to try to have a better implementation.
+Originally the challenge was for Java, but now we can find multiple solutions in many languages.
+</p>
+
+<p>
+In this documentation, we tried to see the differences between three implementations: one in C and two in Zig:
+</p>
+<ul class="org-ul">
+<li><a href="https://github.com/almmiko/1brc-zig">1brc C</a> {{&lt; cite "kootenDannyvankooten1brc2024" &gt;}} {{&lt; cite "OneBillionRows2024" &gt;}}</li>
+<li><a href="https://github.com/candrewlee14/1brc-zig">1brc-zig</a> {{&lt; cite "leeCandrewlee141brczig2024" &gt;}}</li>
+<li><a href="https://github.com/almmiko/1brc-zig">1brc-zig - second implementation</a> {{&lt; cite "mykolaichukAlmmiko1brczig2024" &gt;}}</li>
+</ul>
+
+<p>
+In each repository, we can find how to compile their binary, we followed their instructions.
+</p>
+
+<p>
+After each implementation build, we benchmark with hyperfine to have the results:
+</p>
+
+<ol class="org-ol">
+<li>First, we used <code>hyperfine</code> to benchmark the three implementations one after the other:</li>
+</ol>
+<div class="org-src-container">
+<pre class="src src-shell">hyperfine --warmup=3 <span style="color: #e9b96e;">'./1brc/bin/analyze ~/Documents/1brc/measurements.txt'</span> <span style="color: #e9b96e;">'./1brc-zig/zig-out/bin/1brc-zig ~/Documents/1brc/measurements.txt'</span> <span style="color: #e9b96e;">'./1brc-zig2/zig-out/bin/1brc-zig ~/Documents/1brc/measurements.txt'</span> --export-orgmode <span style="color: #e9b96e;">"benchmark-1brc.org"</span> --output null -i
+</pre>
+</div>
+
+<p>
+And we have the results:
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Command</th>
+<th scope="col" class="org-left">Mean [s]</th>
+<th scope="col" class="org-right">Min [s]</th>
+<th scope="col" class="org-right">Max [s]</th>
+<th scope="col" class="org-left">Relative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><code>C implementation</code></td>
+<td class="org-left">11.774 ± 2.051</td>
+<td class="org-right">7.582</td>
+<td class="org-right">13.034</td>
+<td class="org-left">1.00</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>1th Zig implementation</code></td>
+<td class="org-left">21.283 ± 0.051</td>
+<td class="org-right">21.228</td>
+<td class="org-right">21.390</td>
+<td class="org-left">1.81 ± 0.31</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>2th Zig implementation</code></td>
+<td class="org-left">24.788 ± 0.187</td>
+<td class="org-right">24.332</td>
+<td class="org-right">24.931</td>
+<td class="org-left">2.11 ± 0.37</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+We can see the differences in performances between C and Zig.
+We note that the differences between the best C result and the worst C result have a difference of 6 seconds.
+</p>
+
+<p>
+To see if we get different performances, we benchmark each implementation on its own:
+</p>
+
+<p>
+The first Zig implementation <a href="https://github.com/candrewlee14/1brc-zig">1brc-zig</a>
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Command</th>
+<th scope="col" class="org-left">Mean [s]</th>
+<th scope="col" class="org-right">Min [s]</th>
+<th scope="col" class="org-right">Max [s]</th>
+<th scope="col" class="org-right">Relative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><code>1th Zig implementation</code></td>
+<td class="org-left">15.647 ± 2.206</td>
+<td class="org-right">13.301</td>
+<td class="org-right">21.649</td>
+<td class="org-right">1.00</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Sometimes when we redo the benchmark we don't get this huge difference.
+We use the Linux kernel to map the memory of the measurements file.
+Depending on the computer load, some differences can be found.
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Command</th>
+<th scope="col" class="org-left">Mean [s]</th>
+<th scope="col" class="org-right">Min [s]</th>
+<th scope="col" class="org-right">Max [s]</th>
+<th scope="col" class="org-right">Relative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><code>1th Zig implementation</code></td>
+<td class="org-left">12.749 ± 0.345</td>
+<td class="org-right">12.202</td>
+<td class="org-right">13.545</td>
+<td class="org-right">1.00</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>
+The second Zig implementation <a href="https://github.com/almmiko/1brc-zig">1brc-zig - second implementation</a>
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Command</th>
+<th scope="col" class="org-left">Mean [s]</th>
+<th scope="col" class="org-right">Min [s]</th>
+<th scope="col" class="org-right">Max [s]</th>
+<th scope="col" class="org-right">Relative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><code>2th Zig implementation</code></td>
+<td class="org-left">18.730 ± 2.837</td>
+<td class="org-right">15.192</td>
+<td class="org-right">24.906</td>
+<td class="org-right">1.00</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+And the C implementation
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Command</th>
+<th scope="col" class="org-left">Mean [s]</th>
+<th scope="col" class="org-right">Min [s]</th>
+<th scope="col" class="org-right">Max [s]</th>
+<th scope="col" class="org-right">Relative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><code>C implementation</code></td>
+<td class="org-left">8.898 ± 0.591</td>
+<td class="org-right">7.507</td>
+<td class="org-right">9.510</td>
+<td class="org-right">1.00</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>
+In the C implementation, we note that his writer uses a custom hashmap to hash the city names.
+He uses a fast multiplication hash combined with a linear search probing.
+The load factor of his hashmap is 0.5. {{&lt; cite "BillionRowChallenge" &gt;}}
+</p>
+
+<p>
+The first Zig implementation use also a hashmap.
+But the hashmap comes from the Zig standard library.
+His purpose is generic and uses the Wyhash algorithm to compute the hashes.{{&lt; cite "wangyiWangyifudanWyhash2024" &gt;}}
+</p>
+
+<p>
+The <code>Hotspot</code> program has been used to create flamegraph of the implementations:
+</p>
+
+<p>
+If you look at Zig's flamegraph, you can see that 40% of the cycle time is used to insert the city into the hashmap.
+</p>
+
+<div id="orgb364bdd" class="figure">
+<p><img src="file:///images/flamegraph_1brc_zig_1.png" alt="flamegraph_1brc_zig_1.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>Flamegrph of the Zig's 1brc implementation</p>
+</div>
+
+<p>
+In C, on the other hand, the insertion time in the hashmap is not measurable because it is included in the <code>process_chunck</code> function but does not require any complex hash calculation.
+Calculating the base index is mapped into an array, and then, if there are any collisions, the index is incremented.
+</p>
+
+<div id="org7f6e556" class="figure">
+<p><img src="file:///images/flamegrah_1brc_c.png" alt="flamegrah_1brc_c.png" />
+</p>
+<p><span class="figure-number">Figure 2: </span>Flamegrph of the C's 1brc implementation</p>
+</div>
+
+<p>
+In the example below, Danny van Kooten, the writer of the C One Billion Rows Challenge, explains how the hashes are calculated for each city. {{&lt; cite "OneBillionRows2024a" &gt;}}
+He uses a simple fast multiplication hash combined with linear probing.
+</p>
+
+<p>
+In the first bloc, he multiples each letter of the city by 31.
+After that, he sums up all the results.
+</p>
+
+<p>
+In the second bloc, he checks if the hash can be inserted into the hashmap.
+If there is a collision, he iterates over the hashmap until he finds a free spot or a matching key.
+</p>
+<pre class="example" id="orge891520">
+// hash everything up to ';'
+// assumption: key (city name) is at least 1 char
+unsigned int len = 1;
+unsigned int hash = (unsigned char)buf[0];
+while (buf[len] != ';') {
+  hash = (hash * 31) + (unsigned char)buf[len++];
+}
+
+// probe map until free spot or matching key
+unsigned int idx = hashmap[hash &amp; cap-1];
+while (idx != 0 &amp;&amp; memcmp(results[idx], buf, len) != 0) {
+    hash++;
+    idx = hashmap[hash &amp; cap-1];
+}
+
+// idx is now either 0 (new entry)
+// or contains the index of our key in the results a
+</pre>
+
+<p>
+For the second implementation of the Zig code, we note that it has been implemented with a <code>btree</code>, used for data merge.
+This merge is performed because there are several threads processing the data.
+However, it also uses the same hashmap as the one used in the first version.
+</p>
+
+<p>
+{{&lt; references &gt;}}
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: tetratrux</p>
+<p class="date">Created: 2024-07-22 lun 16:25</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
