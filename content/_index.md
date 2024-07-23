@@ -15,5 +15,5 @@ This is an open source documentation for the Zig progamming language written by 
 {{< /hextra/hero-subtitle >}}
 
 {{< cards >}}
-  {{< card link="HEIG_ZIG/docs/introduction" title="Start exploring the documentation" image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAWJJUZlgC1w2Fh1J6tcZ0ZTN1IBb8HQrKEXdmRybx3skT8GM59ZVQ-f2O8sPvjiH0gZs&usqp=CAU"  >}}
+  {{< card link="docs/introduction" title="Start exploring the documentation" image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAWJJUZlgC1w2Fh1J6tcZ0ZTN1IBb8HQrKEXdmRybx3skT8GM59ZVQ-f2O8sPvjiH0gZs&usqp=CAU"  >}}
 {{< /cards >}}
