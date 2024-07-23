@@ -3,3 +3,74 @@
 #+hugo_cascade_type: docs
 #+math: true
 
+Tests in Zig are a core concept of the language, they can be written in any file with no special syntax or framework needed like you would in C. You simply write a function which names can even be a string and use the [[https://ziglang.org/documentation/master/std/#std.testing][std.testing]] from std in order to except all kind of needed things, from errors to primite values. You can also read the [[https://ziglang.org/documentation/master/#Zig-Tes][Zig Test]] documentation for more information.
+#+begin_src zig
+  test "simple zig test" {
+      try std.testing.expectEqual(1, 1);
+  }
+#+end_src
+
+With httpz I was lucky to have a whole test part [[https://github.com/karlseguin/http.zig?tab=readme-ov-file#testing][already implemented]] in the library. This allowed me to prepare different web requests and except other things than the std allow like excepting JSON or status code.
+
+Since my project was a bit more like a rush rather than a complex complete project, I did not fully test my whole application yet.
+
+But I did two simple tests just to test that the HTTP server is working and that a user can register.
+
+#+begin_src zig
+  test "simple hello request" {
+      var sqldb = try sqlite.Db.init(.{
+          .mode = sqlite.Db.Mode{ .File = "mydb.db" },
+          .open_flags = .{
+              .write = true,
+              .create = true,
+          },
+          .threading_mode = .Serialized, // I cant use multi thread because the HTTP server is already multi-threaded under the hood, making one thread managing multiple connections thus not allowing sqlite MultiThread
+      });
+      var app = App{ .db = &sqldb };
+      const ctx = .{ .app = &app, .user_id = null };
+      var web_test = ht.init(.{});
+      defer web_test.deinit();
+  
+      try welcome(ctx, web_test.req, web_test.res);
+      try web_test.expectStatus(200);
+  }
+#+end_src
+
+#+begin_src zig
+  test "register new user" {
+      // Boilerplate init begin
+      var sqldb = try sqlite.Db.init(.{
+          .mode = sqlite.Db.Mode{ .File = "1.db" },
+          .open_flags = .{
+              .write = true,
+              .create = true,
+          },
+          .threading_mode = .Serialized,
+      });
+      defer sqldb.deinit();
+      var c1 = try sqldb.savepoint("c1");
+      var app = App{ .db = c1.db };
+      const ctx = .{ .app = &app, .user_id = null };
+      var web_test = ht.init(.{});
+      defer web_test.deinit();
+      // Boilerplate init end
+  
+      web_test.req.fd = try httpz.key_value.KeyValue.init(std.testing.allocator, 10);
+      defer web_test.req.fd.deinit(std.testing.allocator);
+      web_test.req.fd.add("username", "john");
+      web_test.req.fd.add("password", "1234");
+      try register(ctx, web_test.req, web_test.res); // Call to my endpoint
+      try web_test.expectStatus(200);
+      try web_test.expectJson(.{ .success = true });
+      c1.commit();
+  }
+#+end_src
+
+We can see that the code is very straigtforward, if the httpz library did not implement it I would have probably have had to create my own library using [[https://ziglang.org/documentation/master/std/#std.http.Client][std.http.Client]] to send different kind of requests and a sort of parser to check the different responses.
+
+In order to have my tests run automatically every time I run my application I added this line to my =build.zig= file:
+#+begin_src zig
+  run_cmd.step.dependOn(&test_cmd.step);
+#+end_src
+
+Zig makes writing and executing tests very easy which can if wanted lead to an easy Test Driven Development workflow.

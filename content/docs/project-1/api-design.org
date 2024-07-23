@@ -55,14 +55,94 @@ Take no paramater and return the village informations of the connected player
 #+end_src
 
 *** POST /game/create_building
+Take no paramater and allow the user to create gold mines, in the future it will take a paramater in order to create different kind of buildings.
+
+This is the message if it is a success:
 #+begin_src json
   {
       "success": true
   }
 #+end_src
 
+You can also get different kind of errors like this one if the user does not have enough gold or space:
+#+begin_src json
+  {
+      "success": false,
+      "error": "not enough ressources"
+  }
+#+end_src
+
 *** POST /game/upgrade_building
+Take the id of the building to upgrade, verify that the person who made the request is indeed the owner of the building and that he has enough gold and space to upgrade it.
+
+This is the message if it is a success:
+#+begin_src json
+  {
+      "success": true
+  }
+#+end_src
+
+You can also get different kind of errors like this one if the player who made the request is not the owner of the building:
+#+begin_src json
+  {
+      "success": false,
+      "error": "you are not the owner of this building"
+  }
+#+end_src
 
 *** POST /game/buy_units
+The typical attack request will have this structure:
+
+#+begin_src json
+  {
+      "nb_ranged": 100,
+      "nb_cavalry": 100,
+      "nb_infantry": 100
+  }
+#+end_src
+
+This is the message if it is a success:
+#+begin_src json
+  {
+      "success": true
+  }
+#+end_src
+
+The operation can fail if the player does not have enough gold to buy the desired units.
+
+#+begin_src json
+  {
+      "success": false,
+      "error": "not enough gold"
+  }
+#+end_src
 
 *** POST /game/attack
+The typical attack request will have this structure:
+
+#+begin_src json
+  {
+      "target_village_id": 32,
+      "source_village_id": 31,
+      "nb_ranged": 100,
+      "nb_cavalry": 100,
+      "nb_infantry": 100
+  }
+#+end_src
+
+All kinds of check are going to be ran, like if the player attack himself, if the target village is not his and if he has enough units to attack.
+
+This is the message if it is a success:
+#+begin_src json
+  {
+      "success": true
+  }
+#+end_src
+
+And this is an example of an error message if the player does not have enough units to attack:
+#+begin_src json
+  {
+      "success": false,
+      "error": "not enough units to attack"
+  }
+#+end_src
