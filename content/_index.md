@@ -11,7 +11,7 @@ Zig documentation
 
 
 {{< hextra/hero-subtitle >}}
-This is an open source documentation for the Zig progamming language written by two students at the HEIG-VD in Switzerland. This documentation aims to tackle a few basics of the language and more importantly dive into some more advanced topics and see how Zig fit into those differnt topics.
+This is an open source documentation for the Zig progamming language written by two students at the HEIG-VD in Switzerland. This documentation aims to tackle a few basics of the language and more importantly dive into some more advanced topics and see how Zig fit into those different topics.
 {{< /hextra/hero-subtitle >}}
 
 {{< cards >}}
