@@ -41,7 +41,7 @@ What =.thread_safe= does is that it makes the allocator thread-safe, meaning tha
 You can have more informations on the topic following a discussion I had on the Zig discord server [[https://discord.com/channels/605571803288698900/1237126868927512718][here]].
 
 **** Memory leaks
-In the exemple below, the memory allocated to *a* is freed (with *destroy* here), if you were to comment the *destroy* line, the GPA would detect a memory leak and tell you what memory leaked giving a stacktrace and the memory address of the leaked memory.
+In the exemple below, the memory allocated to =a= is freed (with =destroy= here), if you were to comment the *destroy* line, the GPA would detect a memory leak and tell you what memory leaked giving a stacktrace and the memory address of the leaked memory.
 #+begin_src zig :imports '(std) :main 'yes :testsuite 'no
   var gpa = std.heap.GeneralPurposeAllocator(.{ .safety = true }){};
   defer {

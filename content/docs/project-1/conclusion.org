@@ -3,7 +3,7 @@
 #+hugo_cascade_type: docs
 #+math: true
 
-The [[https://github.com/Pismice/Zig-Conquest][repository of the project]] is available on GitHub and open-source for now, it might not be in the future for security reasons.
+The [[https://github.com/Pismice/Zig-Conquest][repository of the project]] is available on GitHub and open-source.
 
 The project is still evolving so all the documentation here might not always be up to date. Note that at the time of writing this I still do not have a decend frontend solution, I am using only [[https://www.postman.com/][Postman]] for the moment to test the API.
 
