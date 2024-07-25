@@ -750,10 +750,10 @@ Calculating the base index is mapped into an array, and then, if there are any c
 In the example below, Danny van Kooten, the writer of the C One Billion Rows Challenge, explains how the hashes are calculated for each city. {{< cite "OneBillionRows2024a" >}}
 He uses a simple fast multiplication hash combined with linear probing.
 
-In the first bloc, he multiples each letter of the city by 31.
+In the first block, he multiples each letter of the city by 31.
 After that, he sums up all the results.
 
-In the second bloc, he checks if the hash can be inserted into the hashmap.
+In the second block, he checks if the hash can be inserted into the hashmap.
 If there is a collision, he iterates over the hashmap until he finds a free spot or a matching key.
 #+begin_example c
 // hash everything up to ';'

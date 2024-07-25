@@ -1,17 +1,11 @@
 Doc:
-- [ ] get village qui retourne aussi les buildings
-- [ ] finir api design
-- [?] CI
-- [ ] TOUT relire (verifier que tous les premiers scripts sont executables)
 
 Fin: 
-- [ ] rmettre db schema a jour
-- [ ] sources zotero
-- [ ] corriger fautes orthographe
-- [ ] Affiche
-- [ ] Resume publiable
+- [ ] faire release du projet ou donner le dernier commit
+- [ ] mettre la bib a jour et table des mat
 
 Peut etre:
+- [?] get village qui retourne aussi les buildings
 - [?] securite verifier que les actions peuvent seulement etre faites par la bonne personne
 - [*] Tester avec GPA pour les memory leaks (shutdown et sigint a mettre dans doc si ca marche)
 - [?] + traiter les erreurs et moins de try
@@ -33,10 +27,3 @@ Futur:
 - [!] cicd (cd)
 - [!] durant presentation pas faire que des slides, mais faire aussi des exemple pour aider la comprehension
 - [!] zig test en vert
-
-Questions:
-- est ce que je peux rajouter qqch d interessant pour la concurence par exmple pour epoll, psq je trouve assez fade?
-- voir pour zotero comment faire les liens
-- besoin d avoir "liste des codes, figures, ..." ?
-- voir ensemble la partie projet
-- pas besoin d avoir la liste des codes sources ?

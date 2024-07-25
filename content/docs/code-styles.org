@@ -22,6 +22,10 @@ This util is going to enforce basic things for you like:
 2. =camelCaseFunctionName=: for functions
 3. =snake_case_variable_name=: for variables and everything else
 
+To get more details you can read the official [[https://ziglang.org/documentation/master/#Names][documentation about this topic]].
+
+Not that those conventions are not going to be enforced by the formatter.
+
 *** undefined and null values
 In Zig you can leave variables uninitialized, but you have to do that explicitly contrary to C where you can leave variables uninitialized and never truly notice it. Note that leaving the value undefined is going to leave the memory of this variable to some complete unpredicatble value (except in Debug mode where it will be [[https://github.com/ziglang/zig/issues/15603][set to 0xaa]])
 
@@ -55,7 +59,10 @@ This is to be avoided as much as possible, if you have some in your code it migh
 
 
 *** Zen
-Zig encourages you to use the [[https://ziglang.org/documentation/0.12.0/#Zen][Zen philosophy]], they reflect well the spirit behind Zig, here are those principles:
+Zig encourages you to use the [[https://ziglang.org/documentation/0.12.0/#Zen][Zen philosophy]], they reflect well the spirit behind Zig. Having them in mind while coding in Zig can be very beneficial to help you understand how Zig works and help you write better code.
+
+Here are those principales taken exactly as they are in the documentation:
+
 - Communicate intent precisely.
 - Edge cases matter.
 - Favor reading code over writing code.
@@ -69,11 +76,3 @@ Zig encourages you to use the [[https://ziglang.org/documentation/0.12.0/#Zen][Z
 - Resource allocation may fail; resource deallocation must succeed.
 - Memory is a resource.
 - Together we serve the users.
-
-Sources:
-
-https://ziglang.org/documentation/master/#Type-Coercion-undefined
-https://nathancraddock.com/blog/zig-naming-conventions/o
-https://ziglang.org/documentation/master/#undefined
-https://ziglang.org/documentation/master/#Style-Guide
-https://github.com/ziglang/zig/blob/master/lib/std/fmt.zig

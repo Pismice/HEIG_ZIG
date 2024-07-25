@@ -1,0 +1,22 @@
+#+title: Bottleneck
+#+weight: 99
+#+hugo_cascade_type: docs
+#+math: true
+
+Near the end of my project I wondered if my performances were still as good as the benchmarks I did in the web section and it sadly was not the case anymore ...
+I did a test where I simply did a =SELECT= query on a dozens of rows for each request and ended up with those results. I tried with 4 differents scenarios :
+
+- httpz server NOT hitting the database
+- httpz server hitting the database (doing the SELECT query)
+- std.http.Server NOT hitting the database
+- std.http.Server hitting the database (doing the SELECT query)
+
+#+CAPTION: Transfers per second for different implementations with and without DB
+#+NAME:   fig:SED-HR4049
+[[/HEIG_ZIG/images/db_perf.png]]
+
+We can see how the ratio of requests per second went down when I started to hit the database especially for httpz it went down for more than 10 times the number of requests it could initially handle, but for the std implementation it only went down 2 times. 
+
+In this work I did not give too much attention into why hitting the database made it such a huge bottleneck since it probably is not Zig related, but from my common sense and experience I would say that the order of magnitude quite makes sense. But this show that having the fastest possible HTTP server is not always the best choice since the bottleneck might be somewhere else.
+
+However I did more benchmarks, with applications that are not HTTP servers but simply loop that constantly make a request to the DB, one in C, one in Zig using the library I used during this project and finally one in Zig directly using the C sqlite library. The C implementation and the Zig implementation using the C sqlite library both can handle ~100’000 queries per second where the Zig one with the wrapper library only handle ~30’000. I do not really understand why since the Zig library is supposed to be just a wrapper around the C library, but I can conclude that there is an overhead abstraction when using it or that I am somehow misusing the library, which is unlikely since I simply used the examples presentend on the repository of the project. I thus might change my library in the future for better performances. I tried using different sqlite libraries within the wrapper library but nothing changed.

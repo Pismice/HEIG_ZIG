@@ -1,9 +1,8 @@
 #+title: Errors
 #+weight: 3
 
-In ZIG, [[https://ziglang.org/documentation/master/#Errors][errors]] are juste values.
+In ZIG, [[https://ziglang.org/documentation/master/#Errors][errors]] are juste values, those values are those of a special type of =enum=, that looks just like an enum but with the =error= keyword added.
 
-Those values are those of a special type of enum, that looks just like an enum but with the =error= keyword added.
 #+begin_src zig
   const TcpConnectionError = error{
       HandshakeFailed,
@@ -20,10 +19,10 @@ If you want to return an error without having to make a whole enum for that, you
 #+end_src
 
 *** Handling errors in the application flow
-Functions can return either a value or an error, this is done by adding the =!= to the return type of a function
-With the =!= the return type of the function below is the coerced =anyerror!u8=, which means that it can either return the excepted value or an error.
+Functions can return either a value or an error, this is done by adding the =!= to the return type of a function.
+With the =!=, the return type of the function below is the coerced =anyerror!u8=, which means that it can either return the excepted value or an error.
 
-This way of handling errors is different from languages like Rust for exemple where you encapsulate the error or the value in a completly different type, the =Result= type.
+This way of handling errors is different from languages like Rust for example where you encapsulate the error or the value in a completly different type, the =Result= type.
 
 Note that since error sets are just enums, under the hood all the errors are just =u16= by default.
 
@@ -31,7 +30,7 @@ It is important the the syntax of the type is =ErrorSet!Payload= and not =Payloa
 
 When a function can return an error we have to either =try= or =catch= it.
 
-=try= is going to either get the result or the error. If your function contains a =try= statement, it has to return a =!T= type, where =T= it the type of the excepted value.
+=try= is going to either get the result or make the function return the error. If your function contains a =try= statement, it has to return a =!T= type, where =T= it the type of the excepted value.
 
 =catch= is going to treat the error and return a value even if an error occured.
 
@@ -60,7 +59,7 @@ When a function can return an error we have to either =try= or =catch= it.
   }
 #+end_src
 
-Sometime we want to treat the error depending on the type of the error, to do that we capture the error the =upgradeBuilgin()= function was initially returning and then we can use =if= or =switch= to handle our different cases. Here is an example taken from my [[file:../project-1/][project]].
+Sometime we want to treat the error depending on the type of the error, to do that we capture the error. Here the =upgradeBuilding()= function is either return a value or an error. Here is an example taken from my [[file:../project-1/][project]] where we do different actions depending on the type of the error.
 #+begin_src zig
   building.upgradeBuilding(ctx.app.db) catch |err| {
       if (err == error.NotEnoughRessources) {
@@ -78,8 +77,8 @@ This is the global error set containing all the possible errors that can happen 
 This is the default error used when you just add the =!= withtout precsing the error type. Which means that =!u64= is just a syntaxic sugar for =anyerror!u64=.
 
 *** Errdefer
-  This exemple is taken from the [[https://ziglang.org/documentation/master/#errdefer][official documentation]]
-  [[https://ziglang.org/documentation/master/#errdefer][errdefer]] is a particularity of ZIG, it allows the user to execute some code when the function returns an error, it is useful exemple for deallocating variables you would have normally returned from the function, but since the function failed you deallocate that memory to avoid a memory leak.
+  This exemple is taken as if from the [[https://ziglang.org/documentation/master/#errdefer][official documentation]].
+  [[https://ziglang.org/documentation/master/#errdefer][errdefer]] is a particularity of ZIG, it allows the user to execute some code when the function returns an error, it is useful for exemple for deallocating variables you would have normally returned from the function, but since the function failed you deallocate that memory to avoid a memory leak.
 #+source: simple
 #+begin_src zig :imports '(std)
     fn createFoo(param: i32) !Foo {

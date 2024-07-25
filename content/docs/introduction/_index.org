@@ -11,7 +11,7 @@ That's why new languages come to find a better way to handle errors and memory.
 Like the [[https://www.rust-lang.org/][Rust language]] which relies strongly on its borrow checker to ensure safe memory but it comes at a cost: increased code complexity, that can slow down it's adoption.
 
 Zig wants to simplify the programming development experience with no hidden control flow and no macro to avoid complex mistakes.
-In contrary to rust, in Zig the memory is managed explicitly, you have to manually allocate and deallocate memory, just like you would do in C.
+In contrary to Rust, in Zig the memory is managed explicitly, you have to manually allocate and deallocate memory, just like you would do in C.
 For that purpose Zig offers the concept of *allocators* that allow the user to dictate how he wants data to be allocated. There are different allocators for different use cases. Like the [[file:./allocators.org::#General purpose allocator][General purpose allocator]] that can detect memory leaks.
 
 In the sections below, certain aspects of this programming language will be explored in greater depth.
@@ -23,7 +23,7 @@ Note that this documentation is generated from emacs with org-mode and that you 
 This documentation is being worked on by 2 students from the HEIG-VD, in the context of a Master degree course for one and a Bachelor Thesis for the other.
 The goal of this documentation is to explore the Zig language in-depth, by first learning a few basics of the language we judge interesting or useful, and then by exploring some more advanced topics.
 
-This work is mainly aimed at engineers who already have experiences in C but might consider using Zig as a replacement or alternative. If you are a complete beginner, you might still learn a lot by reading this, but we highly encourage you to look at other ressources aimed at beginners.
+This work is mainly aimed at engineers who already have experiences in C but might consider using Zig as a replacement or an alternative. If you are a complete beginner, you might still learn a lot by reading this, but we highly encourage you to look at other ressources aimed at beginners for that purpose.
 
 One of the advantages this project offers compare to other guides and documentations is that here we are going to learn the language with [[https://en.wikipedia.org/wiki/Literate_programming][literate programming]] because *one snippet of code is worth 1000 words*.
 
@@ -34,10 +34,10 @@ The advanced topics covered are mostly structured as follows:
 2. Look at the different ways to do it in Zig.
 3. Finally making analyses, benchmarks and conclusions .
 
-Those advanced topics will more likely be at the end of this guide. The topics at the top are the most basics that have almost no complexity but are still useful to know or understand. Note that there is no clear line between the basic subjects and the advanced ones.
+Those advanced topics will more likely be at the end of this guide. The topics at the top are the most basics ones that have almost no complexity but are still useful to know or understand. Note that there is no clear line between the basic subjects and the advanced ones, some subjects might be in between the two.
 
 Note that we wrote this documentation with the help of AI assistants like ChatGPT and GH Copilot.
-These tools were used only to improve the syntax and spelling of texts.
+These tools were used only to improve the syntax and spelling of texts, except when mentionned otherwise.
 
 ** What this documentation IS NOT
 This is *not* a guide to learn Zig as first-language, this documentation wants to go in-depth in certain parts of the language, and totally neglets others.
@@ -48,7 +48,7 @@ To understand what is described in this documentation, you should first read up 
 
 ** How to use this documentation
 
-There is no special order in which you should read this documentation, you can start with the part that interests you the most and completly neglects others if you do not find them interesting.
+There is no special order in which you should read this documentation, you can start with the parts that interests you the most and completly neglects others if you do not find them interesting.
 
 This documentation is built to guide the reader through different examples.
 Those examples have been created using literate programming, in fact, the documentation is built on Emacs with the org mode.

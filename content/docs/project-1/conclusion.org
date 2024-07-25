@@ -7,7 +7,9 @@ The [[https://github.com/Pismice/Zig-Conquest][repository of the project]] is av
 
 The project is still evolving so all the documentation here might not always be up to date. Note that at the time of writing this I still do not have a decend frontend solution, I am using only [[https://www.postman.com/][Postman]] for the moment to test the API.
 
-It is hard to say if Zig was a good choice for this project programmer experience wise it is can really be relative to every people but still this language on this point has some good and bad points. The first very good point of Zig is that compared to C it is the nicest possible experience, especially in the context of a web server where there are a lot of dynamic allocations happening at multiple places, having allocators here truly simplified the developpment process, the framework I used could either sometimes ask me to pass an allocator and handle the memory by myself or sometimes it would provide some allocators for me, I therefore knew that there was no need to worry about this memory space. 
+It is hard to say if Zig was a good choice for this project from a programmer experience point of view because those things are relative to each programmer but I still found a few points that make Zig a unique solution. 
+
+The first very good point of Zig is that compared to C it is the nicest possible experience, especially in the context of a web server where there are a lot of dynamic allocations happening at multiple places, having allocators here truly simplified the developpment process, the framework I used could either sometimes ask me to pass an allocator and handle the memory by myself or sometimes it would provide some allocators for me, I therefore knew that there was no need to worry about this memory space. 
 
 To keep the comparaison going with C, the Zig package manager also is great, you do not have to clone a repository, create a Makefile and so on, everything worked out nicely.
 
@@ -15,20 +17,6 @@ The =comptime= keyword also inderectly helped me a lot through the sqlite wrappe
 
 Even though Zig seem to surpass C in the context of web developpment it still has some major concurents like Rust, Go, Java, C# and so on which are probably more adapted for writing a general case web server. Since Zig is pretty low level there are still a lot of things you have to manage yourself and the environment is not as mature as the other languages I cited.
 
-To conclude on the dev experience, Zig was a decent choice for this type of project, it made the dev experience a bit harder than with other languages (except C) but since it has some pretty good performances it was a good choice for the context of a video game server.
+To conclude on the dev experience, Zig was a decent choice for this type of project, it made the dev experience a bit harder than with other languages (except C) but since it has some pretty good performances it was a good choice for the context of a video game server. 
 
-Performance wise since almost all my requests have to hit the database, it became my bottleneck. The number of requests I could treat went down dramatically for requests that have to communicate with the database.
-
-I did a test where I simply did a =SELECT= query on a dozens of rows for each request and ended up with those results.
-
-#+CAPTION: Transfers per second for different implementations with and without DB
-#+NAME:   fig:SED-HR4049
-[[/HEIG_ZIG/images/db_perf.png]]
-
-We can see how the ratio of requests per second went down when I started to hit the database especially for httpz it went down for more than 10 times the number of requests it could handle,  but for the std implementation it only went down 2 times.
-
-I did not give too much attention into why hitting the database made it such a huge bottleneck, but from my common sense and experience I would say that the order of magnitude quite makes sense. But this show that having the fastest possible HTTP server is not always the best choice since the bottleneck might be somewhere else.
-
-To conclude on the performance, I would say that Zig is a decent choice for a video game server, it has some pretty good performances and if the bottleneck can be reduced it could be a great choice.
-
-Overall Zig was good choice, I could ease into the project and start to implement features quite quickly, the language is quite nice to use and the performances are good. The fact that the framework was good and easy to use also probably helped.
+Performance wise since almost all my requests have to hit the database, it became my bottleneck. The number of requests I could treat went down dramatically for requests that have to communicate with the database. Other than that, I would say that Zig is a decent choice for a video game server, it has some pretty good performances and if the bottleneck can be reduced it could be a great choice. I could ease into the project and start to implement features quite quickly, the langage and the ecosystem around it is quite nice to use. The fact that the framework was good and easy to use also probably helped.

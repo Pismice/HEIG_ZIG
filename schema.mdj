@@ -3116,8 +3116,8 @@
 								"$ref": "AAAAAAFF+qBtyKM79qY="
 							},
 							"font": "Arial;13;0",
-							"left": 520,
-							"top": 528,
+							"left": 448,
+							"top": 632,
 							"width": 153,
 							"height": 57,
 							"text": "Regulary polled by the server to do some job when time_end"
@@ -5483,7 +5483,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGQ0O/vE5qibII="
 							},
-							"name": "giver_vilage_id"
+							"name": "giver_vilage_id",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -5491,7 +5492,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGQ0O/vE5qibII="
 							},
-							"name": "receiver_village_id"
+							"name": "receiver_village_id",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -5499,7 +5501,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGQ0O/vE5qibII="
 							},
-							"name": "golds_given"
+							"name": "golds_given",
+							"type": ""
 						}
 					]
 				}
