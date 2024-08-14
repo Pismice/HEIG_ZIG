@@ -3,7 +3,7 @@
 #+hugo_cascade_type: docs
 
 **** Description
-[[https://github.com/cztomsik/tokamak/tree/main][This server-side web framework]] has been created on April 2024 by [[https://github.com/cztomsik][cztomsik]]. It currently ammounst 238 stars on GitHub, has 4 contributors, 0 release and is currently still in early development stage. Despite that, the author is using it in two project that are in production. One of them is [open-source](https://github.com/cztomsik/ava/)
+[[https://github.com/cztomsik/tokamak/tree/main][This server-side web framework]] has been created on April 2024 by [[https://github.com/cztomsik][cztomsik]]. It currently ammounst 238 stars on GitHub, has 4 contributors, 0 release and is currently still in early development stage. Despite that, the author is using it in two projects that are in production. One of them is [[https://github.com/cztomsik/ava/][open-source]]
 
 One of the core concepts of Tokamak is to heavily leverage dependecy injection to make the development of web applications easier. As far as I know it is the only web framework in Zig that does that.
 
