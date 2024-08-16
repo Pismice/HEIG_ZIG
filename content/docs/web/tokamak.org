@@ -3,14 +3,14 @@
 #+hugo_cascade_type: docs
 
 **** Description
-[[https://github.com/cztomsik/tokamak/tree/main][This server-side web framework]] has been created on April 2024 by [[https://github.com/cztomsik][cztomsik]]. It currently ammounst 238 stars on GitHub, has 4 contributors, 0 release and is currently still in early development stage. Despite that, the author is using it in a project that is to be soon in production.
+[[https://github.com/cztomsik/tokamak/tree/main][This server-side web framework]] has been created on April 2024 by [[https://github.com/cztomsik][cztomsik]]. It currently ammounst 238 stars on GitHub, has 4 contributors, 0 release and is currently still in early development stage. Despite that, the author is using it in two projects that are in production. One of them is [[https://github.com/cztomsik/ava/][open-source]]
 
 One of the core concepts of Tokamak is to heavily leverage dependecy injection to make the development of web applications easier. As far as I know it is the only web framework in Zig that does that.
 
 If you have trouble understanding what Tokamak is but you are more familiar with the Java world, know that the author claims that Tokamak is to http.zig what Spring it to Servlets in the Java world. Basically, it is an abstraction layer on top of basics utilises like handling requests by adding things like Dependency Injection.
 
 **** Dependency Injection (DI)
-To illustrate what DI is and why it is uses in Tokamak, let's have a look at an exemple given to me by the author itself.
+To illustrate what DI is and why it is uses in Tokamak, let's have a look at an example given to me by the author itself.
 
 When writing a WEB application you might need multiple objects (dependencies) in various handlers. Those dependencies often being databases, loggers, etc. The most intuitive way to do it would be to pass each needed dependency as a parameter to each handler.
 #+begin_src js
@@ -26,7 +26,7 @@ When writing a WEB application you might need multiple objects (dependencies) in
 
 This solution might look cool at first, but one of the main reason I or anyone did not write it in Zig is because it is simply impossible to express that in the language because Zig does not support closures. Except if you implement it yourself, like this [[https://zig.news/andrewgossage/implementing-closures-and-monads-in-zig-23kf][blog]] explains but that is not the point.
 
-An other basic and forwrad solution would be to use global variables and just use them in the handlers. It work great but it is not a good practice to have global variables in your code. This makes the code coupled and harder to test and maintain.
+An other basic and straight-forward solution would be to use global variables and just use them in the handlers. It works great but it is not a good practice to have global variables in your code. This makes the code coupled and harder to test and maintain.
 #+begin_src js
   // Our dependencies
   var logger = newLogger();
@@ -41,7 +41,7 @@ An other basic and forwrad solution would be to use global variables and just us
   ...
 #+end_src
 
-An other solution would be to use a big variables to store the dependencies, but this is not a good practice aswell as it also makes the code very coupled and dependant on that =context= variable.
+An other solution would be to use a one big shared struct to store the dependencies, but this is not a good practice aswell as it also makes the code very coupled and dependant on that =context= variable.
 
 #+begin_src js
   var context = {
@@ -62,7 +62,7 @@ An other solution would be to use a big variables to store the dependencies, but
 
 This previous solution is the one used in this [[https://github.com/karlseguin/http.zig?tab=readme-ov-file#complex-use-case-1---shared-global-data][http.zig example]] where the =Global= struct act as the context.
 
-The solution Tokamak puts forward is to use DI. How it is done under the hood is that all the handlers have the same signature pfn (*tk.Context) anyerror!void= which allows the framework to chain the handlers. The framework is going to do a bit a magic for you by injecting all the depencies you need in the handlers when you need them by using this =*tk.Context= object. So from the developer point of view, you just have to write the handlers and the framework will take care of the rest. This also makes the code more testable and maintainable since everything is decoupled now, you could easily copy paste one of your handlers in an other project and it would work just fine.
+The solution Tokamak puts forward is to use DI. How it is done under the hood is that all the handlers have the same signature =fn (*tk.Context) anyerror!void= which allows the framework to chain the handlers. The framework is going to do a bit a magic for you by injecting all the depencies you need in the handlers when you need them by using this =*tk.Context= object. So from the developer point of view, you just have to write the handlers and the framework will take care of the rest. This also makes the code easier to test and more maintainable since everything is decoupled now, you could easily copy paste one of your handlers in an other project and it should work just fine.
 
 #+begin_src js
   // Our dependencies
@@ -84,7 +84,7 @@ The solution Tokamak puts forward is to use DI. How it is done under the hood is
 
 **** Simple example
 
-A basic Tokamak application is really is to get up and running really fast.
+A basic Tokamak application is really easy to get up and running really fast.
 
 #+begin_src zig
   const tk = @import("tokamak");
