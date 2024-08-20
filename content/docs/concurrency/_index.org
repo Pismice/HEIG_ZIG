@@ -57,7 +57,7 @@ This method gives the advantage of not having to worry about a thread being star
 There is an interesting thing that is happening in this graph, at the end we see that task 1 is only doing a very small job, which cost a context switch for almost no useful job, but the scheduler does not know that a task remains only a small job until done and can context switch it.
 #+CAPTION: Preemptive multitasking
 #+NAME:   fig:SED-HR4049
-[[/images/premp.svg]]
+[[/HEIG_ZIG/images/premp.svg]]
 
 *** Cooperative multitasking
 Contrary to preemptive multitasking, it is the progammer job to choose which and when the differents threads are executed. Threads are going to run until they are explicitly yielding control back. 
@@ -67,7 +67,7 @@ This method gives the advantage to have the progammer to have a fine grained con
 In cooperative multitasking, we can yield the control back whenever we want, which leads to much less overhead compared to preemptive multitasking.
 #+CAPTION: Cooperative multitasking
 #+NAME:   fig:SED-HR4049
-[[/images/coop.svg]]
+[[/HEIG_ZIG/images/coop.svg]]
 
 *** Kernel threads
 Multithreading, it is the most basic and historical way to do concurrency, it works by running the work on multiple threads that are going to be exectued in parallel (if the CPU can), each thread runs independently of the others. Unlike asynchronous event-driven programming, threads typically block until their assigned task completes.

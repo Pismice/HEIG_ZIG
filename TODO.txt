@@ -1,7 +1,4 @@
-Doc:
-
 Fin: 
-- [ ] faire release du projet ou donner le dernier commit
 - [ ] mettre la bib a jour et table des mat
 
 Peut etre:
