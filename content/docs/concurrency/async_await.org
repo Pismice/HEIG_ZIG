@@ -71,7 +71,7 @@ Chanels are notably well known in Go, they are used to communicate between corou
 
 **** Example
 Here I made a simple example where I simply use chanels to communicate between asynchronous funtions.
-I used an analogy to help understand better the code. A client wants its burder order to come to his house, for that the we create the road between the restaurant and the house =road_between_restaurant_and_house=, the delivery man then knows he has to do his job and that he will transmit the order through that road. The client then waits and listens for his order to arrive. Once the delivery man finished the job the order can be consumed by the =hungry_client=.
+I used an analogy to help understand better the code. A client wants its burger order to come to his house, for that the we create the road between the restaurant and the house =road_between_restaurant_and_house=, the delivery man then knows he has to do his job and that he will transmit the order through that road. The client then waits and listens for his order to arrive. Once the delivery man finished the job the order can be consumed by the =hungry_client=.
 
 #+begin_src zig
   const std = @import("std");
